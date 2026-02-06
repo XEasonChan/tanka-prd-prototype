@@ -751,6 +751,23 @@
                         <p>利用"连锁反应"和"场景识别"，在用户最需要的时候引导连接，解决 Link 率低的问题</p>
                     </div>
                 </div>
+
+                <div class="info-box" style="margin-top: 24px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 12px; padding: 20px;">
+                    <h4 style="margin: 0 0 12px 0; color: #0369a1; font-size: 14px; font-weight: 600;">🔧 核心架构概念</h4>
+                    <p style="margin: 0; color: #0c4a6e; font-size: 13px; line-height: 1.8;">
+                        后端维护一个类似 <strong>MCP Tools</strong> 的工具字典。Agent 在执行不同任务时会查询是否需要调用这些 Tools。其中部分 Tool 包含固定的链接格式，系统会在聊天中自动进行<strong>正则识别</strong>并建议绑定。
+                    </p>
+                    <div style="margin-top: 16px; padding: 12px; background: white; border-radius: 8px; border: 1px solid #e0f2fe;">
+                        <p style="margin: 0; color: #0c4a6e; font-size: 13px; line-height: 1.6;">
+                            <span style="display: inline-block; background: #22c55e; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-right: 8px;">已绑定</span>
+                            直接展示 <strong>Action Card</strong>，执行具体操作
+                        </p>
+                        <p style="margin: 8px 0 0 0; color: #0c4a6e; font-size: 13px; line-height: 1.6;">
+                            <span style="display: inline-block; background: #f59e0b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-right: 8px;">未绑定</span>
+                            展示 <strong>Link Suggestion Card</strong>，引导用户连接服务
+                        </p>
+                    </div>
+                </div>
             </div>
         </section>
 

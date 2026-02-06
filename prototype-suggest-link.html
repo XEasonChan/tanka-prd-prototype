@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggest Link: Chain Reaction - 链式触发建议连接</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0096f8;
+            --primary-light: #e8f4fd;
+            --accent: #ffc53d;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --error-light: #fee2e2;
+            --jira: #0052CC;
+            --jira-light: #deebff;
+            --gmail: #EA4335;
+            --gmail-light: #fce8e6;
+            --google: #4285F4;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            padding: 8px 16px;
+            background: var(--white);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .state-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .state-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .state-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .state-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1fr 390px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .info-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+        }
+
+        .info-content {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+
+        .info-list {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .info-list li {
+            margin-bottom: 8px;
+            color: var(--gray-600);
+        }
+
+        .trigger-box {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .trigger-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .trigger-value {
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Phone Mockup */
+        .phone-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone {
+            width: 375px;
+            background: var(--white);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
+        }
+
+        .phone-status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .phone-notch {
+            width: 80px;
+            height: 24px;
+            background: var(--gray-900);
+            border-radius: 12px;
+        }
+
+        .phone-header {
+            background: var(--white);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .back-btn-phone {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .header-info h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .header-info p {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        .header-actions {
+            margin-left: auto;
+            color: var(--gray-400);
+            font-size: 1.2rem;
+        }
+
+        .phone-content {
+            background: var(--gray-50);
+            min-height: 540px;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .state-view {
+            display: none;
+        }
+
+        .state-view.active {
+            display: block;
+        }
+
+        /* Success Toast */
+        .success-toast {
+            background: var(--success-light);
+            border: 1px solid var(--success);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-toast .icon {
+            width: 20px;
+            height: 20px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        .success-toast .text {
+            flex: 1;
+        }
+
+        .success-toast .text h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .success-toast .text p {
+            font-size: 0.7rem;
+            color: #065f46;
+        }
+
+        /* Email Card (Sent State) */
+        .email-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .email-card-header {
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .email-card-header .sender-label {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .email-card-body {
+            padding: 14px;
+        }
+
+        .email-content {
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .email-assets {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            margin-bottom: 12px;
+        }
+
+        .email-recipient {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .recipient-logo {
+            width: 20px;
+            height: 20px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+
+        /* Success Status */
+        .success-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--success);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        /* AI Suggestion Bubble */
+        .ai-suggestion-bubble {
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .ai-suggestion-bubble p {
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        /* Suggest Link Section */
+        .suggest-link-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .suggest-link-label .sparkle {
+            font-size: 0.9rem;
+        }
+
+        /* Suggest Link Card */
+        .suggest-link-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .suggest-link-header {
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-logo.jira {
+            background: var(--jira);
+        }
+
+        .app-logo.jira svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .suggest-link-header h4 {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .close-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .suggest-link-body {
+            padding: 0 16px 16px;
+        }
+
+        .suggest-link-desc {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .suggest-link-why {
+            margin-bottom: 16px;
+        }
+
+        .why-label {
+            font-size: 0.7rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .why-content {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .suggest-link-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-700);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gray-400);
+            background: var(--gray-50);
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover {
+            background: #0077c4;
+        }
+
+        .btn-primary .arrow {
+            font-size: 0.9rem;
+        }
+
+        /* Connecting State */
+        .connecting-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            color: var(--gray-500);
+            font-size: 0.8rem;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Connected State */
+        .connected-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--success-light);
+            color: var(--success);
+            font-size: 0.8rem;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        /* OAuth Page Simulation */
+        .oauth-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .oauth-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .oauth-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .oauth-close:hover {
+            background: var(--gray-100);
+        }
+
+        .oauth-url {
+            flex: 1;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .oauth-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .oauth-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+        }
+
+        .oauth-logo.jira-logo {
+            background: var(--jira);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .oauth-logo.jira-logo svg {
+            width: 48px;
+            height: 48px;
+            fill: white;
+        }
+
+        .oauth-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .oauth-subtitle {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .oauth-app-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .oauth-app-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .oauth-app-text {
+            text-align: left;
+        }
+
+        .oauth-app-text h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .oauth-app-text p {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        .oauth-permissions {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .oauth-permissions h5 {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.8rem;
+            color: var(--gray-700);
+        }
+
+        .permission-item:last-child {
+            border-bottom: none;
+        }
+
+        .permission-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+        }
+
+        .oauth-actions {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .oauth-btn-cancel {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .oauth-btn-allow {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            background: var(--jira);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Processing indicator */
+        .processing-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+
+        /* AI Response Card */
+        .ai-response-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .ai-response-header {
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--gray-100);
+            background: var(--gray-50);
+        }
+
+        .ai-response-header .icon {
+            color: var(--success);
+        }
+
+        .ai-response-header span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .ai-response-body {
+            padding: 14px;
+        }
+
+        .ai-response-body p {
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .ai-response-body ul {
+            margin: 8px 0;
+            padding-left: 18px;
+        }
+
+        .ai-response-body li {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+
+        .jira-ticket-preview {
+            background: var(--jira-light);
+            border: 1px solid #b3d4ff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .jira-ticket-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .jira-ticket-header .jira-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--jira);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .jira-ticket-header .jira-icon svg {
+            width: 12px;
+            height: 12px;
+            fill: white;
+        }
+
+        .jira-ticket-header span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--jira);
+        }
+
+        .jira-ticket-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .jira-ticket-id {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        /* Dismissed state */
+        .dismissed-notice {
+            background: var(--gray-100);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 0.8rem;
+        }
+
+        /* Chat Input */
+        .chat-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--white);
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--primary);
+        }
+
+        .chat-input button {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        /* Jira SVG Icon */
+        .jira-svg {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← 返回 PRD 文档</a>
+
+        <div class="page-header">
+            <h1 class="page-title">Suggest Link: Chain Reaction</h1>
+            <p class="page-subtitle">链式触发建议连接 - Action 完成后建议连接相关服务以获得更多能力</p>
+        </div>
+
+        <div class="state-nav">
+            <button class="state-btn active" data-state="action-completed">1. Action Completed</button>
+            <button class="state-btn" data-state="show-suggest">2. Show Suggest Card</button>
+            <button class="state-btn" data-state="oauth-flow">3. OAuth Flow</button>
+            <button class="state-btn" data-state="connecting">4. Connecting</button>
+            <button class="state-btn" data-state="connected">5. Connected</button>
+            <button class="state-btn" data-state="continue-action">6. Continue Action</button>
+            <button class="state-btn" data-state="dismissed">7. Dismissed</button>
+        </div>
+
+        <div class="content-layout">
+            <div class="info-panel">
+                <h3 class="info-title" id="info-title">Action Completed - 操作完成</h3>
+                <div class="info-content" id="info-content">
+                    <p>用户完成了一个 Action（如发送邮件），系统检测到可以通过连接其他服务来增强后续能力。</p>
+                    <ul class="info-list">
+                        <li><strong>触发条件：</strong>Action 执行成功后</li>
+                        <li><strong>场景示例：</strong>发送客户反馈邮件后，建议连接 Jira 创建 Bug Ticket</li>
+                        <li><strong>UI 状态：</strong>显示成功 Toast 和已发送邮件卡片</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">当前触发</div>
+                        <div class="trigger-value">Email sent → Suggest connect Jira for bug tracking</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phone-wrapper">
+                <div class="phone">
+                    <div class="phone-status-bar">
+                        <div class="phone-notch"></div>
+                    </div>
+                    <div class="phone-header">
+                        <span class="back-btn-phone">&lt;</span>
+                        <div class="avatar">🤖</div>
+                        <div class="header-info">
+                            <h3>Tanka Memory</h3>
+                            <p>Your AI Assistant at Shanda</p>
+                        </div>
+                        <div class="header-actions">☰</div>
+                    </div>
+                    <div class="phone-content">
+                        <!-- State 1: Action Completed -->
+                        <div class="state-view active" data-view="action-completed">
+                            <div class="success-toast">
+                                <div class="icon">✓</div>
+                                <div class="text">
+                                    <h4>Email sent successfully</h4>
+                                    <p>Your message has been delivered to Glean Inc.</p>
+                                </div>
+                            </div>
+                            <div class="email-card">
+                                <div class="email-card-header">
+                                    <span class="sender-label">You</span>
+                                </div>
+                                <div class="email-card-body">
+                                    <div class="email-content">
+                                        Thank you for bringing the API integration performance issue to our attention. We understand that you're experiencing slow response times when processing large amounts of data. Our engineering team has been notified and will prioritize this issue.
+                                    </div>
+                                    <div class="email-assets">
+                                        📎 2 assets from this Work
+                                    </div>
+                                    <div class="email-recipient">
+                                        Send to <div class="recipient-logo">G</div> Glean Inc.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="success-status">
+                                ✓ Email sent successfully
+                            </div>
+                        </div>
+
+                        <!-- State 2: Show Suggest Card -->
+                        <div class="state-view" data-view="show-suggest">
+                            <div class="email-card" style="margin-bottom: 8px;">
+                                <div class="email-card-header">
+                                    <span class="sender-label">You</span>
+                                </div>
+                                <div class="email-card-body">
+                                    <div class="email-content" style="font-size: 0.75rem;">
+                                        Thank you for bringing the API integration performance issue to our attention. We understand that you're experiencing slow response times when processing large amounts of data. Our engineering team has been notified and will prioritize this issue.
+                                    </div>
+                                    <div class="email-assets">
+                                        📎 2 assets from this Work
+                                    </div>
+                                    <div class="email-recipient">
+                                        Send to <div class="recipient-logo">G</div> Glean Inc.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="success-status">
+                                ✓ Email sent successfully
+                            </div>
+                            <div class="ai-suggestion-bubble">
+                                <p>为了更好地管理客户的 bug 和反馈，您可以利用连接 JIRA 来进行团队协作。</p>
+                            </div>
+                            <div class="suggest-link-label">
+                                <span class="sparkle">✨</span> Suggest link for more context
+                            </div>
+                            <div class="suggest-link-card">
+                                <div class="suggest-link-header">
+                                    <div class="app-logo jira">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.005 1.005 0 0 0 23.013 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h4>Link Jira for more data</h4>
+                                    <div class="close-btn" onclick="switchState('dismissed')">×</div>
+                                </div>
+                                <div class="suggest-link-body">
+                                    <p class="suggest-link-desc">Add Jira connection for more context in Tanka memory</p>
+                                    <div class="suggest-link-why">
+                                        <div class="why-label">Why:</div>
+                                        <div class="why-content">"Step requires Jira tool to create and track bug ticket for API performance issue"</div>
+                                    </div>
+                                    <div class="suggest-link-actions">
+                                        <button class="btn-secondary">Learn more</button>
+                                        <button class="btn-primary" onclick="switchState('oauth-flow')">
+                                            <span class="arrow">↗</span> Connect
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- State 3: OAuth Flow -->
+                        <div class="state-view" data-view="oauth-flow">
+                            <div class="oauth-overlay">
+                                <div class="oauth-header">
+                                    <div class="oauth-close" onclick="switchState('show-suggest')">✕</div>
+                                    <div class="oauth-url">🔒 id.atlassian.com/authorize</div>
+                                </div>
+                                <div class="oauth-content">
+                                    <div class="oauth-logo jira-logo">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.005 1.005 0 0 0 23.013 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="oauth-title">Authorize Tanka Memory</h3>
+                                    <p class="oauth-subtitle">Tanka Memory wants to access your Atlassian account</p>
+                                    <div class="oauth-app-info">
+                                        <div class="oauth-app-icon">T</div>
+                                        <div class="oauth-app-text">
+                                            <h4>Tanka Memory</h4>
+                                            <p>tanka.ai</p>
+                                        </div>
+                                    </div>
+                                    <div class="oauth-permissions">
+                                        <h5>This will allow Tanka to:</h5>
+                                        <div class="permission-item">
+                                            <div class="permission-icon">✓</div>
+                                            <span>View your Jira projects and issues</span>
+                                        </div>
+                                        <div class="permission-item">
+                                            <div class="permission-icon">✓</div>
+                                            <span>Create and update issues on your behalf</span>
+                                        </div>
+                                        <div class="permission-item">
+                                            <div class="permission-icon">✓</div>
+                                            <span>Read your profile information</span>
+                                        </div>
+                                    </div>
+                                    <div class="oauth-actions">
+                                        <button class="oauth-btn-cancel" onclick="switchState('show-suggest')">Cancel</button>
+                                        <button class="oauth-btn-allow" onclick="switchState('connecting')">Allow access</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- State 4: Connecting -->
+                        <div class="state-view" data-view="connecting">
+                            <div class="email-card" style="margin-bottom: 8px;">
+                                <div class="email-card-header">
+                                    <span class="sender-label">You</span>
+                                </div>
+                                <div class="email-card-body">
+                                    <div class="email-content" style="font-size: 0.75rem;">
+                                        Thank you for bringing the API integration performance issue to our attention...
+                                    </div>
+                                    <div class="email-recipient">
+                                        Send to <div class="recipient-logo">G</div> Glean Inc.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="success-status">
+                                ✓ Email sent successfully
+                            </div>
+                            <div class="ai-suggestion-bubble">
+                                <p>正在连接 Jira，请稍候...</p>
+                            </div>
+                            <div class="suggest-link-label">
+                                <span class="sparkle">✨</span> Suggest link for more context
+                            </div>
+                            <div class="suggest-link-card">
+                                <div class="suggest-link-header">
+                                    <div class="app-logo jira">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.005 1.005 0 0 0 23.013 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h4>Link Jira for more data</h4>
+                                </div>
+                                <div class="suggest-link-body">
+                                    <div class="connecting-indicator">
+                                        <div class="spinner"></div>
+                                        Connecting to Jira...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- State 5: Connected -->
+                        <div class="state-view" data-view="connected">
+                            <div class="email-card" style="margin-bottom: 8px;">
+                                <div class="email-card-header">
+                                    <span class="sender-label">You</span>
+                                </div>
+                                <div class="email-card-body">
+                                    <div class="email-content" style="font-size: 0.75rem;">
+                                        Thank you for bringing the API integration performance issue to our attention...
+                                    </div>
+                                    <div class="email-recipient">
+                                        Send to <div class="recipient-logo">G</div> Glean Inc.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="success-status">
+                                ✓ Email sent successfully
+                            </div>
+                            <div class="ai-suggestion-bubble">
+                                <p>Jira 连接成功！正在分析你的任务上下文...</p>
+                            </div>
+                            <div class="suggest-link-label">
+                                <span class="sparkle">✨</span> Suggest link for more context
+                            </div>
+                            <div class="suggest-link-card">
+                                <div class="suggest-link-header">
+                                    <div class="app-logo jira">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.005 1.005 0 0 0 23.013 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h4>Jira Connected</h4>
+                                </div>
+                                <div class="suggest-link-body">
+                                    <div class="connected-badge">
+                                        ✓ Jira connected successfully
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="processing-status">
+                                <div class="spinner"></div>
+                                正在分析上下文，准备创建 Bug Ticket...
+                            </div>
+                        </div>
+
+                        <!-- State 6: Continue Action -->
+                        <div class="state-view" data-view="continue-action">
+                            <div class="email-card" style="margin-bottom: 8px;">
+                                <div class="email-card-header">
+                                    <span class="sender-label">You</span>
+                                </div>
+                                <div class="email-card-body">
+                                    <div class="email-content" style="font-size: 0.75rem;">
+                                        Thank you for bringing the API integration performance issue...
+                                    </div>
+                                    <div class="email-recipient">
+                                        Send to <div class="recipient-logo">G</div> Glean Inc.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="success-status">
+                                ✓ Email sent successfully
+                            </div>
+                            <div class="ai-response-card">
+                                <div class="ai-response-header">
+                                    <span class="icon">✓</span>
+                                    <span>Tanka AI</span>
+                                </div>
+                                <div class="ai-response-body">
+                                    <p>已成功连接 Jira！基于邮件内容，我已为你创建了一个 Bug Ticket：</p>
+                                    <div class="jira-ticket-preview">
+                                        <div class="jira-ticket-header">
+                                            <div class="jira-icon">
+                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.005 1.005 0 0 0 23.013 0z"/>
+                                                </svg>
+                                            </div>
+                                            <span>Bug Ticket Created</span>
+                                        </div>
+                                        <div class="jira-ticket-title">API Performance Issue - Slow response for large data processing</div>
+                                        <div class="jira-ticket-id">ENG-1234 · Priority: High · Assignee: Engineering Team</div>
+                                    </div>
+                                    <p style="margin-top: 12px; font-size: 0.75rem; color: var(--gray-500);">需要我修改 Ticket 详情或添加更多信息吗？</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- State 7: Dismissed -->
+                        <div class="state-view" data-view="dismissed">
+                            <div class="email-card" style="margin-bottom: 8px;">
+                                <div class="email-card-header">
+                                    <span class="sender-label">You</span>
+                                </div>
+                                <div class="email-card-body">
+                                    <div class="email-content" style="font-size: 0.75rem;">
+                                        Thank you for bringing the API integration performance issue to our attention. We understand that you're experiencing slow response times when processing large amounts of data. Our engineering team has been notified and will prioritize this issue.
+                                    </div>
+                                    <div class="email-assets">
+                                        📎 2 assets from this Work
+                                    </div>
+                                    <div class="email-recipient">
+                                        Send to <div class="recipient-logo">G</div> Glean Inc.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="success-status">
+                                ✓ Email sent successfully
+                            </div>
+                            <div class="ai-suggestion-bubble">
+                                <p>邮件已成功发送。如果你之后需要连接 Jira 来跟踪 Bug，可以在设置中进行连接。</p>
+                            </div>
+                            <div class="dismissed-notice">
+                                建议连接已关闭
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <button type="button">+</button>
+                        <input type="text" placeholder="Type a message">
+                        <button type="button">🎤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stateInfo = {
+            'action-completed': {
+                title: 'Action Completed - 操作完成',
+                content: `
+                    <p>用户完成了一个 Action（如发送邮件），系统检测到可以通过连接其他服务来增强后续能力。</p>
+                    <ul class="info-list">
+                        <li><strong>触发条件：</strong>Action 执行成功后</li>
+                        <li><strong>场景示例：</strong>发送客户反馈邮件后，建议连接 Jira 创建 Bug Ticket</li>
+                        <li><strong>UI 状态：</strong>显示成功 Toast 和已发送邮件卡片</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">当前触发</div>
+                        <div class="trigger-value">Email sent → Suggest connect Jira for bug tracking</div>
+                    </div>
+                `
+            },
+            'show-suggest': {
+                title: 'Show Suggest Card - 显示建议连接卡片',
+                content: `
+                    <p>显示 AI 建议气泡和 Suggest Link Card，引导用户连接相关服务。</p>
+                    <ul class="info-list">
+                        <li><strong>AI 建议：</strong>解释为什么建议连接该服务</li>
+                        <li><strong>Card 内容：</strong>App Logo + 标题 + 描述 + Why 原因</li>
+                        <li><strong>操作按钮：</strong>[Learn more] / [Connect]</li>
+                        <li><strong>关闭按钮：</strong>用户可以 dismiss 建议</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">设计要点</div>
+                        <div class="trigger-value">"Why" 字段解释 AI 为什么推荐这个连接</div>
+                    </div>
+                `
+            },
+            'oauth-flow': {
+                title: 'OAuth Flow - 授权流程',
+                content: `
+                    <p>用户点击 Connect 后，跳转到第三方 OAuth 授权页面。</p>
+                    <ul class="info-list">
+                        <li><strong>页面内容：</strong>App Logo + 授权标题 + 权限列表</li>
+                        <li><strong>请求方信息：</strong>显示 Tanka Memory 应用信息</li>
+                        <li><strong>权限说明：</strong>列出所需的权限项</li>
+                        <li><strong>操作按钮：</strong>[Cancel] / [Allow access]</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">技术实现</div>
+                        <div class="trigger-value">标准 OAuth 2.0 授权码流程</div>
+                    </div>
+                `
+            },
+            'connecting': {
+                title: 'Connecting - 连接中',
+                content: `
+                    <p>OAuth 授权完成后，系统正在建立连接。</p>
+                    <ul class="info-list">
+                        <li><strong>UI 状态：</strong>Card 显示 Spinner 和 "Connecting..." 文字</li>
+                        <li><strong>AI 提示：</strong>告知用户正在连接</li>
+                        <li><strong>后台操作：</strong>保存 OAuth token，验证连接</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">状态</div>
+                        <div class="trigger-value">OAuth callback → Token exchange → Verify</div>
+                    </div>
+                `
+            },
+            'connected': {
+                title: 'Connected - 连接成功',
+                content: `
+                    <p>服务连接成功，系统准备继续执行后续任务。</p>
+                    <ul class="info-list">
+                        <li><strong>UI 状态：</strong>显示绿色成功 Badge</li>
+                        <li><strong>AI 提示：</strong>告知连接成功，正在分析上下文</li>
+                        <li><strong>自动触发：</strong>Re-process 原始任务上下文</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">下一步</div>
+                        <div class="trigger-value">Auto re-process with new capability</div>
+                    </div>
+                `
+            },
+            'continue-action': {
+                title: 'Continue Action - 继续执行',
+                content: `
+                    <p>连接成功后，AI 利用新能力继续执行任务。</p>
+                    <ul class="info-list">
+                        <li><strong>场景示例：</strong>自动创建 Jira Bug Ticket</li>
+                        <li><strong>展示内容：</strong>已创建的 Ticket 预览</li>
+                        <li><strong>用户选项：</strong>可以修改或添加更多信息</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">链式反应完成</div>
+                        <div class="trigger-value">Email sent → Jira connected → Ticket created</div>
+                    </div>
+                `
+            },
+            'dismissed': {
+                title: 'Dismissed - 已关闭',
+                content: `
+                    <p>用户点击关闭按钮，dismiss 了建议连接。</p>
+                    <ul class="info-list">
+                        <li><strong>UI 状态：</strong>Suggest Card 消失，显示关闭提示</li>
+                        <li><strong>AI 回应：</strong>提示用户可以稍后在设置中连接</li>
+                        <li><strong>记录状态：</strong>不再对该消息重复推荐</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">用户行为</div>
+                        <div class="trigger-value">dismiss_reason: user_closed</div>
+                    </div>
+                `
+            }
+        };
+
+        function switchState(state) {
+            // Update buttons
+            document.querySelectorAll('.state-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.state === state);
+            });
+
+            // Update views
+            document.querySelectorAll('.state-view').forEach(view => {
+                view.classList.toggle('active', view.dataset.view === state);
+            });
+
+            // Update info panel
+            const info = stateInfo[state];
+            if (info) {
+                document.getElementById('info-title').textContent = info.title;
+                document.getElementById('info-content').innerHTML = info.content;
+            }
+        }
+
+        document.querySelectorAll('.state-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchState(btn.dataset.state);
+            });
+        });
+    </script>
+</body>
+</html>

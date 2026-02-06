@@ -973,6 +973,35 @@ flowchart TD
                     </table>
                 </div>
 
+                <!-- Edit Functionality & Schema -->
+                <div class="info-box" style="margin-top: 20px; background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); border: 1px solid #fde047; border-radius: 12px; padding: 20px;">
+                    <h4 style="margin: 0 0 12px 0; color: #854d0e; font-size: 14px; font-weight: 600;">✏️ 字段编辑功能 & Schema 数据来源</h4>
+                    <p style="margin: 0 0 12px 0; color: #713f12; font-size: 13px; line-height: 1.8;">
+                        点击 <strong>[Edit]</strong> 按钮后，用户可以编辑对应字段。编辑控件类型由 App Schema 决定：
+                    </p>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+                        <div style="flex: 1; min-width: 200px; padding: 12px; background: white; border-radius: 8px; border: 1px solid #fde047;">
+                            <p style="margin: 0; color: #713f12; font-size: 12px; font-weight: 600;">📝 纯文本字段</p>
+                            <p style="margin: 4px 0 0 0; color: #854d0e; font-size: 12px;">使用 Text Input 编辑</p>
+                        </div>
+                        <div style="flex: 1; min-width: 200px; padding: 12px; background: white; border-radius: 8px; border: 1px solid #fde047;">
+                            <p style="margin: 0; color: #713f12; font-size: 12px; font-weight: 600;">🔽 状态/枚举字段</p>
+                            <p style="margin: 4px 0 0 0; color: #854d0e; font-size: 12px;">使用 Dropdown 选择</p>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: white; border-radius: 8px; border: 1px solid #fde047;">
+                        <p style="margin: 0; color: #713f12; font-size: 12px; font-weight: 600;">⚠️ 工程师注意事项</p>
+                        <p style="margin: 6px 0 0 0; color: #854d0e; font-size: 12px; line-height: 1.6;">
+                            数据来源：Link 后从对应 App 获取的 <strong>Schema 固定格式</strong>。需确认各 App API 能否返回：
+                        </p>
+                        <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #854d0e; font-size: 12px; line-height: 1.8;">
+                            <li><strong>字段类型</strong>（text / enum / date / number 等）</li>
+                            <li><strong>枚举选项</strong>（如 Jira Status 的可选值列表）</li>
+                            <li><strong>校验规则</strong>（required / max_length / regex pattern 等）</li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="table-container" style="margin-top: 16px;">
                     <div class="table-header">
                         <h4>常用 Action 案例</h4>

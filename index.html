@@ -701,8 +701,8 @@
             </div>
             <div class="nav-links">
                 <a href="#background">背景</a>
+                <a href="#active-link">Suggest Link</a>
                 <a href="#action-card">Action Card</a>
-                <a href="#active-link">Active Link</a>
                 <a href="#prototypes">Prototypes</a>
             </div>
         </div>
@@ -832,10 +832,427 @@
 
         <div class="divider"></div>
 
-        <!-- Section 2: Action Card -->
-        <section class="section" id="action-card">
+        <!-- Section 2: Active Link Recommendation -->
+        <section class="section" id="active-link">
             <div class="section-header">
                 <span class="section-number">Section 2</span>
+                <h2 class="section-title">Active Link Recommendation（智能连接引导）</h2>
+                <p class="section-subtitle">基于"场景缺失"的主动推荐，分为两种落地形态（Surface）</p>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.0 设计原则（低幻觉优先）</h3>
+                <div class="warning-box">
+                    <h4>参考 Gemini 的连接提示卡，本期只做"可验证证据"驱动的推荐</h4>
+                    <ul style="margin-top: 8px; padding-left: 20px;">
+                        <li><strong>先证据，后推荐：</strong>必须能指出"为什么推荐连接"（来自系统状态/错误信息/URL 命中/计划依赖）</li>
+                        <li><strong>不猜测用户目的：</strong>不基于用户身份、偏好或模糊主题做推断</li>
+                        <li><strong>低风险动作：</strong>卡片提供 <code>Learn more</code> / <code>Connect</code>，不自动执行写入类操作</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.0.1 数据来源与状态定义（工程约束）</h3>
+                <div class="content-box">
+                    <ul>
+                        <li><strong>Integration status 接口：</strong>存在 <code>integration status</code> 查询接口（用于判定"未连接/已连接"）</li>
+                        <li><strong>缓存：</strong>连接状态有缓存；进入绑定流程或绑定完成回调时需重新查一次最新状态</li>
+                        <li><strong>连接粒度：</strong>连接为 <strong>user 级</strong>；推荐与展示均基于"当前 user"的连接状态</li>
+                        <li><strong>绑定完成后的回流：</strong>OAuth/Link 完成后回到 AI 小助手；推荐卡更新为"已连接"，随后 <strong>Resume 原 Action</strong>，AI 继续推理流程</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.0.2 频控与轰炸防护（必须）</h3>
+                <div class="content-box">
+                    <ul>
+                        <li><strong>单次 Assistant 回复最多 1 个推荐：</strong>在一次 AI 推理/回复周期内，只允许弹出 <strong>1 张</strong>连接建议卡（或 1 段连接建议文本）</li>
+                        <li><strong>多候选只取第一个：</strong>若同一回复内命中多个 App，仅推荐排序后的第一个</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.1 本期实现范围：A 档场景识别（仅做 1-4）</h3>
+                <p style="margin-bottom: 16px; color: var(--gray-600);">触发推荐的前置条件：<strong>目标 App 未连接/未授权</strong>（系统状态可查）且命中以下任一规则。</p>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h4>触发规则（优先级：A1 > A4 > A3 > A2）</h4>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>规则 ID</th>
+                                <th>场景（低幻觉）</th>
+                                <th>触发信号（必须可验证）</th>
+                                <th>推荐输出</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>A1</code></td>
+                                <td>工具/Action 执行失败指向未连接</td>
+                                <td>connector/tool call 失败且系统状态显示未连接；若是业务参数错误则不触发</td>
+                                <td>文本提示 + Connect；Why：引用失败原因</td>
+                            </tr>
+                            <tr>
+                                <td><code>A2</code></td>
+                                <td>用户显式意图 + 明确应用名/对象</td>
+                                <td>用户原话中同时出现：动词 + App + 对象；缺对象则不触发，改为追问</td>
+                                <td>Why：引用用户原话关键片段</td>
+                            </tr>
+                            <tr>
+                                <td><code>A3</code></td>
+                                <td>可验证的 URL/资源标识出现</td>
+                                <td>命中 URL Regex 或出现资源 ID（如 Jira ABC-123）</td>
+                                <td>Why：To open/read this link, connect &lt;App&gt;</td>
+                            </tr>
+                            <tr>
+                                <td><code>A4</code></td>
+                                <td>Agent 计划步骤明确依赖某集成</td>
+                                <td>Plan/Workflow 中出现明确步骤：Fetch from / Update / Send via &lt;App&gt;</td>
+                                <td>Why：引用 plan 步骤</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>冲突处理 & 冷启动兜底</h4>
+                    <ul>
+                        <li><strong>冲突处理（多规则同时命中）：</strong>一次只推荐 1 个 App，优先级：A1 > A4 > A3 > A2</li>
+                        <li><strong>冷启动兜底：</strong>如无法抽取证据片段（Why），则不出卡（避免"黑盒推荐"）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.1.1 推荐卡片 UI 模板（参考 Gemini）</h3>
+                <div class="content-box">
+                    <ul>
+                        <li><strong>Header：</strong><code>&lt;App Icon&gt; &lt;App Name&gt;</code></li>
+                        <li><strong>Title：</strong><code>Connect &lt;App&gt; to continue</code></li>
+                        <li><strong>Description（价值陈述）：</strong><code>Connect to enable read/write access for this step.</code></li>
+                        <li><strong>Why（必须展示证据）：</strong>从 A1-A4 的触发信号中抽取 1 条（错误原因/URL/plan step/用户原话片段）</li>
+                        <li><strong>Actions：</strong>
+                            <ul>
+                                <li><code>Learn more</code>：打开权限说明/将解锁的能力说明</li>
+                                <li><code>Connect</code>：拉起 OAuth/授权流程</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.1.2 防幻觉约束（必须遵守）</h3>
+                <div class="warning-box">
+                    <ul>
+                        <li>卡片文案中<strong>不得出现</strong>"你可能/应该/我猜你想…"等推断性表达</li>
+                        <li>不得以"业务常识"补全缺失信息（例如没看到 Jira 链接就说"你在做 bug 所以需要 Jira"）</li>
+                        <li>不得承诺连接后一定能完成任务（只说"解锁能力/继续执行该步骤"）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.2 Surface 1：Assistant（任务流引导）</h3>
+
+                <div class="mermaid-container">
+                    <div class="mermaid-header">
+                        <h3>Suggest Link Card 流程图（Assistant Surface）</h3>
+                        <span class="mermaid-badge">Flowchart</span>
+                    </div>
+                    <div class="mermaid-body">
+                        <pre class="mermaid">
+flowchart TD
+    START["AI 推理回复周期开始"] --> CHECK{"遍历触发规则 A1-A4"}
+
+    CHECK -->|"A1 tool call 失败"| A1_1{"失败原因是未连接?"}
+    A1_1 -->|"否 业务错误"| SKIP["不触发推荐"]
+    A1_1 -->|"是"| HIT
+
+    CHECK -->|"A4 plan step 引用 tool"| A4_1["查 tool dictionary 得到 appId"]
+    A4_1 --> A4_2{"appId 在 featured list?"}
+    A4_2 -->|"否 且用户未点名"| SKIP
+    A4_2 -->|"是"| A4_3{"同类 App 冲突?"}
+    A4_3 -->|"是 且用户未指定"| SKIP
+    A4_3 -->|"否"| A4_4{"查 integration status"}
+    A4_4 -->|"已连接"| SKIP
+    A4_4 -->|"未连接"| HIT
+
+    CHECK -->|"A3 URL 或资源 ID"| A3_1{"命中 regex?"}
+    A3_1 -->|"否"| SKIP
+    A3_1 -->|"是"| A3_2{"查 integration status"}
+    A3_2 -->|"已连接"| SKIP
+    A3_2 -->|"未连接"| HIT
+
+    CHECK -->|"A2 用户显式意图"| A2_1{"动词+App+对象 齐全?"}
+    A2_1 -->|"缺对象"| ASK["AI 追问补全对象"]
+    ASK --> A2_1
+    A2_1 -->|"齐全"| A2_2{"查 integration status"}
+    A2_2 -->|"已连接"| SKIP
+    A2_2 -->|"未连接"| HIT
+
+    CHECK -->|"无命中"| SKIP
+
+    HIT["命中 - 取优先级最高的 1 个 App"] --> FREQ{"本次回复已有推荐?"}
+    FREQ -->|"是"| SKIP
+    FREQ -->|"否"| CARD["展示 Suggest Link Card"]
+    CARD --> USER{"用户操作"}
+    USER -->|"Connect"| OAUTH["跳转 Link 模块"]
+    USER -->|"Dismiss"| DISMISS["记录 dismissed"]
+    USER -->|"Learn more"| INFO["打开权限说明页"]
+    OAUTH --> CALLBACK{"绑定回调"}
+    CALLBACK -->|"已绑定"| ALREADY["Toast App 已绑定"]
+    CALLBACK -->|"绑定成功"| SUCCESS["卡片更新已连接, Resume 原 Action"]
+    CALLBACK -->|"绑定失败"| FAIL["显示失败原因, 保留 Connect"]
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="content-box">
+                    <h4>典型场景</h4>
+                    <ul>
+                        <li><strong>A1：</strong>执行某个 Action（如 "Send Email via Gmail"）失败，错误显示未授权</li>
+                        <li><strong>A4：</strong>Agent plan 明确需要调用某 App，但系统状态显示未连接</li>
+                        <li><strong>A2：</strong>用户明确提出"在 Jira 建 issue / 发 Slack 给团队"等意图，但检测到未连接</li>
+                    </ul>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>A1 的交互补充（工程实现）</h4>
+                    <ul>
+                        <li><strong>失败后呈现形式：</strong>在 chat stream 里用一段 AI 文本说明"未连接，无法调用工具"，并附带 1 个 Connect CTA</li>
+                        <li><strong>成功后行为：</strong>绑定完成回到小助手，卡片更新为"已连接"，系统自动 <strong>Resume 原 action</strong>，AI 继续推理/执行</li>
+                        <li><strong>失败/重复绑定处理：</strong>进入绑定流程时重新查 status；若发现已绑定，toast：<code>&lt;App&gt; 已绑定 &lt;账号&gt;</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.3 Surface 2：Group Chat URL Regex Trigger（群聊正则引导）</h3>
+
+                <div class="mermaid-container">
+                    <div class="mermaid-header">
+                        <h3>Suggest Link in Group Chat 流程图</h3>
+                        <span class="mermaid-badge">Flowchart</span>
+                    </div>
+                    <div class="mermaid-body">
+                        <pre class="mermaid">
+flowchart TD
+    MSG["群聊收到新消息"] --> EXTRACT["提取消息中的 URL"]
+    EXTRACT --> HAS{"包含 URL?"}
+    HAS -->|"否"| NOOP["不处理"]
+    HAS -->|"是"| REGEX{"URL 命中白名单 regex?"}
+    REGEX -->|"否 非白名单域名"| NOOP
+    REGEX -->|"是"| MAP["匹配到目标 App"]
+    MAP --> STATUS{"查 integration status - 已连接?"}
+    STATUS -->|"已连接"| READ["AI 直接读取链接内容"]
+    STATUS -->|"未连接"| CHIP["展示 Smart Chip"]
+    CHIP --> USER{"用户操作"}
+    USER -->|"点击 Connect"| LINK["跳转 Link 模块走 OAuth"]
+    USER -->|"点击 X 关闭"| CLOSE["Smart Chip 消失, 记录 dismissed"]
+    USER -->|"忽略"| IDLE["Smart Chip 保留"]
+    LINK --> CB{"绑定回调"}
+    CB -->|"已绑定"| TOAST["Toast App 已绑定"]
+    CB -->|"绑定成功"| REPROCESS["AI Re-process 该消息"]
+    CB -->|"绑定失败"| ERR["显示失败原因, 保留 Smart Chip"]
+    REPROCESS --> ACTION{"是否触发 Action?"}
+    ACTION -->|"是"| DRAFT["生成 Action 确认卡片"]
+    ACTION -->|"否"| READY["链接内容已可访问"]
+    TOAST --> REPROCESS
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="content-box">
+                    <h4>场景说明</h4>
+                    <p>用户在群里发送链接，AI 无法读取链接内容</p>
+                    <p style="margin-top: 8px;"><strong>Trigger：</strong>实时监听群消息，匹配高频 SaaS 工具 URL 规则（Link Formula）</p>
+                    <p style="margin-top: 8px;"><strong>白名单约束：</strong>不在白名单域名/regex 命中列表内，本期 <strong>不触发</strong> 推荐（避免误判）</p>
+                </div>
+
+                <div class="table-container" style="margin-top: 16px;">
+                    <div class="table-header">
+                        <h4>URL Regex 白名单</h4>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>App / Category</th>
+                                <th>Pattern 示例</th>
+                                <th>Smart Chip Copy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Google Docs</td>
+                                <td><code>docs.google.com/document/*</code></td>
+                                <td>📝 Link Docs to read content</td>
+                            </tr>
+                            <tr>
+                                <td>Google Sheets</td>
+                                <td><code>docs.google.com/spreadsheets/*</code></td>
+                                <td>📊 Link Sheets to analyze data</td>
+                            </tr>
+                            <tr>
+                                <td>Google Slides</td>
+                                <td><code>docs.google.com/presentation/*</code></td>
+                                <td>📽️ Link Slides to view deck</td>
+                            </tr>
+                            <tr>
+                                <td>Figma</td>
+                                <td><code>figma.com/file/*</code></td>
+                                <td>🔗 Link Figma to view file</td>
+                            </tr>
+                            <tr>
+                                <td>Notion</td>
+                                <td><code>notion.so/*</code></td>
+                                <td>🔗 Link Notion to open page</td>
+                            </tr>
+                            <tr>
+                                <td>Jira</td>
+                                <td><code>*.atlassian.net/browse/*</code></td>
+                                <td>🐛 Link Jira to track ticket</td>
+                            </tr>
+                            <tr>
+                                <td>Confluence</td>
+                                <td><code>*.atlassian.net/wiki/*</code></td>
+                                <td>📘 Link Confluence to read spec</td>
+                            </tr>
+                            <tr>
+                                <td>Linear</td>
+                                <td><code>linear.app/*/issue/*</code></td>
+                                <td>🔗 Link Linear to view issue</td>
+                            </tr>
+                            <tr>
+                                <td>Zoom</td>
+                                <td><code>zoom.us/j/*</code></td>
+                                <td>🔗 Link Zoom to open meeting</td>
+                            </tr>
+                            <tr>
+                                <td>Miro</td>
+                                <td><code>miro.com/app/board/*</code></td>
+                                <td>🧠 Link Miro to view whiteboard</td>
+                            </tr>
+                            <tr>
+                                <td>Loom</td>
+                                <td><code>loom.com/share/*</code></td>
+                                <td>🎬 Link Loom to watch video</td>
+                            </tr>
+                            <tr>
+                                <td>Airtable</td>
+                                <td><code>airtable.com/app*</code></td>
+                                <td>🗃️ Link Airtable to sync base</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>Interaction（交互设计）</h4>
+                    <ul>
+                        <li><strong>Smart Chip（胶囊提示）：</strong>在包含链接的消息气泡右下方或正下方，显示一个微型 Bar</li>
+                        <li><strong>UI：</strong>✨ Link &lt;App&gt; to open this link [Logo] [x]</li>
+                        <li><strong>Behavior：</strong>点击后直接弹出 OAuth 授权窗，授权完成后 AI 自动读取该链接内容并 Re-process 该消息</li>
+                    </ul>
+                </div>
+
+                <!-- Type C Prototype Embed -->
+                <div class="inline-prototype">
+                    <div class="inline-prototype-header">
+                        <div class="inline-prototype-title">
+                            <div class="inline-prototype-icon type-c">🔗</div>
+                            <h4>交互原型：Smart Link Suggestion</h4>
+                        </div>
+                        <a href="prototype-type-c.html" class="prototype-open-btn">打开完整原型 →</a>
+                    </div>
+                    <table class="step-preview-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">状态名称</th>
+                                <th style="width: 55%;">交互逻辑</th>
+                                <th style="width: 25%;">原型预览</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">1</span>URL Detected</span></td>
+                                <td class="step-logic">群聊消息命中 URL 白名单 Regex；系统识别目标 App（如 Figma）</td>
+                                <td><a href="prototype-type-c.html#url-detected" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">2</span>Show Chip</span></td>
+                                <td class="step-logic">检测到 App 未连接；在消息下方展示 Smart Chip：✨ Link Figma to view file [Connect] [×]</td>
+                                <td><a href="prototype-type-c.html#show-chip" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">3</span>Connecting</span></td>
+                                <td class="step-logic">用户点击 Connect；跳转 OAuth 授权流程；Smart Chip 显示 "Connecting..."</td>
+                                <td><a href="prototype-type-c.html#connecting" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">4</span>Connected</span></td>
+                                <td class="step-logic">OAuth 成功；Smart Chip 更新为 "✓ Figma 已连接"；AI 自动 Re-process 消息</td>
+                                <td><a href="prototype-type-c.html#connected" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">5</span>Re-process</span></td>
+                                <td class="step-logic">AI 读取链接内容；判断是否触发 Action；展示内容摘要或 Action Card</td>
+                                <td><a href="prototype-type-c.html#reprocess" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">6</span>Dismissed</span></td>
+                                <td class="step-logic">用户点击 × 关闭 Smart Chip；记录 dismissed 状态；不再对该消息推荐</td>
+                                <td><a href="prototype-type-c.html#dismissed" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.4 Featured Apps（本期覆盖）</h3>
+                <div class="content-box">
+                    <p>本期优先覆盖以下 featured apps（可控、常用、低幻觉）：</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Calendar</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Outlook Calendar</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">OneDrive</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Gmail</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Outlook (Email)</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Notion</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Drive</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Sheets</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Docs</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Slides</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Zoom</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.5 指标与评估（本期）</h3>
+                <div class="content-box">
+                    <ul>
+                        <li><strong>打扰度：</strong>推荐次数分布、每会话/每用户的 link_suggested 频率、dismiss 率</li>
+                        <li><strong>转化：</strong>link_clicked -> link_connected 转化率</li>
+                        <li><strong>效果提升：</strong>连接后任务成功率/完成率是否提升（连接前 vs 连接后）</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Section 3: Action Card -->
+        <section class="section" id="action-card">
+            <div class="section-header">
+                <span class="section-number">Section 3</span>
                 <h2 class="section-title">通用 Action 样式 (Action Abstraction)</h2>
                 <p class="section-subtitle">为了支持未来更多扩展 App，需要抽象 3 种标准交互模板</p>
             </div>
@@ -879,7 +1296,7 @@ flowchart TD
             </div>
 
             <div class="subsection">
-                <h3 class="subsection-title">2.1 Action 类型与开发方案</h3>
+                <h3 class="subsection-title">3.1 Action 类型与开发方案</h3>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -921,7 +1338,7 @@ flowchart TD
             </div>
 
             <div class="subsection">
-                <h3 class="subsection-title">2.2 Type A: State Mutation Card（状态变更型）</h3>
+                <h3 class="subsection-title">3.2 Type A: State Mutation Card（状态变更型）</h3>
                 <div class="content-box">
                     <h4>适用场景</h4>
                     <p>Update Jira Status, Change HubSpot Deal Stage, Mark Linear Issue as Done</p>
@@ -1109,7 +1526,7 @@ flowchart TD
             </div>
 
             <div class="subsection">
-                <h3 class="subsection-title">2.3 Type B: Content Dispatch Card（内容分发型）</h3>
+                <h3 class="subsection-title">3.3 Type B: Content Dispatch Card（内容分发型）</h3>
                 <div class="content-box">
                     <h4>适用场景</h4>
                     <p>Send Slack Message, Draft Email (Gmail), Reply to Intercom, Tweet</p>
@@ -1183,7 +1600,7 @@ flowchart TD
             </div>
 
             <div class="subsection">
-                <h3 class="subsection-title">2.4 Type C: Resource Allocation Card（资源调度型）</h3>
+                <h3 class="subsection-title">3.4 Type C: Resource Allocation Card（资源调度型）</h3>
                 <div class="content-box">
                     <h4>适用场景</h4>
                     <p>Schedule Zoom Meeting, Create Google Calendar Event, Book Resource</p>
@@ -1200,423 +1617,6 @@ flowchart TD
                             </ul>
                         </li>
                         <li><strong>Footer：</strong><code>[ Send Invite ]</code></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <div class="divider"></div>
-
-        <!-- Section 3: Active Link Recommendation -->
-        <section class="section" id="active-link">
-            <div class="section-header">
-                <span class="section-number">Section 3</span>
-                <h2 class="section-title">Active Link Recommendation（智能连接引导）</h2>
-                <p class="section-subtitle">基于"场景缺失"的主动推荐，分为两种落地形态（Surface）</p>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.0 设计原则（低幻觉优先）</h3>
-                <div class="warning-box">
-                    <h4>参考 Gemini 的连接提示卡，本期只做"可验证证据"驱动的推荐</h4>
-                    <ul style="margin-top: 8px; padding-left: 20px;">
-                        <li><strong>先证据，后推荐：</strong>必须能指出"为什么推荐连接"（来自系统状态/错误信息/URL 命中/计划依赖）</li>
-                        <li><strong>不猜测用户目的：</strong>不基于用户身份、偏好或模糊主题做推断</li>
-                        <li><strong>低风险动作：</strong>卡片提供 <code>Learn more</code> / <code>Connect</code>，不自动执行写入类操作</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.0.1 数据来源与状态定义（工程约束）</h3>
-                <div class="content-box">
-                    <ul>
-                        <li><strong>Integration status 接口：</strong>存在 <code>integration status</code> 查询接口（用于判定"未连接/已连接"）</li>
-                        <li><strong>缓存：</strong>连接状态有缓存；进入绑定流程或绑定完成回调时需重新查一次最新状态</li>
-                        <li><strong>连接粒度：</strong>连接为 <strong>user 级</strong>；推荐与展示均基于"当前 user"的连接状态</li>
-                        <li><strong>绑定完成后的回流：</strong>OAuth/Link 完成后回到 AI 小助手；推荐卡更新为"已连接"，随后 <strong>Resume 原 Action</strong>，AI 继续推理流程</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.0.2 频控与轰炸防护（必须）</h3>
-                <div class="content-box">
-                    <ul>
-                        <li><strong>单次 Assistant 回复最多 1 个推荐：</strong>在一次 AI 推理/回复周期内，只允许弹出 <strong>1 张</strong>连接建议卡（或 1 段连接建议文本）</li>
-                        <li><strong>多候选只取第一个：</strong>若同一回复内命中多个 App，仅推荐排序后的第一个</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.1 本期实现范围：A 档场景识别（仅做 1-4）</h3>
-                <p style="margin-bottom: 16px; color: var(--gray-600);">触发推荐的前置条件：<strong>目标 App 未连接/未授权</strong>（系统状态可查）且命中以下任一规则。</p>
-
-                <div class="table-container">
-                    <div class="table-header">
-                        <h4>触发规则（优先级：A1 > A4 > A3 > A2）</h4>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>规则 ID</th>
-                                <th>场景（低幻觉）</th>
-                                <th>触发信号（必须可验证）</th>
-                                <th>推荐输出</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>A1</code></td>
-                                <td>工具/Action 执行失败指向未连接</td>
-                                <td>connector/tool call 失败且系统状态显示未连接；若是业务参数错误则不触发</td>
-                                <td>文本提示 + Connect；Why：引用失败原因</td>
-                            </tr>
-                            <tr>
-                                <td><code>A2</code></td>
-                                <td>用户显式意图 + 明确应用名/对象</td>
-                                <td>用户原话中同时出现：动词 + App + 对象；缺对象则不触发，改为追问</td>
-                                <td>Why：引用用户原话关键片段</td>
-                            </tr>
-                            <tr>
-                                <td><code>A3</code></td>
-                                <td>可验证的 URL/资源标识出现</td>
-                                <td>命中 URL Regex 或出现资源 ID（如 Jira ABC-123）</td>
-                                <td>Why：To open/read this link, connect &lt;App&gt;</td>
-                            </tr>
-                            <tr>
-                                <td><code>A4</code></td>
-                                <td>Agent 计划步骤明确依赖某集成</td>
-                                <td>Plan/Workflow 中出现明确步骤：Fetch from / Update / Send via &lt;App&gt;</td>
-                                <td>Why：引用 plan 步骤</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="content-box" style="margin-top: 16px;">
-                    <h4>冲突处理 & 冷启动兜底</h4>
-                    <ul>
-                        <li><strong>冲突处理（多规则同时命中）：</strong>一次只推荐 1 个 App，优先级：A1 > A4 > A3 > A2</li>
-                        <li><strong>冷启动兜底：</strong>如无法抽取证据片段（Why），则不出卡（避免"黑盒推荐"）</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.1.1 推荐卡片 UI 模板（参考 Gemini）</h3>
-                <div class="content-box">
-                    <ul>
-                        <li><strong>Header：</strong><code>&lt;App Icon&gt; &lt;App Name&gt;</code></li>
-                        <li><strong>Title：</strong><code>Connect &lt;App&gt; to continue</code></li>
-                        <li><strong>Description（价值陈述）：</strong><code>Connect to enable read/write access for this step.</code></li>
-                        <li><strong>Why（必须展示证据）：</strong>从 A1-A4 的触发信号中抽取 1 条（错误原因/URL/plan step/用户原话片段）</li>
-                        <li><strong>Actions：</strong>
-                            <ul>
-                                <li><code>Learn more</code>：打开权限说明/将解锁的能力说明</li>
-                                <li><code>Connect</code>：拉起 OAuth/授权流程</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.1.2 防幻觉约束（必须遵守）</h3>
-                <div class="warning-box">
-                    <ul>
-                        <li>卡片文案中<strong>不得出现</strong>"你可能/应该/我猜你想…"等推断性表达</li>
-                        <li>不得以"业务常识"补全缺失信息（例如没看到 Jira 链接就说"你在做 bug 所以需要 Jira"）</li>
-                        <li>不得承诺连接后一定能完成任务（只说"解锁能力/继续执行该步骤"）</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.2 Surface 1：Assistant（任务流引导）</h3>
-
-                <div class="mermaid-container">
-                    <div class="mermaid-header">
-                        <h3>Suggest Link Card 流程图（Assistant Surface）</h3>
-                        <span class="mermaid-badge">Flowchart</span>
-                    </div>
-                    <div class="mermaid-body">
-                        <pre class="mermaid">
-flowchart TD
-    START["AI 推理回复周期开始"] --> CHECK{"遍历触发规则 A1-A4"}
-
-    CHECK -->|"A1 tool call 失败"| A1_1{"失败原因是未连接?"}
-    A1_1 -->|"否 业务错误"| SKIP["不触发推荐"]
-    A1_1 -->|"是"| HIT
-
-    CHECK -->|"A4 plan step 引用 tool"| A4_1["查 tool dictionary 得到 appId"]
-    A4_1 --> A4_2{"appId 在 featured list?"}
-    A4_2 -->|"否 且用户未点名"| SKIP
-    A4_2 -->|"是"| A4_3{"同类 App 冲突?"}
-    A4_3 -->|"是 且用户未指定"| SKIP
-    A4_3 -->|"否"| A4_4{"查 integration status"}
-    A4_4 -->|"已连接"| SKIP
-    A4_4 -->|"未连接"| HIT
-
-    CHECK -->|"A3 URL 或资源 ID"| A3_1{"命中 regex?"}
-    A3_1 -->|"否"| SKIP
-    A3_1 -->|"是"| A3_2{"查 integration status"}
-    A3_2 -->|"已连接"| SKIP
-    A3_2 -->|"未连接"| HIT
-
-    CHECK -->|"A2 用户显式意图"| A2_1{"动词+App+对象 齐全?"}
-    A2_1 -->|"缺对象"| ASK["AI 追问补全对象"]
-    ASK --> A2_1
-    A2_1 -->|"齐全"| A2_2{"查 integration status"}
-    A2_2 -->|"已连接"| SKIP
-    A2_2 -->|"未连接"| HIT
-
-    CHECK -->|"无命中"| SKIP
-
-    HIT["命中 - 取优先级最高的 1 个 App"] --> FREQ{"本次回复已有推荐?"}
-    FREQ -->|"是"| SKIP
-    FREQ -->|"否"| CARD["展示 Suggest Link Card"]
-    CARD --> USER{"用户操作"}
-    USER -->|"Connect"| OAUTH["跳转 Link 模块"]
-    USER -->|"Dismiss"| DISMISS["记录 dismissed"]
-    USER -->|"Learn more"| INFO["打开权限说明页"]
-    OAUTH --> CALLBACK{"绑定回调"}
-    CALLBACK -->|"已绑定"| ALREADY["Toast App 已绑定"]
-    CALLBACK -->|"绑定成功"| SUCCESS["卡片更新已连接, Resume 原 Action"]
-    CALLBACK -->|"绑定失败"| FAIL["显示失败原因, 保留 Connect"]
-                        </pre>
-                    </div>
-                </div>
-
-                <div class="content-box">
-                    <h4>典型场景</h4>
-                    <ul>
-                        <li><strong>A1：</strong>执行某个 Action（如 "Send Email via Gmail"）失败，错误显示未授权</li>
-                        <li><strong>A4：</strong>Agent plan 明确需要调用某 App，但系统状态显示未连接</li>
-                        <li><strong>A2：</strong>用户明确提出"在 Jira 建 issue / 发 Slack 给团队"等意图，但检测到未连接</li>
-                    </ul>
-                </div>
-
-                <div class="content-box" style="margin-top: 16px;">
-                    <h4>A1 的交互补充（工程实现）</h4>
-                    <ul>
-                        <li><strong>失败后呈现形式：</strong>在 chat stream 里用一段 AI 文本说明"未连接，无法调用工具"，并附带 1 个 Connect CTA</li>
-                        <li><strong>成功后行为：</strong>绑定完成回到小助手，卡片更新为"已连接"，系统自动 <strong>Resume 原 action</strong>，AI 继续推理/执行</li>
-                        <li><strong>失败/重复绑定处理：</strong>进入绑定流程时重新查 status；若发现已绑定，toast：<code>&lt;App&gt; 已绑定 &lt;账号&gt;</code></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.3 Surface 2：Group Chat URL Regex Trigger（群聊正则引导）</h3>
-
-                <div class="mermaid-container">
-                    <div class="mermaid-header">
-                        <h3>Suggest Link in Group Chat 流程图</h3>
-                        <span class="mermaid-badge">Flowchart</span>
-                    </div>
-                    <div class="mermaid-body">
-                        <pre class="mermaid">
-flowchart TD
-    MSG["群聊收到新消息"] --> EXTRACT["提取消息中的 URL"]
-    EXTRACT --> HAS{"包含 URL?"}
-    HAS -->|"否"| NOOP["不处理"]
-    HAS -->|"是"| REGEX{"URL 命中白名单 regex?"}
-    REGEX -->|"否 非白名单域名"| NOOP
-    REGEX -->|"是"| MAP["匹配到目标 App"]
-    MAP --> STATUS{"查 integration status - 已连接?"}
-    STATUS -->|"已连接"| READ["AI 直接读取链接内容"]
-    STATUS -->|"未连接"| CHIP["展示 Smart Chip"]
-    CHIP --> USER{"用户操作"}
-    USER -->|"点击 Connect"| LINK["跳转 Link 模块走 OAuth"]
-    USER -->|"点击 X 关闭"| CLOSE["Smart Chip 消失, 记录 dismissed"]
-    USER -->|"忽略"| IDLE["Smart Chip 保留"]
-    LINK --> CB{"绑定回调"}
-    CB -->|"已绑定"| TOAST["Toast App 已绑定"]
-    CB -->|"绑定成功"| REPROCESS["AI Re-process 该消息"]
-    CB -->|"绑定失败"| ERR["显示失败原因, 保留 Smart Chip"]
-    REPROCESS --> ACTION{"是否触发 Action?"}
-    ACTION -->|"是"| DRAFT["生成 Action 确认卡片"]
-    ACTION -->|"否"| READY["链接内容已可访问"]
-    TOAST --> REPROCESS
-                        </pre>
-                    </div>
-                </div>
-
-                <div class="content-box">
-                    <h4>场景说明</h4>
-                    <p>用户在群里发送链接，AI 无法读取链接内容</p>
-                    <p style="margin-top: 8px;"><strong>Trigger：</strong>实时监听群消息，匹配高频 SaaS 工具 URL 规则（Link Formula）</p>
-                    <p style="margin-top: 8px;"><strong>白名单约束：</strong>不在白名单域名/regex 命中列表内，本期 <strong>不触发</strong> 推荐（避免误判）</p>
-                </div>
-
-                <div class="table-container" style="margin-top: 16px;">
-                    <div class="table-header">
-                        <h4>URL Regex 白名单</h4>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>App / Category</th>
-                                <th>Pattern 示例</th>
-                                <th>Smart Chip Copy</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Google Docs</td>
-                                <td><code>docs.google.com/document/*</code></td>
-                                <td>📝 Link Docs to read content</td>
-                            </tr>
-                            <tr>
-                                <td>Google Sheets</td>
-                                <td><code>docs.google.com/spreadsheets/*</code></td>
-                                <td>📊 Link Sheets to analyze data</td>
-                            </tr>
-                            <tr>
-                                <td>Google Slides</td>
-                                <td><code>docs.google.com/presentation/*</code></td>
-                                <td>📽️ Link Slides to view deck</td>
-                            </tr>
-                            <tr>
-                                <td>Figma</td>
-                                <td><code>figma.com/file/*</code></td>
-                                <td>🔗 Link Figma to view file</td>
-                            </tr>
-                            <tr>
-                                <td>Notion</td>
-                                <td><code>notion.so/*</code></td>
-                                <td>🔗 Link Notion to open page</td>
-                            </tr>
-                            <tr>
-                                <td>Jira</td>
-                                <td><code>*.atlassian.net/browse/*</code></td>
-                                <td>🐛 Link Jira to track ticket</td>
-                            </tr>
-                            <tr>
-                                <td>Confluence</td>
-                                <td><code>*.atlassian.net/wiki/*</code></td>
-                                <td>📘 Link Confluence to read spec</td>
-                            </tr>
-                            <tr>
-                                <td>Linear</td>
-                                <td><code>linear.app/*/issue/*</code></td>
-                                <td>🔗 Link Linear to view issue</td>
-                            </tr>
-                            <tr>
-                                <td>Zoom</td>
-                                <td><code>zoom.us/j/*</code></td>
-                                <td>🔗 Link Zoom to open meeting</td>
-                            </tr>
-                            <tr>
-                                <td>Miro</td>
-                                <td><code>miro.com/app/board/*</code></td>
-                                <td>🧠 Link Miro to view whiteboard</td>
-                            </tr>
-                            <tr>
-                                <td>Loom</td>
-                                <td><code>loom.com/share/*</code></td>
-                                <td>🎬 Link Loom to watch video</td>
-                            </tr>
-                            <tr>
-                                <td>Airtable</td>
-                                <td><code>airtable.com/app*</code></td>
-                                <td>🗃️ Link Airtable to sync base</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="content-box" style="margin-top: 16px;">
-                    <h4>Interaction（交互设计）</h4>
-                    <ul>
-                        <li><strong>Smart Chip（胶囊提示）：</strong>在包含链接的消息气泡右下方或正下方，显示一个微型 Bar</li>
-                        <li><strong>UI：</strong>✨ Link &lt;App&gt; to open this link [Logo] [x]</li>
-                        <li><strong>Behavior：</strong>点击后直接弹出 OAuth 授权窗，授权完成后 AI 自动读取该链接内容并 Re-process 该消息</li>
-                    </ul>
-                </div>
-
-                <!-- Type C Prototype Embed -->
-                <div class="inline-prototype">
-                    <div class="inline-prototype-header">
-                        <div class="inline-prototype-title">
-                            <div class="inline-prototype-icon type-c">🔗</div>
-                            <h4>交互原型：Smart Link Suggestion</h4>
-                        </div>
-                        <a href="prototype-type-c.html" class="prototype-open-btn">打开完整原型 →</a>
-                    </div>
-                    <table class="step-preview-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 20%;">状态名称</th>
-                                <th style="width: 55%;">交互逻辑</th>
-                                <th style="width: 25%;">原型预览</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="step-name"><span class="step-number-badge">1</span>URL Detected</span></td>
-                                <td class="step-logic">群聊消息命中 URL 白名单 Regex；系统识别目标 App（如 Figma）</td>
-                                <td><a href="prototype-type-c.html#url-detected" class="step-preview-link">查看状态 →</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class="step-name"><span class="step-number-badge">2</span>Show Chip</span></td>
-                                <td class="step-logic">检测到 App 未连接；在消息下方展示 Smart Chip：✨ Link Figma to view file [Connect] [×]</td>
-                                <td><a href="prototype-type-c.html#show-chip" class="step-preview-link">查看状态 →</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class="step-name"><span class="step-number-badge">3</span>Connecting</span></td>
-                                <td class="step-logic">用户点击 Connect；跳转 OAuth 授权流程；Smart Chip 显示 "Connecting..."</td>
-                                <td><a href="prototype-type-c.html#connecting" class="step-preview-link">查看状态 →</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class="step-name"><span class="step-number-badge">4</span>Connected</span></td>
-                                <td class="step-logic">OAuth 成功；Smart Chip 更新为 "✓ Figma 已连接"；AI 自动 Re-process 消息</td>
-                                <td><a href="prototype-type-c.html#connected" class="step-preview-link">查看状态 →</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class="step-name"><span class="step-number-badge">5</span>Re-process</span></td>
-                                <td class="step-logic">AI 读取链接内容；判断是否触发 Action；展示内容摘要或 Action Card</td>
-                                <td><a href="prototype-type-c.html#reprocess" class="step-preview-link">查看状态 →</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class="step-name"><span class="step-number-badge">6</span>Dismissed</span></td>
-                                <td class="step-logic">用户点击 × 关闭 Smart Chip；记录 dismissed 状态；不再对该消息推荐</td>
-                                <td><a href="prototype-type-c.html#dismissed" class="step-preview-link">查看状态 →</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.5 Featured Apps（本期覆盖）</h3>
-                <div class="content-box">
-                    <p>本期优先覆盖以下 featured apps（可控、常用、低幻觉）：</p>
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Calendar</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Outlook Calendar</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">OneDrive</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Gmail</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Outlook (Email)</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Notion</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Drive</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Sheets</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Docs</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Slides</span>
-                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Zoom</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3 class="subsection-title">3.6 指标与评估（本期）</h3>
-                <div class="content-box">
-                    <ul>
-                        <li><strong>打扰度：</strong>推荐次数分布、每会话/每用户的 link_suggested 频率、dismiss 率</li>
-                        <li><strong>转化：</strong>link_clicked -> link_connected 转化率</li>
-                        <li><strong>效果提升：</strong>连接后任务成功率/完成率是否提升（连接前 vs 连接后）</li>
                     </ul>
                 </div>
             </div>

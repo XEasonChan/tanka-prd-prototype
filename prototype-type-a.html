@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type A: State Mutation Card - 状态变更型</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0096f8;
+            --primary-light: #e8f4fd;
+            --accent: #ffc53d;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --error-light: #fee2e2;
+            --hubspot: #ff7a59;
+            --hubspot-light: #fff0ed;
+            --linear: #5E6AD2;
+            --linear-light: #eef0fb;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            padding: 8px 16px;
+            background: var(--white);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        /* Example Switcher */
+        .example-switcher {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .example-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid var(--gray-200);
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .example-btn:hover {
+            border-color: var(--gray-300);
+        }
+
+        .example-btn.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .example-btn .icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .example-btn .icon.hubspot { background: var(--hubspot); }
+        .example-btn .icon.linear { background: var(--linear); }
+
+        .example-btn .text {
+            text-align: left;
+        }
+
+        .example-btn .text h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .example-btn .text p {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        .state-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .state-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .state-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .state-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1fr 390px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .info-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+        }
+
+        .info-content {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+
+        .info-list {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .info-list li {
+            margin-bottom: 8px;
+            color: var(--gray-600);
+        }
+
+        .trigger-box {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .trigger-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .trigger-value {
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Phone Mockup */
+        .phone-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone {
+            width: 375px;
+            background: var(--white);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
+        }
+
+        .phone-status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .phone-notch {
+            width: 80px;
+            height: 24px;
+            background: var(--gray-900);
+            border-radius: 12px;
+        }
+
+        .phone-header {
+            background: var(--white);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .back-btn-phone {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .header-info h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .header-info p {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .header-actions {
+            margin-left: auto;
+            color: var(--gray-400);
+        }
+
+        .phone-content {
+            background: var(--gray-50);
+            min-height: 520px;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .state-view {
+            display: none;
+        }
+
+        .state-view.active {
+            display: block;
+        }
+
+        /* Chat Bubbles */
+        .chat-bubble {
+            margin-bottom: 12px;
+            max-width: 85%;
+        }
+
+        .chat-bubble.user {
+            margin-left: auto;
+        }
+
+        .chat-bubble.ai {
+            margin-right: auto;
+        }
+
+        .bubble-content {
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .chat-bubble.user .bubble-content {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-bubble.ai .bubble-content {
+            background: var(--white);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+            border-bottom-left-radius: 4px;
+        }
+
+        .bubble-time {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .chat-bubble.ai .bubble-time {
+            text-align: left;
+        }
+
+        /* Next Step Section */
+        .next-step-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin: 12px 0;
+            font-weight: 500;
+        }
+
+        /* Action Card */
+        .action-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .app-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .app-icon.hubspot { background: var(--hubspot); }
+        .app-icon.linear { background: var(--linear); }
+
+        .card-header-text {
+            flex: 1;
+        }
+
+        .card-header-text h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-badge.pending { background: var(--hubspot-light); color: var(--hubspot); }
+        .status-badge.pending.linear-style { background: var(--linear-light); color: var(--linear); }
+        .status-badge.success { background: var(--success-light); color: var(--success); }
+        .status-badge.error { background: var(--error-light); color: var(--error); }
+        .status-badge.identifying { background: var(--primary-light); color: var(--primary); }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .action-type {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-bottom: 4px;
+        }
+
+        .action-object {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+        }
+
+        /* Field Row */
+        .field-row {
+            margin-bottom: 14px;
+        }
+
+        .field-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .field-label .required { color: var(--error); }
+        .field-label .info { color: var(--gray-400); font-size: 0.7rem; }
+
+        .field-values {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .field-value {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .field-value.current {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .field-value.new {
+            background: var(--white);
+            color: var(--gray-900);
+            border: 1px solid var(--gray-300);
+        }
+
+        .field-arrow {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        /* Card Footer */
+        .card-footer {
+            padding: 12px 16px;
+            display: flex;
+            gap: 12px;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+        .btn-secondary:hover { background: var(--gray-200); }
+        .btn-primary { background: var(--primary); color: var(--white); }
+        .btn-primary:hover { background: #0077c4; }
+        .btn-error { background: var(--error); color: var(--white); }
+        .btn-success { background: var(--success); color: var(--white); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-line { height: 14px; margin-bottom: 10px; }
+        .skeleton-line.short { width: 60%; }
+        .skeleton-line.medium { width: 80%; }
+
+        /* Spinner */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-icon { color: var(--success); font-size: 1.2rem; }
+
+        /* Error State */
+        .error-message {
+            background: var(--error-light);
+            border: 1px solid var(--error);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+            color: var(--error);
+        }
+
+        /* Suggest Link Card */
+        .suggest-link-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            padding: 16px;
+        }
+
+        .suggest-link-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .suggest-link-header h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .suggest-link-desc {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .suggest-link-why {
+            background: var(--gray-50);
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-bottom: 12px;
+        }
+
+        .suggest-link-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .link-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .link-btn.learn { background: var(--gray-100); color: var(--gray-700); }
+        .link-btn.connect { background: var(--primary); color: white; }
+
+        /* Chat Input */
+        .chat-input {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .chat-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 0.85rem;
+            color: var(--gray-800);
+            font-family: inherit;
+        }
+
+        .chat-input input::placeholder { color: var(--gray-400); }
+        .chat-input button {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        /* Flow Steps */
+        .flow-steps { margin-top: 20px; }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .flow-step:last-child { border-bottom: none; }
+
+        .step-number {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            color: var(--gray-500);
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-number.active { background: var(--primary); color: white; }
+        .step-number.done { background: var(--success); color: white; }
+
+        .step-content h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 2px;
+        }
+
+        .step-content p {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* Example content containers */
+        .example-content { display: none; }
+        .example-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← 返回 PRD</a>
+        <div class="page-header">
+            <h1 class="page-title">Type A: State Mutation Card</h1>
+            <p class="page-subtitle">状态变更型 - 支持 HubSpot、Linear、Jira 等应用的状态更新</p>
+        </div>
+
+        <!-- Example Switcher -->
+        <div class="example-switcher">
+            <button class="example-btn active" data-example="hubspot">
+                <div class="icon hubspot">H</div>
+                <div class="text">
+                    <h4>HubSpot 样例</h4>
+                    <p>更新客户商机状态</p>
+                </div>
+            </button>
+            <button class="example-btn" data-example="linear">
+                <div class="icon linear">L</div>
+                <div class="text">
+                    <h4>Linear 样例</h4>
+                    <p>完成 Bug 修复任务</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="state-nav">
+            <button class="state-btn active" data-state="identifying">1. Identifying</button>
+            <button class="state-btn" data-state="drafting">2. Drafting</button>
+            <button class="state-btn" data-state="pending">3. Pending</button>
+            <button class="state-btn" data-state="fulfilled">4. Fulfilled</button>
+            <button class="state-btn" data-state="rejected">5. Rejected</button>
+            <button class="state-btn" data-state="not-connected">6. Not Connected</button>
+        </div>
+
+        <div class="content-layout">
+            <div class="info-panel">
+                <!-- Identifying Info -->
+                <div class="state-info active" data-info="identifying">
+                    <h3 class="info-title">Identifying 状态</h3>
+                    <div class="info-content">
+                        <p>用户输入指令后，AI 正在识别意图和提取关键信息。</p>
+                        <ul class="info-list">
+                            <li>显示 Skeleton Screen</li>
+                            <li>AI 识别动作类型和目标对象</li>
+                            <li>查询 tool dictionary 获取 appId</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">用户输入指令</div>
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number active">1</div>
+                            <div class="step-content">
+                                <h4>意图识别</h4>
+                                <p>分析用户指令，识别动作类型</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>查询 Tool Dictionary</h4>
+                                <p>获取对应的 appId 和操作类型</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>检查连接状态</h4>
+                                <p>查询 integration status</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drafting Info -->
+                <div class="state-info" data-info="drafting" style="display:none;">
+                    <h3 class="info-title">Drafting 状态</h3>
+                    <div class="info-content">
+                        <p>意图识别完成，展示 Action Card 供用户确认。</p>
+                        <ul class="info-list">
+                            <li>Diff View 展示当前值与建议值</li>
+                            <li>用户可修改参数</li>
+                            <li>提供 Confirm / Cancel 按钮</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">意图识别完成且 App 已连接</div>
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number done">1</div>
+                            <div class="step-content">
+                                <h4>获取当前值</h4>
+                                <p>从 API 读取当前状态</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number active">2</div>
+                            <div class="step-content">
+                                <h4>展示 Diff View</h4>
+                                <p>对比当前值和建议值</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>等待用户确认</h4>
+                                <p>Confirm 或 Cancel</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Info -->
+                <div class="state-info" data-info="pending" style="display:none;">
+                    <h3 class="info-title">Pending 状态</h3>
+                    <div class="info-content">
+                        <p>用户点击 Confirm 后，正在调用 API 执行更新。</p>
+                        <ul class="info-list">
+                            <li>UI 冻结，按钮显示 Spinner</li>
+                            <li>调用目标 API 进行更新</li>
+                            <li>支持 Optimistic UI</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">用户点击 Confirm</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fulfilled Info -->
+                <div class="state-info" data-info="fulfilled" style="display:none;">
+                    <h3 class="info-title">Fulfilled 状态</h3>
+                    <div class="info-content">
+                        <p>API 返回成功，显示完成状态。</p>
+                        <ul class="info-list">
+                            <li>显示绿勾和成功提示</li>
+                            <li>触发 Next Step 建议</li>
+                            <li>卡片变为静态展示</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">API 返回 200 OK</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rejected Info -->
+                <div class="state-info" data-info="rejected" style="display:none;">
+                    <h3 class="info-title">Rejected 状态</h3>
+                    <div class="info-content">
+                        <p>API 返回错误，显示失败原因。</p>
+                        <ul class="info-list">
+                            <li>显示红色警告和错误原因</li>
+                            <li>提供 Retry / Edit 按钮</li>
+                            <li>如果是未连接导致，触发 Suggest Link</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">API 返回 4xx/5xx</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Not Connected Info -->
+                <div class="state-info" data-info="not-connected" style="display:none;">
+                    <h3 class="info-title">Not Connected 状态</h3>
+                    <div class="info-content">
+                        <p>检测到目标 App 未连接，展示 Suggest Link Card。</p>
+                        <ul class="info-list">
+                            <li>展示连接引导卡片</li>
+                            <li>说明为什么需要连接</li>
+                            <li>提供 Learn more / Connect 按钮</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">integration status = false</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phone-wrapper">
+                <div class="phone">
+                    <div class="phone-status-bar">
+                        <div class="phone-notch"></div>
+                    </div>
+                    <div class="phone-header">
+                        <span class="back-btn-phone">&lt;</span>
+                        <div class="avatar">T</div>
+                        <div class="header-info">
+                            <h3>Tanka Memory</h3>
+                            <p>Your AI Assistant</p>
+                        </div>
+                        <span class="header-actions">☰</span>
+                    </div>
+                    <div class="phone-content">
+                        <!-- ========== HUBSPOT EXAMPLE ========== -->
+                        <div class="example-content active" data-example-content="hubspot">
+                            <!-- Identifying State -->
+                            <div class="state-view active" data-view="identifying">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">刚和 Glean 的客户聊完，他们已经决定购买了，帮我把 HubSpot 里这个商机的状态从「意向」更新到「合同签署中」</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">好的，我来帮你更新 HubSpot 中 Glean 商机的状态...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Next step for you
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon hubspot">H</div>
+                                        <div class="card-header-text">
+                                            <h4>Update HubSpot Deal</h4>
+                                        </div>
+                                        <span class="status-badge identifying">Identifying</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="skeleton skeleton-line short"></div>
+                                        <div class="skeleton skeleton-line medium"></div>
+                                        <div class="skeleton skeleton-line"></div>
+                                        <div class="skeleton skeleton-line short" style="margin-top: 16px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Drafting State -->
+                            <div class="state-view" data-view="drafting">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">刚和 Glean 的客户聊完，他们已经决定购买了，帮我把 HubSpot 里这个商机的状态从「意向」更新到「合同签署中」</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">好的，我找到了 Glean 的商机记录，请确认以下状态变更：</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Next step for you
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon hubspot">H</div>
+                                        <div class="card-header-text">
+                                            <h4>Update HubSpot Deal</h4>
+                                        </div>
+                                        <span class="status-badge pending">待确认</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Update Deal</div>
+                                        <div class="action-object">Glean Enterprise License</div>
+                                        <div class="field-row">
+                                            <div class="field-label">Deal Stage <span class="required">*</span></div>
+                                            <div class="field-values">
+                                                <div class="field-value current">意向</div>
+                                                <span class="field-arrow">→</span>
+                                                <div class="field-value new">合同签署中</div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="field-label">Amount</div>
+                                            <div class="field-values">
+                                                <div class="field-value current">$150,000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary">✎ Edit</button>
+                                        <button class="btn btn-primary">✓ Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pending State -->
+                            <div class="state-view" data-view="pending">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">刚和 Glean 的客户聊完，他们已经决定购买了，帮我把 HubSpot 里这个商机的状态从「意向」更新到「合同签署中」</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">正在更新 HubSpot 商机状态...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Updating...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon hubspot">H</div>
+                                        <div class="card-header-text">
+                                            <h4>Update HubSpot Deal</h4>
+                                        </div>
+                                        <span class="status-badge pending">更新中...</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Update Deal</div>
+                                        <div class="action-object">Glean Enterprise License</div>
+                                        <div class="field-row">
+                                            <div class="field-label">Deal Stage</div>
+                                            <div class="field-values">
+                                                <div class="field-value current">意向</div>
+                                                <span class="field-arrow">→</span>
+                                                <div class="field-value new">合同签署中</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary" disabled>✎ Edit</button>
+                                        <button class="btn btn-primary" disabled>
+                                            <span class="spinner"></span> Updating
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fulfilled State -->
+                            <div class="state-view" data-view="fulfilled">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">刚和 Glean 的客户聊完，他们已经决定购买了，帮我把 HubSpot 里这个商机的状态从「意向」更新到「合同签署中」</div>
+                                    <div class="bubble-time">1分钟前</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">已成功更新！Glean Enterprise License 的状态已变更为「合同签署中」。需要我帮你发送跟进邮件给客户吗？</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✅</span> Completed
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon hubspot">H</div>
+                                        <div class="card-header-text">
+                                            <h4>Update HubSpot Deal</h4>
+                                        </div>
+                                        <span class="status-badge success">✓ 已完成</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Updated Deal</div>
+                                        <div class="action-object">Glean Enterprise License</div>
+                                        <div class="field-row">
+                                            <div class="field-label">Deal Stage</div>
+                                            <div class="field-values">
+                                                <div class="field-value new" style="border-color: var(--success);">
+                                                    <span class="success-icon">✓</span> 合同签署中
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 8px;">Updated just now</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rejected State -->
+                            <div class="state-view" data-view="rejected">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">刚和 Glean 的客户聊完，他们已经决定购买了，帮我把 HubSpot 里这个商机的状态从「意向」更新到「合同签署中」</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">抱歉，更新失败了。看起来是权限问题，你可以重试或者联系管理员。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>⚠️</span> Action Failed
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon hubspot">H</div>
+                                        <div class="card-header-text">
+                                            <h4>Update HubSpot Deal</h4>
+                                        </div>
+                                        <span class="status-badge error">✕ 失败</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="error-message">
+                                            ⚠️ API Error: Insufficient permissions to update this deal.
+                                        </div>
+                                        <div class="action-type">Update Deal</div>
+                                        <div class="action-object">Glean Enterprise License</div>
+                                        <div class="field-row">
+                                            <div class="field-label">Deal Stage</div>
+                                            <div class="field-values">
+                                                <div class="field-value current">意向</div>
+                                                <span class="field-arrow">→</span>
+                                                <div class="field-value new">合同签署中</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary">✎ Edit</button>
+                                        <button class="btn btn-error">↻ Retry</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Not Connected State -->
+                            <div class="state-view" data-view="not-connected">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">刚和 Glean 的客户聊完，他们已经决定购买了，帮我把 HubSpot 里这个商机的状态从「意向」更新到「合同签署中」</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">我需要先连接你的 HubSpot 账户才能帮你更新商机状态。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>🔗</span> Connection Required
+                                </div>
+                                <div class="suggest-link-card">
+                                    <div class="suggest-link-header">
+                                        <div class="app-icon hubspot">H</div>
+                                        <h4>Connect HubSpot to continue</h4>
+                                    </div>
+                                    <div class="suggest-link-desc">
+                                        Connect to enable read/write access for updating deals and contacts.
+                                    </div>
+                                    <div class="suggest-link-why">
+                                        <strong>Why:</strong> You asked to update the HubSpot deal "Glean Enterprise License", but HubSpot is not connected.
+                                    </div>
+                                    <div class="suggest-link-actions">
+                                        <button class="link-btn learn">Learn more</button>
+                                        <button class="link-btn connect">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========== LINEAR EXAMPLE ========== -->
+                        <div class="example-content" data-example-content="linear">
+                            <!-- Identifying State -->
+                            <div class="state-view active" data-view="identifying">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">我刚完成了 Linear 里那个「修改前端缓存导致页面白屏」的 bug，帮我把状态改成已完成</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">好的，我来帮你更新 Linear 中这个 issue 的状态...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Next step for you
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon linear">L</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Linear Issue</h4>
+                                        </div>
+                                        <span class="status-badge identifying">Identifying</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="skeleton skeleton-line short"></div>
+                                        <div class="skeleton skeleton-line medium"></div>
+                                        <div class="skeleton skeleton-line"></div>
+                                        <div class="skeleton skeleton-line short" style="margin-top: 16px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Drafting State -->
+                            <div class="state-view" data-view="drafting">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">我刚完成了 Linear 里那个「修改前端缓存导致页面白屏」的 bug，帮我把状态改成已完成</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">找到了这个 issue，请确认状态变更：</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Next step for you
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon linear">L</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Linear Issue</h4>
+                                        </div>
+                                        <span class="status-badge pending linear-style">待确认</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Update Issue</div>
+                                        <div class="action-object">FE-128: 修改前端缓存导致页面白屏</div>
+                                        <div class="field-row">
+                                            <div class="field-label">Status <span class="required">*</span></div>
+                                            <div class="field-values">
+                                                <div class="field-value current">In Progress</div>
+                                                <span class="field-arrow">→</span>
+                                                <div class="field-value new">Done</div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="field-label">Priority</div>
+                                            <div class="field-values">
+                                                <div class="field-value current">🔴 Urgent</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary">✎ Edit</button>
+                                        <button class="btn btn-primary">✓ Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pending State -->
+                            <div class="state-view" data-view="pending">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">我刚完成了 Linear 里那个「修改前端缓存导致页面白屏」的 bug，帮我把状态改成已完成</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">正在更新 Linear issue 状态...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Updating...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon linear">L</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Linear Issue</h4>
+                                        </div>
+                                        <span class="status-badge pending linear-style">更新中...</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Update Issue</div>
+                                        <div class="action-object">FE-128: 修改前端缓存导致页面白屏</div>
+                                        <div class="field-row">
+                                            <div class="field-label">Status</div>
+                                            <div class="field-values">
+                                                <div class="field-value current">In Progress</div>
+                                                <span class="field-arrow">→</span>
+                                                <div class="field-value new">Done</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary" disabled>✎ Edit</button>
+                                        <button class="btn btn-primary" disabled>
+                                            <span class="spinner"></span> Updating
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fulfilled State -->
+                            <div class="state-view" data-view="fulfilled">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">我刚完成了 Linear 里那个「修改前端缓存导致页面白屏」的 bug，帮我把状态改成已完成</div>
+                                    <div class="bubble-time">1分钟前</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">已完成！FE-128 的状态已更新为 Done。这个 bug 解决得很及时，需要我帮你通知相关同事吗？</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✅</span> Completed
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon linear">L</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Linear Issue</h4>
+                                        </div>
+                                        <span class="status-badge success">✓ 已完成</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Updated Issue</div>
+                                        <div class="action-object">FE-128: 修改前端缓存导致页面白屏</div>
+                                        <div class="field-row">
+                                            <div class="field-label">Status</div>
+                                            <div class="field-values">
+                                                <div class="field-value new" style="border-color: var(--success);">
+                                                    <span class="success-icon">✓</span> Done
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 8px;">Updated just now</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rejected State -->
+                            <div class="state-view" data-view="rejected">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">我刚完成了 Linear 里那个「修改前端缓存导致页面白屏」的 bug，帮我把状态改成已完成</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">更新失败了，这个 issue 可能被锁定或者你没有编辑权限。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>⚠️</span> Action Failed
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon linear">L</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Linear Issue</h4>
+                                        </div>
+                                        <span class="status-badge error">✕ 失败</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="error-message">
+                                            ⚠️ API Error: Issue is locked by project lead.
+                                        </div>
+                                        <div class="action-type">Update Issue</div>
+                                        <div class="action-object">FE-128: 修改前端缓存导致页面白屏</div>
+                                        <div class="field-row">
+                                            <div class="field-label">Status</div>
+                                            <div class="field-values">
+                                                <div class="field-value current">In Progress</div>
+                                                <span class="field-arrow">→</span>
+                                                <div class="field-value new">Done</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary">✎ Edit</button>
+                                        <button class="btn btn-error">↻ Retry</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Not Connected State -->
+                            <div class="state-view" data-view="not-connected">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">我刚完成了 Linear 里那个「修改前端缓存导致页面白屏」的 bug，帮我把状态改成已完成</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">我需要先连接你的 Linear 账户才能帮你更新 issue 状态。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>🔗</span> Connection Required
+                                </div>
+                                <div class="suggest-link-card">
+                                    <div class="suggest-link-header">
+                                        <div class="app-icon linear">L</div>
+                                        <h4>Connect Linear to continue</h4>
+                                    </div>
+                                    <div class="suggest-link-desc">
+                                        Connect to enable read/write access for updating issues and projects.
+                                    </div>
+                                    <div class="suggest-link-why">
+                                        <strong>Why:</strong> You asked to update the Linear issue "FE-128", but Linear is not connected.
+                                    </div>
+                                    <div class="suggest-link-actions">
+                                        <button class="link-btn learn">Learn more</button>
+                                        <button class="link-btn connect">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <button>+</button>
+                        <input type="text" placeholder="Ask Tanka anything...">
+                        <button>🌐</button>
+                        <button>▷</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentExample = 'hubspot';
+        let currentState = 'identifying';
+
+        function switchState(state) {
+            currentState = state;
+
+            document.querySelectorAll('.state-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.state === state) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Update views for current example
+            const currentExampleContent = document.querySelector(`.example-content[data-example-content="${currentExample}"]`);
+            currentExampleContent.querySelectorAll('.state-view').forEach(view => {
+                view.classList.remove('active');
+                if (view.dataset.view === state) {
+                    view.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.state-info').forEach(info => {
+                info.style.display = 'none';
+                if (info.dataset.info === state) {
+                    info.style.display = 'block';
+                }
+            });
+        }
+
+        function switchExample(example) {
+            currentExample = example;
+
+            document.querySelectorAll('.example-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.example === example) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.example-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.dataset.exampleContent === example) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Re-apply current state to new example
+            switchState(currentState);
+        }
+
+        document.querySelectorAll('.state-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchState(btn.dataset.state);
+            });
+        });
+
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchExample(btn.dataset.example);
+            });
+        });
+    </script>
+</body>
+</html>

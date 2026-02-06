@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type C: Smart Link Suggestion - 智能连接引导</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0096f8;
+            --primary-light: #e8f4fd;
+            --accent: #ffc53d;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --error-light: #fee2e2;
+            --figma: #F24E1E;
+            --figma-light: #fef2f0;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .state-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .state-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .state-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .state-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1fr 390px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .info-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+        }
+
+        .info-content {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+
+        .info-list {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .info-list li {
+            margin-bottom: 8px;
+            color: var(--gray-600);
+        }
+
+        .trigger-box {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .trigger-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .trigger-value {
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Regex Box */
+        .regex-box {
+            background: var(--gray-900);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-top: 12px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.7rem;
+            color: var(--success);
+            overflow-x: auto;
+        }
+
+        /* Phone Mockup */
+        .phone-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone {
+            width: 375px;
+            background: var(--white);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
+        }
+
+        .phone-status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .phone-notch {
+            width: 80px;
+            height: 24px;
+            background: var(--gray-900);
+            border-radius: 12px;
+        }
+
+        .phone-header {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .back-btn {
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .unread-badge {
+            background: var(--primary);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .header-info h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .phone-content {
+            background: var(--white);
+            min-height: 480px;
+            padding: 16px;
+        }
+
+        .state-view {
+            display: none;
+        }
+
+        .state-view.active {
+            display: block;
+        }
+
+        /* Chat Message */
+        .message {
+            margin-bottom: 16px;
+        }
+
+        .message-author {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-bottom: 6px;
+        }
+
+        .author-avatar {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+        }
+
+        .message-bubble {
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 0.85rem;
+            color: var(--gray-800);
+            line-height: 1.5;
+            max-width: 90%;
+        }
+
+        .message-link {
+            color: var(--figma);
+            text-decoration: none;
+            word-break: break-all;
+            font-size: 0.8rem;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        /* Smart Chip */
+        .smart-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-top: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .smart-chip:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .smart-chip .sparkle {
+            color: var(--primary);
+        }
+
+        .smart-chip .app-badge {
+            background: var(--figma);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .smart-chip .close {
+            color: var(--gray-400);
+            margin-left: 4px;
+        }
+
+        .smart-chip.connected {
+            background: var(--success-light);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        /* Connecting Chip */
+        .connecting-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-top: 8px;
+        }
+
+        .spinner-small {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0, 150, 248, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* AI Response Card */
+        .ai-response {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 16px;
+        }
+
+        .ai-response-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .ai-response-header .icon {
+            color: var(--success);
+        }
+
+        .ai-response-content {
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        .ai-response-content ul {
+            margin: 8px 0 0 16px;
+            font-size: 0.8rem;
+        }
+
+        .ai-response-content li {
+            margin-bottom: 4px;
+        }
+
+        /* Chat Input */
+        .chat-input {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .chat-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 0.85rem;
+            color: var(--gray-800);
+            font-family: inherit;
+        }
+
+        .chat-input input::placeholder {
+            color: var(--gray-400);
+        }
+
+        .chat-input button {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        /* AI Conversation Bubbles */
+        .ai-conversation {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .ai-conversation-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ai-conversation-label .icon {
+            color: var(--primary);
+        }
+
+        .chat-bubble {
+            margin-bottom: 10px;
+            max-width: 85%;
+        }
+
+        .chat-bubble:last-child {
+            margin-bottom: 0;
+        }
+
+        .chat-bubble.user {
+            margin-left: auto;
+        }
+
+        .chat-bubble.ai {
+            margin-right: auto;
+        }
+
+        .bubble-content {
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .chat-bubble.user .bubble-content {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-bubble.ai .bubble-content {
+            background: var(--white);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+            border-bottom-left-radius: 4px;
+        }
+
+        .bubble-sender {
+            font-size: 0.65rem;
+            color: var(--gray-500);
+            margin-bottom: 4px;
+        }
+
+        .chat-bubble.user .bubble-sender {
+            text-align: right;
+        }
+
+        /* Group Message Preview Box */
+        .group-message-preview {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-top: 8px;
+        }
+
+        .group-preview-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            margin-bottom: 6px;
+        }
+
+        .group-preview-header .group-icon {
+            font-size: 0.8rem;
+        }
+
+        .group-preview-content {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
+        .group-preview-link {
+            color: var(--figma);
+            word-break: break-all;
+            font-size: 0.7rem;
+        }
+
+        /* Flow Steps */
+        .flow-steps {
+            margin-top: 20px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .flow-step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            color: var(--gray-500);
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-number.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-number.done {
+            background: var(--success);
+            color: white;
+        }
+
+        .step-content h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 2px;
+        }
+
+        .step-content p {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* App List */
+        .app-list {
+            margin-top: 20px;
+        }
+
+        .app-list-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 12px;
+        }
+
+        .app-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .app-item .icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .app-item .icon.gdocs { background: #4285F4; }
+        .app-item .icon.gsheets { background: #0F9D58; }
+        .app-item .icon.gslides { background: #F4B400; }
+        .app-item .icon.figma { background: var(--figma); }
+        .app-item .icon.notion { background: #000; }
+        .app-item .icon.confluence { background: #0052CC; }
+
+        .app-item .name {
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            flex: 1;
+        }
+
+        .app-item .pattern {
+            font-size: 0.65rem;
+            color: var(--gray-500);
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .status-indicator.success {
+            color: var(--success);
+        }
+
+        .status-indicator.processing {
+            color: var(--primary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            padding: 8px 16px;
+            background: var(--white);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← 返回 PRD</a>
+        <div class="page-header">
+            <h1 class="page-title">Type C: Smart Link Suggestion</h1>
+            <p class="page-subtitle">智能连接引导 - 群聊 URL Regex Trigger（Surface 2）</p>
+        </div>
+
+        <div class="state-nav">
+            <button class="state-btn active" data-state="url-detected">1. URL Detected</button>
+            <button class="state-btn" data-state="show-chip">2. Show Smart Chip</button>
+            <button class="state-btn" data-state="connecting">3. Connecting</button>
+            <button class="state-btn" data-state="connected">4. Connected</button>
+            <button class="state-btn" data-state="reprocess">5. Re-process</button>
+            <button class="state-btn" data-state="dismissed">6. Dismissed</button>
+        </div>
+
+        <div class="content-layout">
+            <div class="info-panel">
+                <!-- URL Detected Info -->
+                <div class="state-info active" data-info="url-detected">
+                    <h3 class="info-title">URL Detected 状态</h3>
+                    <div class="info-content">
+                        <p>群聊收到新消息，系统提取消息中的 URL 并匹配白名单正则表达式。</p>
+                        <ul class="info-list">
+                            <li>实时监听群消息</li>
+                            <li>提取消息中的 URL</li>
+                            <li>匹配高频 SaaS 工具 URL 规则</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">检测到的 URL</div>
+                            <div class="trigger-value">figma.com/design/jFWV7mEpNPRq...</div>
+                        </div>
+                        <div class="regex-box">
+                            Pattern: figma.com/(?:file|proto|design)/*
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number active">1</div>
+                            <div class="step-content">
+                                <h4>提取 URL</h4>
+                                <p>从消息中提取所有 URL</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>匹配 Regex</h4>
+                                <p>检查是否命中白名单</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>检查连接状态</h4>
+                                <p>查询 integration status</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="app-list">
+                        <div class="app-list-title">支持的 App 白名单</div>
+                        <div class="app-item">
+                            <div class="icon gdocs">D</div>
+                            <span class="name">Google Docs</span>
+                            <span class="pattern">docs.google.com/document/*</span>
+                        </div>
+                        <div class="app-item">
+                            <div class="icon gsheets">S</div>
+                            <span class="name">Google Sheets</span>
+                            <span class="pattern">docs.google.com/spreadsheets/*</span>
+                        </div>
+                        <div class="app-item">
+                            <div class="icon gslides">P</div>
+                            <span class="name">Google Slides</span>
+                            <span class="pattern">docs.google.com/presentation/*</span>
+                        </div>
+                        <div class="app-item">
+                            <div class="icon figma">F</div>
+                            <span class="name">Figma</span>
+                            <span class="pattern">figma.com/file/*</span>
+                        </div>
+                        <div class="app-item">
+                            <div class="icon notion">N</div>
+                            <span class="name">Notion</span>
+                            <span class="pattern">notion.so/*</span>
+                        </div>
+                        <div class="app-item">
+                            <div class="icon confluence">C</div>
+                            <span class="name">Confluence</span>
+                            <span class="pattern">*.atlassian.net/wiki/*</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Show Chip Info -->
+                <div class="state-info" data-info="show-chip" style="display:none;">
+                    <h3 class="info-title">Show Smart Chip 状态</h3>
+                    <div class="info-content">
+                        <p>URL 命中白名单且用户未连接该 App，展示 Smart Chip 引导连接。</p>
+                        <ul class="info-list">
+                            <li>微型 Bar 显示在消息下方</li>
+                            <li>展示 ✨ 图标 + App 名称</li>
+                            <li>点击触发连接流程</li>
+                            <li>提供关闭按钮</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">Smart Chip Copy</div>
+                            <div class="trigger-value">✨ Link Figma to your memory</div>
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>URL 命中 Figma</h4>
+                                <p>匹配 figma.com/design/* 规则</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>检测到未连接</h4>
+                                <p>integration status = false</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number active">3</div>
+                            <div class="step-content">
+                                <h4>展示 Smart Chip</h4>
+                                <p>引导用户连接 Figma</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connecting Info -->
+                <div class="state-info" data-info="connecting" style="display:none;">
+                    <h3 class="info-title">Connecting 状态</h3>
+                    <div class="info-content">
+                        <p>用户点击 Connect 后，跳转到 OAuth 授权流程。</p>
+                        <ul class="info-list">
+                            <li>跳转到 Link 模块</li>
+                            <li>走 OAuth/API Link 流程</li>
+                            <li>Smart Chip 显示连接中状态</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">用户点击 Smart Chip</div>
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>用户点击连接</h4>
+                                <p>触发 OAuth 授权</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number active">2</div>
+                            <div class="step-content">
+                                <h4>OAuth 授权中</h4>
+                                <p>等待用户授权完成</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>绑定回调</h4>
+                                <p>处理授权结果</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connected Info -->
+                <div class="state-info" data-info="connected" style="display:none;">
+                    <h3 class="info-title">Connected 状态</h3>
+                    <div class="info-content">
+                        <p>OAuth 授权成功，App 已连接。系统自动触发 Re-process。</p>
+                        <ul class="info-list">
+                            <li>Smart Chip 更新为已连接状态</li>
+                            <li>显示绿色勾选标识</li>
+                            <li>自动触发消息 Re-process</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">OAuth 回调成功</div>
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>OAuth 授权成功</h4>
+                                <p>获取到 Figma access token</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>更新连接状态</h4>
+                                <p>integration status = true</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number active">3</div>
+                            <div class="step-content">
+                                <h4>触发 Re-process</h4>
+                                <p>AI 开始读取链接内容</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reprocess Info -->
+                <div class="state-info" data-info="reprocess" style="display:none;">
+                    <h3 class="info-title">Re-process 状态</h3>
+                    <div class="info-content">
+                        <p>连接成功后，AI 可以读取链接内容，为后续对话提供上下文支持。</p>
+                        <ul class="info-list">
+                            <li>AI 获得链接内容的读取权限</li>
+                            <li>内容作为上下文存入记忆</li>
+                            <li>用户可以随时询问相关问题</li>
+                            <li>不自动生成摘要，由用户主动触发</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">Re-process 结果</div>
+                            <div class="trigger-value">链接内容已加入上下文，等待用户指令</div>
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>获取访问权限</h4>
+                                <p>通过 OAuth 获得 Figma API 权限</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>读取链接内容</h4>
+                                <p>AI 可访问链接中的设计文件</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number active">3</div>
+                            <div class="step-content">
+                                <h4>等待用户指令</h4>
+                                <p>用户可主动询问或请求分析</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dismissed Info -->
+                <div class="state-info" data-info="dismissed" style="display:none;">
+                    <h3 class="info-title">Dismissed 状态</h3>
+                    <div class="info-content">
+                        <p>用户点击关闭按钮，Smart Chip 消失，记录 link_dismissed 事件。</p>
+                        <ul class="info-list">
+                            <li>Smart Chip 从界面消失</li>
+                            <li>记录 link_dismissed 埋点</li>
+                            <li>不再对该消息重复弹出</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">埋点事件</div>
+                            <div class="trigger-value">link_dismissed: { ruleId: A3, app: figma }</div>
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>用户点击关闭</h4>
+                                <p>不想连接 Figma</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number done">✓</div>
+                            <div class="step-content">
+                                <h4>记录埋点</h4>
+                                <p>link_dismissed 事件</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number active">3</div>
+                            <div class="step-content">
+                                <h4>恢复正常状态</h4>
+                                <p>消息保留，不再提示</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phone-wrapper">
+                <div class="phone">
+                    <div class="phone-status-bar">
+                        <div class="phone-notch"></div>
+                    </div>
+                    <div class="phone-header">
+                        <span class="back-btn">&lt;</span>
+                        <div class="avatar">🤖</div>
+                        <div class="header-info">
+                            <h3>Tanka Memory AI</h3>
+                        </div>
+                    </div>
+                    <div class="phone-content">
+                        <!-- URL Detected State -->
+                        <div class="state-view active" data-view="url-detected">
+                            <div class="ai-conversation">
+                                <div class="ai-conversation-label">
+                                    <span class="icon">💬</span> 对话上下文
+                                </div>
+                                <div class="chat-bubble user">
+                                    <div class="bubble-sender">你</div>
+                                    <div class="bubble-content">
+                                        设计组刚在群里发了新的设计稿，帮我看看是关于什么的
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message">
+                                <div class="message-author">
+                                    <div class="author-avatar" style="background: #E91E63;"></div>
+                                    群消息 · Meizhen XU
+                                </div>
+                                <div class="message-bubble">
+                                    @Kai WANG @Meizhen XU 新版首页设计稿来了<br><br>
+                                    <a href="#" class="message-link">https://www.figma.com/design/jFWV7mEpNPRqBwXjEPFNPT/...</a>
+                                </div>
+                                <div class="message-time">15:12</div>
+                            </div>
+                            <div class="status-indicator processing">
+                                检测到 Figma 链接...
+                            </div>
+                        </div>
+
+                        <!-- Show Chip State -->
+                        <div class="state-view" data-view="show-chip">
+                            <div class="ai-conversation">
+                                <div class="ai-conversation-label">
+                                    <span class="icon">💬</span> 对话上下文
+                                </div>
+                                <div class="chat-bubble user">
+                                    <div class="bubble-sender">你</div>
+                                    <div class="bubble-content">
+                                        设计组刚在群里发了新的设计稿，帮我看看是关于什么的
+                                    </div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-sender">Tanka AI</div>
+                                    <div class="bubble-content">
+                                        我看到群里有一个 Figma 链接。不过你还没有连接 Figma，连接后我就能帮你查看设计稿内容了。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message">
+                                <div class="message-author">
+                                    <div class="author-avatar" style="background: #E91E63;"></div>
+                                    群消息 · Meizhen XU
+                                </div>
+                                <div class="message-bubble">
+                                    @Kai WANG @Meizhen XU 新版首页设计稿来了<br><br>
+                                    <a href="#" class="message-link">https://www.figma.com/design/jFWV7mEpNPRqBwXjEPFNPT/...</a>
+                                </div>
+                                <div class="smart-chip" onclick="switchState('connecting')">
+                                    <span class="sparkle">✨</span>
+                                    Link Figma to your memory
+                                    <span class="app-badge">F</span>
+                                    <span class="close" onclick="event.stopPropagation(); switchState('dismissed');">×</span>
+                                </div>
+                                <div class="message-time">15:12</div>
+                            </div>
+                        </div>
+
+                        <!-- Connecting State -->
+                        <div class="state-view" data-view="connecting">
+                            <div class="ai-conversation">
+                                <div class="ai-conversation-label">
+                                    <span class="icon">💬</span> 对话上下文
+                                </div>
+                                <div class="chat-bubble user">
+                                    <div class="bubble-sender">你</div>
+                                    <div class="bubble-content">
+                                        设计组刚在群里发了新的设计稿，帮我看看是关于什么的
+                                    </div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-sender">Tanka AI</div>
+                                    <div class="bubble-content">
+                                        正在连接你的 Figma 账号，请在弹出的窗口中完成授权...
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message">
+                                <div class="message-author">
+                                    <div class="author-avatar" style="background: #E91E63;"></div>
+                                    群消息 · Meizhen XU
+                                </div>
+                                <div class="message-bubble">
+                                    @Kai WANG @Meizhen XU 新版首页设计稿来了<br><br>
+                                    <a href="#" class="message-link">https://www.figma.com/design/jFWV7mEpNPRqBwXjEPFNPT/...</a>
+                                </div>
+                                <div class="connecting-chip">
+                                    <span class="spinner-small"></span>
+                                    Connecting to Figma...
+                                </div>
+                                <div class="message-time">15:12</div>
+                            </div>
+                        </div>
+
+                        <!-- Connected State -->
+                        <div class="state-view" data-view="connected">
+                            <div class="ai-conversation">
+                                <div class="ai-conversation-label">
+                                    <span class="icon">💬</span> 对话上下文
+                                </div>
+                                <div class="chat-bubble user">
+                                    <div class="bubble-sender">你</div>
+                                    <div class="bubble-content">
+                                        设计组刚在群里发了新的设计稿，帮我看看是关于什么的
+                                    </div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-sender">Tanka AI</div>
+                                    <div class="bubble-content">
+                                        Figma 连接成功！正在读取设计稿内容...
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message">
+                                <div class="message-author">
+                                    <div class="author-avatar" style="background: #E91E63;"></div>
+                                    群消息 · Meizhen XU
+                                </div>
+                                <div class="message-bubble">
+                                    @Kai WANG @Meizhen XU 新版首页设计稿来了<br><br>
+                                    <a href="#" class="message-link">https://www.figma.com/design/jFWV7mEpNPRqBwXjEPFNPT/...</a>
+                                </div>
+                                <div class="smart-chip connected">
+                                    ✓ Figma connected
+                                    <span class="app-badge">F</span>
+                                </div>
+                                <div class="message-time">15:12</div>
+                            </div>
+                            <div class="status-indicator processing">
+                                正在读取 Figma 设计稿...
+                            </div>
+                        </div>
+
+                        <!-- Reprocess State -->
+                        <div class="state-view" data-view="reprocess">
+                            <div class="ai-conversation">
+                                <div class="ai-conversation-label">
+                                    <span class="icon">💬</span> 对话上下文
+                                </div>
+                                <div class="chat-bubble user">
+                                    <div class="bubble-sender">你</div>
+                                    <div class="bubble-content">
+                                        设计组刚在群里发了新的设计稿，帮我看看是关于什么的
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message">
+                                <div class="message-author">
+                                    <div class="author-avatar" style="background: #E91E63;"></div>
+                                    群消息 · Meizhen XU
+                                </div>
+                                <div class="message-bubble">
+                                    @Kai WANG @Meizhen XU 新版首页设计稿来了<br><br>
+                                    <a href="#" class="message-link">https://www.figma.com/design/jFWV7mEpNPRqBwXjEPFNPT/...</a>
+                                </div>
+                                <div class="smart-chip connected">
+                                    ✓ Figma connected
+                                    <span class="app-badge">F</span>
+                                </div>
+                                <div class="message-time">15:12</div>
+                            </div>
+                            <div class="ai-response">
+                                <div class="ai-response-header">
+                                    <span class="icon">✓</span>
+                                    Tanka AI
+                                </div>
+                                <div class="ai-response-content">
+                                    <p>这是一份「App 首页改版」的设计稿，包含以下主要内容：</p>
+                                    <ul>
+                                        <li><strong>顶部导航：</strong>新增搜索入口和通知中心</li>
+                                        <li><strong>内容 Feed：</strong>采用卡片式布局，支持多种内容类型</li>
+                                        <li><strong>底部 Tab：</strong>5 个主要功能入口</li>
+                                    </ul>
+                                    <p style="margin-top: 8px; color: var(--gray-500); font-size: 0.75rem;">需要我帮你详细分析某个部分吗？</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dismissed State -->
+                        <div class="state-view" data-view="dismissed">
+                            <div class="ai-conversation">
+                                <div class="ai-conversation-label">
+                                    <span class="icon">💬</span> 对话上下文
+                                </div>
+                                <div class="chat-bubble user">
+                                    <div class="bubble-sender">你</div>
+                                    <div class="bubble-content">
+                                        设计组刚在群里发了新的设计稿，帮我看看是关于什么的
+                                    </div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-sender">Tanka AI</div>
+                                    <div class="bubble-content">
+                                        我看到群里有一个 Figma 链接，但由于没有连接 Figma，我暂时无法查看设计稿内容。你可以稍后在设置中连接 Figma。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message">
+                                <div class="message-author">
+                                    <div class="author-avatar" style="background: #E91E63;"></div>
+                                    群消息 · Meizhen XU
+                                </div>
+                                <div class="message-bubble">
+                                    @Kai WANG @Meizhen XU 新版首页设计稿来了<br><br>
+                                    <a href="#" class="message-link">https://www.figma.com/design/jFWV7mEpNPRqBwXjEPFNPT/...</a>
+                                </div>
+                                <div class="message-time">15:12</div>
+                            </div>
+                            <div class="status-indicator">
+                                Smart Chip 已关闭
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <button type="button">+</button>
+                        <input type="text" placeholder="输入消息...">
+                        <button type="button">😊</button>
+                        <button type="button">🎤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchState(state) {
+            document.querySelectorAll('.state-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.state === state) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.state-view').forEach(view => {
+                view.classList.remove('active');
+                if (view.dataset.view === state) {
+                    view.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.state-info').forEach(info => {
+                info.style.display = 'none';
+                if (info.dataset.info === state) {
+                    info.style.display = 'block';
+                }
+            });
+        }
+
+        document.querySelectorAll('.state-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchState(btn.dataset.state);
+            });
+        });
+    </script>
+</body>
+</html>

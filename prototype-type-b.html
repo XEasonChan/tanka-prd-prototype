@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type B: Content Dispatch Card - 内容分发型</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0096f8;
+            --primary-light: #e8f4fd;
+            --accent: #ffc53d;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --error-light: #fee2e2;
+            --gmail: #ea4335;
+            --gmail-light: #fef2f2;
+            --slack: #4A154B;
+            --slack-light: #f5f0f6;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            padding: 8px 16px;
+            background: var(--white);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover { background: var(--primary-light); border-color: var(--primary); }
+
+        .page-header { margin-bottom: 24px; }
+        .page-title { font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+        .page-subtitle { color: var(--gray-500); font-size: 0.9rem; }
+
+        .state-nav { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+
+        .state-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .state-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .state-btn.active { background: var(--primary); border-color: var(--primary); color: var(--white); }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1fr 390px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) { .content-layout { grid-template-columns: 1fr; } }
+
+        .info-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .info-title { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--gray-900); }
+        .info-content { color: var(--gray-600); font-size: 0.875rem; line-height: 1.7; }
+        .info-list { margin: 12px 0; padding-left: 20px; }
+        .info-list li { margin-bottom: 8px; color: var(--gray-600); }
+
+        .trigger-box {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .trigger-label { font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .trigger-value { color: var(--primary); font-size: 0.8rem; font-weight: 500; }
+
+        /* Phone Mockup */
+        .phone-wrapper { display: flex; justify-content: center; }
+
+        .phone {
+            width: 375px;
+            background: var(--white);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
+        }
+
+        .phone-status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .phone-notch { width: 80px; height: 24px; background: var(--gray-900); border-radius: 12px; }
+
+        .phone-header {
+            background: var(--white);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .back-btn-phone { color: var(--primary); font-size: 1.25rem; }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .header-info h3 { font-size: 0.9rem; font-weight: 600; color: var(--gray-900); }
+        .header-info p { font-size: 0.75rem; color: var(--gray-500); }
+        .header-actions { margin-left: auto; color: var(--gray-400); }
+
+        .phone-content { background: var(--gray-50); min-height: 520px; padding: 16px; overflow-y: auto; }
+
+        .state-view { display: none; }
+        .state-view.active { display: block; }
+
+        /* Chat Bubbles */
+        .chat-bubble { margin-bottom: 12px; max-width: 85%; }
+        .chat-bubble.user { margin-left: auto; }
+        .chat-bubble.ai { margin-right: auto; }
+
+        .bubble-content { padding: 12px 14px; border-radius: 16px; font-size: 0.85rem; line-height: 1.5; }
+        .chat-bubble.user .bubble-content { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .chat-bubble.ai .bubble-content { background: var(--white); color: var(--gray-700); border: 1px solid var(--gray-200); border-bottom-left-radius: 4px; }
+
+        .bubble-time { font-size: 0.65rem; color: var(--gray-400); margin-top: 4px; text-align: right; }
+        .chat-bubble.ai .bubble-time { text-align: left; }
+
+        .next-step-label { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--gray-600); margin: 12px 0; font-weight: 500; }
+
+        /* Action Card */
+        .action-card { background: var(--white); border-radius: 12px; border: 1px solid var(--gray-200); overflow: hidden; }
+
+        .card-header {
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .app-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .app-icon.gmail { background: var(--gmail); }
+
+        .card-header-text { flex: 1; }
+        .card-header-text h4 { font-size: 0.875rem; font-weight: 600; color: var(--gray-900); }
+
+        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+        .status-badge.draft { background: var(--gmail-light); color: var(--gmail); }
+        .status-badge.sending { background: var(--primary-light); color: var(--primary); }
+        .status-badge.success { background: var(--success-light); color: var(--success); }
+        .status-badge.error { background: var(--error-light); color: var(--error); }
+
+        .card-body { padding: 16px; }
+
+        /* Email Preview */
+        .email-preview { font-size: 0.85rem; }
+        .email-field { margin-bottom: 12px; }
+        .email-label { font-size: 0.7rem; color: var(--gray-500); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .email-value { color: var(--gray-800); font-weight: 500; }
+
+        .email-content {
+            background: var(--gray-50);
+            padding: 12px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+        }
+
+        .card-footer { padding: 12px 16px; display: flex; gap: 12px; border-top: 1px solid var(--gray-100); }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+        .btn-secondary:hover { background: var(--gray-200); }
+        .btn-gmail { background: var(--gmail); color: var(--white); }
+        .btn-gmail:hover { background: #d33426; }
+        .btn-error { background: var(--error); color: var(--white); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+        }
+
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        .skeleton-line { height: 14px; margin-bottom: 10px; }
+        .skeleton-line.short { width: 60%; }
+        .skeleton-line.medium { width: 80%; }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-message {
+            background: var(--error-light);
+            border: 1px solid var(--error);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+            color: var(--error);
+        }
+
+        .success-check {
+            width: 48px;
+            height: 48px;
+            background: var(--success-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+            font-size: 1.5rem;
+            margin: 0 auto 12px;
+        }
+
+        .success-text { text-align: center; color: var(--gray-600); font-size: 0.85rem; }
+        .success-text strong { display: block; font-size: 1rem; color: var(--gray-900); margin-bottom: 4px; }
+
+        /* Suggest Link Card */
+        .suggest-link-card { background: var(--white); border-radius: 12px; border: 1px solid var(--gray-200); padding: 16px; }
+        .suggest-link-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .suggest-link-header h4 { font-size: 0.875rem; font-weight: 600; color: var(--gray-900); }
+        .suggest-link-desc { font-size: 0.8rem; color: var(--gray-600); margin-bottom: 12px; line-height: 1.5; }
+        .suggest-link-why { background: var(--gray-50); padding: 10px 12px; border-radius: 6px; font-size: 0.75rem; color: var(--gray-600); margin-bottom: 12px; }
+        .suggest-link-actions { display: flex; gap: 10px; }
+
+        .link-btn { padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 500; cursor: pointer; border: none; font-family: inherit; }
+        .link-btn.learn { background: var(--gray-100); color: var(--gray-700); }
+        .link-btn.connect { background: var(--primary); color: white; }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .chat-input input { flex: 1; border: none; outline: none; font-size: 0.85rem; color: var(--gray-800); font-family: inherit; }
+        .chat-input input::placeholder { color: var(--gray-400); }
+        .chat-input button { background: none; border: none; color: var(--gray-400); font-size: 1.1rem; cursor: pointer; }
+
+        .flow-steps { margin-top: 20px; }
+        .flow-step { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--gray-200); }
+        .flow-step:last-child { border-bottom: none; }
+
+        .step-number {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            color: var(--gray-500);
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-number.active { background: var(--primary); color: white; }
+        .step-number.done { background: var(--success); color: white; }
+        .step-content h4 { font-size: 0.8rem; font-weight: 600; color: var(--gray-700); margin-bottom: 2px; }
+        .step-content p { font-size: 0.75rem; color: var(--gray-500); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← 返回 PRD</a>
+        <div class="page-header">
+            <h1 class="page-title">Type B: Content Dispatch Card</h1>
+            <p class="page-subtitle">内容分发型 - Send Email, Slack Message</p>
+        </div>
+
+        <div class="state-nav">
+            <button class="state-btn active" data-state="generating">1. Generating</button>
+            <button class="state-btn" data-state="preview">2. Preview</button>
+            <button class="state-btn" data-state="sending">3. Sending</button>
+            <button class="state-btn" data-state="sent">4. Sent</button>
+            <button class="state-btn" data-state="failed">5. Failed</button>
+            <button class="state-btn" data-state="suggest-link">6. Suggest Link</button>
+        </div>
+
+        <div class="content-layout">
+            <div class="info-panel">
+                <!-- Generating Info -->
+                <div class="state-info active" data-info="generating">
+                    <h3 class="info-title">Generating 状态</h3>
+                    <div class="info-content">
+                        <p>AI 正在根据用户指令生成邮件/消息草稿。</p>
+                        <ul class="info-list">
+                            <li>显示 Skeleton Screen</li>
+                            <li>AI 分析上下文生成内容</li>
+                            <li>提取收件人、主题等信息</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">用户请求发送邮件/消息</div>
+                        </div>
+                    </div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number active">1</div>
+                            <div class="step-content">
+                                <h4>分析用户指令</h4>
+                                <p>识别收件人、主题、内容要求</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>生成草稿内容</h4>
+                                <p>根据上下文生成邮件正文</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>展示预览</h4>
+                                <p>供用户确认或编辑</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Info -->
+                <div class="state-info" data-info="preview" style="display:none;">
+                    <h3 class="info-title">Preview 状态</h3>
+                    <div class="info-content">
+                        <p>草稿生成完成，展示邮件预览供用户确认。</p>
+                        <ul class="info-list">
+                            <li>显示完整邮件内容</li>
+                            <li>支持编辑修改</li>
+                            <li>提供 Send / Edit 按钮</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">草稿生成完成</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sending Info -->
+                <div class="state-info" data-info="sending" style="display:none;">
+                    <h3 class="info-title">Sending 状态</h3>
+                    <div class="info-content">
+                        <p>用户确认后，正在调用 API 发送邮件。</p>
+                        <ul class="info-list">
+                            <li>UI 冻结，显示发送中状态</li>
+                            <li>调用 Gmail/Outlook API</li>
+                            <li>等待发送结果</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">用户点击 Send</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sent Info -->
+                <div class="state-info" data-info="sent" style="display:none;">
+                    <h3 class="info-title">Sent 状态</h3>
+                    <div class="info-content">
+                        <p>邮件发送成功，显示完成状态。</p>
+                        <ul class="info-list">
+                            <li>显示绿勾和成功提示</li>
+                            <li>提供查看已发送邮件的入口</li>
+                            <li>可触发后续 Action 建议</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">API 返回发送成功</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Failed Info -->
+                <div class="state-info" data-info="failed" style="display:none;">
+                    <h3 class="info-title">Failed 状态</h3>
+                    <div class="info-content">
+                        <p>邮件发送失败，显示错误原因。</p>
+                        <ul class="info-list">
+                            <li>显示红色警告和错误原因</li>
+                            <li>提供 Retry / Edit 按钮</li>
+                            <li>如果是未连接导致，触发 Suggest Link</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">API 返回错误</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggest Link Info -->
+                <div class="state-info" data-info="suggest-link" style="display:none;">
+                    <h3 class="info-title">Suggest Link 状态</h3>
+                    <div class="info-content">
+                        <p>检测到 Gmail 未连接，展示连接引导卡片。</p>
+                        <ul class="info-list">
+                            <li>A1 规则：发送失败且原因是未连接</li>
+                            <li>展示 Why（为什么需要连接）</li>
+                            <li>提供 Learn more / Connect 按钮</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">integration status = false</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phone-wrapper">
+                <div class="phone">
+                    <div class="phone-status-bar">
+                        <div class="phone-notch"></div>
+                    </div>
+                    <div class="phone-header">
+                        <span class="back-btn-phone">&lt;</span>
+                        <div class="avatar">T</div>
+                        <div class="header-info">
+                            <h3>Tanka Memory</h3>
+                            <p>Your AI Assistant</p>
+                        </div>
+                        <span class="header-actions">☰</span>
+                    </div>
+                    <div class="phone-content">
+                        <!-- Generating State -->
+                        <div class="state-view active" data-view="generating">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">帮我给 Sarah 发封邮件，告诉她 Project X 的 Q1 进展顺利，下周可以约个时间讨论 Q2 计划</div>
+                                <div class="bubble-time">刚刚</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">好的，我来帮你起草这封邮件...</div>
+                            </div>
+                            <div class="next-step-label">
+                                <span>✨</span> Drafting email...
+                            </div>
+                            <div class="action-card">
+                                <div class="card-header">
+                                    <div class="app-icon gmail">✉</div>
+                                    <div class="card-header-text">
+                                        <h4>Send Email via Gmail</h4>
+                                    </div>
+                                    <span class="status-badge draft">Generating</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="email-preview">
+                                        <div class="email-field">
+                                            <div class="skeleton skeleton-line short"></div>
+                                            <div class="skeleton skeleton-line medium"></div>
+                                        </div>
+                                        <div class="email-field">
+                                            <div class="skeleton skeleton-line short"></div>
+                                            <div class="skeleton skeleton-line"></div>
+                                        </div>
+                                        <div class="email-field">
+                                            <div class="skeleton skeleton-line short"></div>
+                                            <div class="skeleton skeleton-line"></div>
+                                            <div class="skeleton skeleton-line medium"></div>
+                                            <div class="skeleton skeleton-line"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview State -->
+                        <div class="state-view" data-view="preview">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">帮我给 Sarah 发封邮件，告诉她 Project X 的 Q1 进展顺利，下周可以约个时间讨论 Q2 计划</div>
+                                <div class="bubble-time">刚刚</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">邮件草稿已生成，请确认内容后发送：</div>
+                            </div>
+                            <div class="next-step-label">
+                                <span>✨</span> Review and send
+                            </div>
+                            <div class="action-card">
+                                <div class="card-header">
+                                    <div class="app-icon gmail">✉</div>
+                                    <div class="card-header-text">
+                                        <h4>Send Email via Gmail</h4>
+                                    </div>
+                                    <span class="status-badge draft">Draft</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="email-preview">
+                                        <div class="email-field">
+                                            <div class="email-label">To</div>
+                                            <div class="email-value">sarah.chen@acme.com</div>
+                                        </div>
+                                        <div class="email-field">
+                                            <div class="email-label">Subject</div>
+                                            <div class="email-value">Project X - Q1 进展更新</div>
+                                        </div>
+                                        <div class="email-field">
+                                            <div class="email-label">Content</div>
+                                            <div class="email-content">Hi Sarah,
+
+Project X 的 Q1 工作进展顺利，主要指标都在预期范围内。
+
+方便的话，下周我们约个时间讨论一下 Q2 的计划和目标。
+
+Best regards</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-secondary">✎ Edit</button>
+                                    <button type="button" class="btn btn-gmail">✉ Send</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sending State -->
+                        <div class="state-view" data-view="sending">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">帮我给 Sarah 发封邮件，告诉她 Project X 的 Q1 进展顺利，下周可以约个时间讨论 Q2 计划</div>
+                                <div class="bubble-time">刚刚</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">正在发送邮件...</div>
+                            </div>
+                            <div class="next-step-label">
+                                <span>✉️</span> Sending email...
+                            </div>
+                            <div class="action-card">
+                                <div class="card-header">
+                                    <div class="app-icon gmail">✉</div>
+                                    <div class="card-header-text">
+                                        <h4>Send Email via Gmail</h4>
+                                    </div>
+                                    <span class="status-badge sending">Sending...</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="email-preview">
+                                        <div class="email-field">
+                                            <div class="email-label">To</div>
+                                            <div class="email-value">sarah.chen@acme.com</div>
+                                        </div>
+                                        <div class="email-field">
+                                            <div class="email-label">Subject</div>
+                                            <div class="email-value">Project X - Q1 进展更新</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-secondary" disabled>✎ Edit</button>
+                                    <button type="button" class="btn btn-gmail" disabled>
+                                        <span class="spinner"></span> Sending
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sent State -->
+                        <div class="state-view" data-view="sent">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">帮我给 Sarah 发封邮件，告诉她 Project X 的 Q1 进展顺利，下周可以约个时间讨论 Q2 计划</div>
+                                <div class="bubble-time">1分钟前</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">邮件已成功发送给 Sarah！需要我帮你在日历上创建一个下周和 Sarah 的会议吗？</div>
+                            </div>
+                            <div class="next-step-label">
+                                <span>✅</span> Email sent
+                            </div>
+                            <div class="action-card">
+                                <div class="card-header">
+                                    <div class="app-icon gmail">✉</div>
+                                    <div class="card-header-text">
+                                        <h4>Send Email via Gmail</h4>
+                                    </div>
+                                    <span class="status-badge success">✓ Sent</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="success-check">✓</div>
+                                    <div class="success-text">
+                                        <strong>Email sent successfully</strong>
+                                        To: sarah.chen@acme.com
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Failed State -->
+                        <div class="state-view" data-view="failed">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">帮我给 Sarah 发封邮件，告诉她 Project X 的 Q1 进展顺利，下周可以约个时间讨论 Q2 计划</div>
+                                <div class="bubble-time">刚刚</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">抱歉，邮件发送失败了。可能是收件人地址有问题，你可以检查一下或重试。</div>
+                            </div>
+                            <div class="next-step-label">
+                                <span>⚠️</span> Send failed
+                            </div>
+                            <div class="action-card">
+                                <div class="card-header">
+                                    <div class="app-icon gmail">✉</div>
+                                    <div class="card-header-text">
+                                        <h4>Send Email via Gmail</h4>
+                                    </div>
+                                    <span class="status-badge error">✕ Failed</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="error-message">
+                                        ⚠️ Send failed: Invalid recipient address.
+                                    </div>
+                                    <div class="email-preview">
+                                        <div class="email-field">
+                                            <div class="email-label">To</div>
+                                            <div class="email-value">sarah.chen@acme.com</div>
+                                        </div>
+                                        <div class="email-field">
+                                            <div class="email-label">Subject</div>
+                                            <div class="email-value">Project X - Q1 进展更新</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-secondary">✎ Edit</button>
+                                    <button type="button" class="btn btn-error">↻ Retry</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Suggest Link State -->
+                        <div class="state-view" data-view="suggest-link">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">帮我给 Sarah 发封邮件，告诉她 Project X 的 Q1 进展顺利，下周可以约个时间讨论 Q2 计划</div>
+                                <div class="bubble-time">刚刚</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">我需要先连接你的 Gmail 账户才能帮你发送邮件。</div>
+                            </div>
+                            <div class="next-step-label">
+                                <span>🔗</span> Connection Required
+                            </div>
+                            <div class="suggest-link-card">
+                                <div class="suggest-link-header">
+                                    <div class="app-icon gmail">✉</div>
+                                    <h4>Connect Gmail to continue</h4>
+                                </div>
+                                <div class="suggest-link-desc">
+                                    Connect to enable sending emails on your behalf.
+                                </div>
+                                <div class="suggest-link-why">
+                                    <strong>Why:</strong> You asked to send an email to sarah.chen@acme.com, but Gmail is not connected.
+                                </div>
+                                <div class="suggest-link-actions">
+                                    <button type="button" class="link-btn learn">Learn more</button>
+                                    <button type="button" class="link-btn connect">Connect</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <button type="button">+</button>
+                        <input type="text" placeholder="Ask Tanka anything...">
+                        <button type="button">🌐</button>
+                        <button type="button">▷</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchState(state) {
+            document.querySelectorAll('.state-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.state === state) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.state-view').forEach(view => {
+                view.classList.remove('active');
+                if (view.dataset.view === state) {
+                    view.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.state-info').forEach(info => {
+                info.style.display = 'none';
+                if (info.dataset.info === state) {
+                    info.style.display = 'block';
+                }
+            });
+        }
+
+        document.querySelectorAll('.state-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchState(btn.dataset.state);
+            });
+        });
+    </script>
+</body>
+</html>

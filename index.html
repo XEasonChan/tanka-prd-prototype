@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proactive Action Card PRD - Tanka Memory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #0096f8;
+            --primary-light: #e8f4fd;
+            --accent: #ffc53d;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 12px 24px;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-links a {
+            padding: 6px 12px;
+            color: var(--gray-600);
+            text-decoration: none;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 24px 60px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 40px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-number {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+        }
+
+        /* Content Box */
+        .content-box {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .content-box h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+        }
+
+        .content-box p {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        .content-box ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .content-box li {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .highlight-box h4 {
+            color: var(--primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .highlight-box p {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fef3c7;
+            border: 1px solid var(--warning);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .warning-box h4 {
+            color: #b45309;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .warning-box p, .warning-box li {
+            font-size: 0.875rem;
+            color: #92400e;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .mermaid-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--gray-50);
+        }
+
+        .mermaid-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .mermaid-badge {
+            background: var(--gray-200);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .mermaid-body {
+            padding: 24px;
+            overflow-x: auto;
+            background: var(--white);
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .table-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .table-header h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.8rem;
+        }
+
+        td {
+            color: var(--gray-600);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        code {
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+
+        /* Prototype Cards */
+        .prototype-section {
+            background: var(--gray-100);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 40px;
+        }
+
+        .prototype-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .prototype-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .prototype-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+            display: block;
+        }
+
+        .prototype-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0, 150, 248, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 14px;
+        }
+
+        .card-icon.type-a {
+            background: linear-gradient(135deg, #ff7a59, #ff9a85);
+        }
+
+        .card-icon.type-b {
+            background: linear-gradient(135deg, var(--success), #34d399);
+        }
+
+        .card-icon.type-c {
+            background: linear-gradient(135deg, var(--accent), #ffd666);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            margin-bottom: 12px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            background: var(--gray-100);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--gray-600);
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 40px 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--gray-500);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Figma Link */
+        .figma-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 12px;
+            transition: all 0.2s;
+        }
+
+        .figma-link:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Inline Prototype Section */
+        .inline-prototype {
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .inline-prototype-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .inline-prototype-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .inline-prototype-title h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .inline-prototype-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .inline-prototype-icon.type-a {
+            background: linear-gradient(135deg, #ff7a59, #ff9a85);
+        }
+
+        .inline-prototype-icon.type-b {
+            background: linear-gradient(135deg, var(--success), #34d399);
+        }
+
+        .inline-prototype-icon.type-c {
+            background: linear-gradient(135deg, var(--accent), #ffd666);
+        }
+
+        .prototype-open-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .prototype-open-btn:hover {
+            background: #0077c4;
+        }
+
+        /* Step Preview Table */
+        .step-preview-table {
+            width: 100%;
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        .step-preview-table th {
+            background: var(--gray-50);
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .step-preview-table td {
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: top;
+        }
+
+        .step-preview-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .step-number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .step-name {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--gray-900);
+        }
+
+        .step-logic {
+            line-height: 1.6;
+        }
+
+        .step-preview-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 4px 10px;
+            background: var(--primary-light);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .step-preview-link:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Sub Section */
+        .subsection {
+            margin-top: 32px;
+        }
+
+        .subsection-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+
+        /* Rule Box */
+        .rule-box {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .rule-id {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .rule-box h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+        }
+
+        .rule-box p {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-content">
+            <div class="nav-logo">
+                <div class="nav-logo-icon"></div>
+                Tanka PRD
+            </div>
+            <div class="nav-links">
+                <a href="#background">背景</a>
+                <a href="#action-card">Action Card</a>
+                <a href="#active-link">Active Link</a>
+                <a href="#prototypes">Prototypes</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-badge">✨ Phase 2: Proactive Action Card</div>
+            <h1>Ingest ↔ Reason ↔ Act</h1>
+            <p>构建完整闭环：支持 API 回写和消息分发，让 AI 真正干活</p>
+        </section>
+
+        <!-- Section 1: Background -->
+        <section class="section" id="background">
+            <div class="section-header">
+                <span class="section-number">Section 1</span>
+                <h2 class="section-title">背景与目标</h2>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">1.1 背景</h3>
+                <p style="margin-bottom: 16px; color: var(--gray-600);">Phase 1 完成了数据 Ingest（摄入），但存在两个核心痛点：</p>
+                <div class="grid-2">
+                    <div class="content-box">
+                        <h4>痛点 1：闭环缺失</h4>
+                        <p>用户只能"查"不能"改"，导致 Tanka 无法进入核心业务流</p>
+                    </div>
+                    <div class="content-box">
+                        <h4>痛点 2：连接动力不足</h4>
+                        <p>用户（含内部员工）缺乏主动连接数据源的动力，导致数据孤岛</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">1.2 Phase 2 核心目标</h3>
+                <p style="margin-bottom: 16px; color: var(--gray-600);">构建 "Ingest <-> Reason <-> Act" 的完整闭环：</p>
+                <div class="grid-2">
+                    <div class="highlight-box">
+                        <h4>Action Loop</h4>
+                        <p>支持 API 回写和消息分发，让 AI 真正干活</p>
+                    </div>
+                    <div class="highlight-box">
+                        <h4>Active Guidance</h4>
+                        <p>利用"连锁反应"和"场景识别"，在用户最需要的时候引导连接，解决 Link 率低的问题</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Section 2: Action Card -->
+        <section class="section" id="action-card">
+            <div class="section-header">
+                <span class="section-number">Section 2</span>
+                <h2 class="section-title">通用 Action 样式 (Action Abstraction)</h2>
+                <p class="section-subtitle">为了支持未来更多扩展 App，需要抽象 3 种标准交互模板</p>
+            </div>
+
+            <!-- Action Card Flow -->
+            <div class="mermaid-container">
+                <div class="mermaid-header">
+                    <h3>Action Card 主流程图</h3>
+                    <span class="mermaid-badge">Flowchart</span>
+                </div>
+                <div class="mermaid-body">
+                    <pre class="mermaid">
+flowchart TD
+    A["用户输入指令"] --> B{"AI 意图识别"}
+    B -->|"识别中"| C["Identifying - Skeleton Screen"]
+    C --> D{"是否需要 tool call"}
+    D -->|"是"| E{"查 tool dictionary 得到 appId"}
+    D -->|"否"| F["直接文本回复"]
+    E --> G{"查 integration status - App 已连接?"}
+    G -->|"未连接"| H["触发 Suggest Link Card"]
+    H --> H1["用户完成连接"]
+    H1 --> I
+    G -->|"已连接"| I{"缺对象或字段?"}
+    I -->|"是"| J["AI 追问补全对象和字段"]
+    J --> K["用户补全"]
+    K --> I
+    I -->|"否"| L["Drafting - 展示 Action Card"]
+    L --> M{"用户操作"}
+    M -->|"Confirm"| N["Pending - UI 冻结, 调用 API"]
+    M -->|"Cancel"| O["取消, 卡片关闭"]
+    N --> P{"API 返回结果"}
+    P -->|"200 OK"| Q["Fulfilled - 显示绿勾, 触发 Next Step"]
+    P -->|"4xx 5xx"| R{"是 tool call 失败且未连接?"}
+    R -->|"是"| H
+    R -->|"否"| S["Rejected - 显示错误原因"]
+    S --> T{"用户操作"}
+    T -->|"Retry"| N
+    T -->|"Edit"| L
+                    </pre>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.1 Action 类型与开发方案</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Action 类型</th>
+                                <th>样例</th>
+                                <th>主要开发方案</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>API 更新</td>
+                                <td>HubSpot, Jira, Linear</td>
+                                <td>对齐统一 API schema 后进行字段更新与写入</td>
+                            </tr>
+                            <tr>
+                                <td>消息发送</td>
+                                <td>Slack, Gmail, Outlook</td>
+                                <td>使用统一消息模板审核与发送，交互与 Work 当前消息一致</td>
+                            </tr>
+                            <tr>
+                                <td>Generation</td>
+                                <td>可灵, nano banana</td>
+                                <td>小助手中直接进行多模态生成</td>
+                            </tr>
+                            <tr>
+                                <td>深度开发</td>
+                                <td>Zoom</td>
+                                <td>按业务需求进行单独开发与工作流适配</td>
+                            </tr>
+                            <tr>
+                                <td>结构化数据库</td>
+                                <td>HubSpot 查询, Airtable 查询</td>
+                                <td>通过 AI coding 生成查询代码</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.2 Type A: State Mutation Card（状态变更型）</h3>
+                <div class="content-box">
+                    <h4>适用场景</h4>
+                    <p>Update Jira Status, Change HubSpot Deal Stage, Mark Linear Issue as Done</p>
+                    <p style="margin-top: 8px;"><strong>交互逻辑：</strong>Read Current State -> Propose New State -> Confirm</p>
+                </div>
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div class="content-box">
+                        <h4>UI 结构</h4>
+                        <ul>
+                            <li><strong>Header：</strong>App Icon + "Update Status"</li>
+                            <li><strong>Body：</strong>左右对比视图（Diff View），示例：To Do (灰) -> In Progress (绿)</li>
+                            <li><strong>Footer：</strong><code>[ Confirm Update ]</code></li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <h4>状态流转</h4>
+                        <p><code>Drafting</code> -> <code>User_Interaction</code> -> <code>Pending</code> -> <code>Fulfilled</code> / <code>Rejected</code></p>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 16px;">
+                    <div class="table-header">
+                        <h4>状态说明</h4>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>状态</th>
+                                <th>触发条件</th>
+                                <th>前端交互与视觉逻辑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>Identifying</code></td>
+                                <td>用户输入指令</td>
+                                <td>Skeleton Screen：显示 "Thinking..." 或 "Identifying intent..."</td>
+                            </tr>
+                            <tr>
+                                <td><code>Drafting</code></td>
+                                <td>意图识别完成并获取 Current Value</td>
+                                <td>Diff/Form View 展示当前值与建议值；Dropdown 可修改；按钮 [Confirm] / [Cancel]</td>
+                            </tr>
+                            <tr>
+                                <td><code>Pending</code></td>
+                                <td>用户点击 Confirm</td>
+                                <td>UI 冻结（Disabled）；按钮 Spinner；支持 Optimistic UI</td>
+                            </tr>
+                            <tr>
+                                <td><code>Fulfilled</code></td>
+                                <td>接口返回 200 OK</td>
+                                <td>静态卡片；显示绿勾与 "Updated just now"；触发 Next Step 提示</td>
+                            </tr>
+                            <tr>
+                                <td><code>Rejected</code></td>
+                                <td>接口返回 4xx/5xx</td>
+                                <td>显示红色警告与错误原因；按钮变为 [Retry] / [Edit Parameters]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-container" style="margin-top: 16px;">
+                    <div class="table-header">
+                        <h4>常用 Action 案例</h4>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>样式</th>
+                                <th>应用列表样例</th>
+                                <th>相关场景</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CRM</td>
+                                <td>HubSpot</td>
+                                <td>Update Deal Stage；Update Contact；Log Activity</td>
+                            </tr>
+                            <tr>
+                                <td>任务管理</td>
+                                <td>Linear, Jira</td>
+                                <td>Status Change；Assignee Update；Priority Change</td>
+                            </tr>
+                            <tr>
+                                <td>文档同步</td>
+                                <td>Confluence, Notion, Google Doc</td>
+                                <td>创建文档；更新文档内容</td>
+                            </tr>
+                            <tr>
+                                <td>日程同步</td>
+                                <td>Google Cal, Outlook Cal</td>
+                                <td>发送日程</td>
+                            </tr>
+                            <tr>
+                                <td>会议生成</td>
+                                <td>Zoom, Google Meeting</td>
+                                <td>Instant Meeting：生成会议链接并发送</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Type A Prototype Embed -->
+                <div class="inline-prototype">
+                    <div class="inline-prototype-header">
+                        <div class="inline-prototype-title">
+                            <div class="inline-prototype-icon type-a">📊</div>
+                            <h4>交互原型：State Mutation Card</h4>
+                        </div>
+                        <a href="prototype-type-a.html" class="prototype-open-btn">打开完整原型 →</a>
+                    </div>
+                    <table class="step-preview-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">状态名称</th>
+                                <th style="width: 55%;">交互逻辑</th>
+                                <th style="width: 25%;">原型预览</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">1</span>Identifying</span></td>
+                                <td class="step-logic">用户输入指令后，显示 Skeleton Screen；AI 识别意图、查询 tool dictionary、检查连接状态</td>
+                                <td><a href="prototype-type-a.html#identifying" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">2</span>Drafting</span></td>
+                                <td class="step-logic">展示 Diff View：当前值 → 建议值；用户可修改参数；提供 [Edit] / [Confirm] 按钮</td>
+                                <td><a href="prototype-type-a.html#drafting" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">3</span>Pending</span></td>
+                                <td class="step-logic">用户点击 Confirm 后，UI 冻结；按钮显示 Spinner；调用 API 执行更新</td>
+                                <td><a href="prototype-type-a.html#pending" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">4</span>Fulfilled</span></td>
+                                <td class="step-logic">API 返回 200 OK；显示绿勾和 "Updated just now"；卡片变为静态；触发 Next Step 建议</td>
+                                <td><a href="prototype-type-a.html#fulfilled" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">5</span>Rejected</span></td>
+                                <td class="step-logic">API 返回 4xx/5xx；显示红色警告和错误原因；按钮变为 [Retry] / [Edit]</td>
+                                <td><a href="prototype-type-a.html#rejected" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">6</span>Not Connected</span></td>
+                                <td class="step-logic">检测到 App 未连接；展示 Suggest Link Card；提供 [Learn more] / [Connect] 按钮</td>
+                                <td><a href="prototype-type-a.html#not-connected" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.3 Type B: Content Dispatch Card（内容分发型）</h3>
+                <div class="content-box">
+                    <h4>适用场景</h4>
+                    <p>Send Slack Message, Draft Email (Gmail), Reply to Intercom, Tweet</p>
+                    <p style="margin-top: 8px;"><strong>交互逻辑：</strong>Generate Draft -> Preview -> Send</p>
+                </div>
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>UI 结构</h4>
+                    <ul>
+                        <li><strong>Header：</strong>App Icon + "Draft Message"</li>
+                        <li><strong>Body：</strong>引用框或缩略图
+                            <ul>
+                                <li>Subject：Re: Project X</li>
+                                <li>Content："Here is the summary..."（支持点击展开编辑）</li>
+                            </ul>
+                        </li>
+                        <li><strong>Footer：</strong><code>[ Send Now ]</code> | <code>[ Edit ]</code></li>
+                    </ul>
+                </div>
+
+                <!-- Type B Prototype Embed -->
+                <div class="inline-prototype">
+                    <div class="inline-prototype-header">
+                        <div class="inline-prototype-title">
+                            <div class="inline-prototype-icon type-b">✉️</div>
+                            <h4>交互原型：Content Dispatch Card</h4>
+                        </div>
+                        <a href="prototype-type-b.html" class="prototype-open-btn">打开完整原型 →</a>
+                    </div>
+                    <table class="step-preview-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">状态名称</th>
+                                <th style="width: 55%;">交互逻辑</th>
+                                <th style="width: 25%;">原型预览</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">1</span>Generating</span></td>
+                                <td class="step-logic">AI 正在生成邮件草稿；显示 Skeleton Screen 和 "Generating draft..." 提示</td>
+                                <td><a href="prototype-type-b.html#generating" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">2</span>Preview</span></td>
+                                <td class="step-logic">展示邮件预览：To / Subject / Content；用户可编辑内容；提供 [Edit] / [Send] 按钮</td>
+                                <td><a href="prototype-type-b.html#preview" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">3</span>Sending</span></td>
+                                <td class="step-logic">用户点击 Send 后，UI 冻结；按钮显示 Spinner；调用 Gmail API 发送</td>
+                                <td><a href="prototype-type-b.html#sending" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">4</span>Sent</span></td>
+                                <td class="step-logic">发送成功；显示绿勾和 "Sent just now"；卡片变为静态；显示查看链接</td>
+                                <td><a href="prototype-type-b.html#sent" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">5</span>Failed</span></td>
+                                <td class="step-logic">发送失败；显示红色警告和错误原因；按钮变为 [Retry] / [Edit]</td>
+                                <td><a href="prototype-type-b.html#failed" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">6</span>Suggest Link</span></td>
+                                <td class="step-logic">检测到 Gmail 未连接；展示 Suggest Link Card；连接后 Resume 原 Action</td>
+                                <td><a href="prototype-type-b.html#suggest-link" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">2.4 Type C: Resource Allocation Card（资源调度型）</h3>
+                <div class="content-box">
+                    <h4>适用场景</h4>
+                    <p>Schedule Zoom Meeting, Create Google Calendar Event, Book Resource</p>
+                    <p style="margin-top: 8px;"><strong>交互逻辑：</strong>Check Availability -> Propose Slot -> Book</p>
+                </div>
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>UI 结构</h4>
+                    <ul>
+                        <li><strong>Header：</strong>App Icon + "Schedule Event"</li>
+                        <li><strong>Body：</strong>时间胶囊 + 人员列表
+                            <ul>
+                                <li>📅 Jan 20, 2:00 PM (30m)</li>
+                                <li>👥 David, Sarah, +AI</li>
+                            </ul>
+                        </li>
+                        <li><strong>Footer：</strong><code>[ Send Invite ]</code></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Section 3: Active Link Recommendation -->
+        <section class="section" id="active-link">
+            <div class="section-header">
+                <span class="section-number">Section 3</span>
+                <h2 class="section-title">Active Link Recommendation（智能连接引导）</h2>
+                <p class="section-subtitle">基于"场景缺失"的主动推荐，分为两种落地形态（Surface）</p>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.0 设计原则（低幻觉优先）</h3>
+                <div class="warning-box">
+                    <h4>参考 Gemini 的连接提示卡，本期只做"可验证证据"驱动的推荐</h4>
+                    <ul style="margin-top: 8px; padding-left: 20px;">
+                        <li><strong>先证据，后推荐：</strong>必须能指出"为什么推荐连接"（来自系统状态/错误信息/URL 命中/计划依赖）</li>
+                        <li><strong>不猜测用户目的：</strong>不基于用户身份、偏好或模糊主题做推断</li>
+                        <li><strong>低风险动作：</strong>卡片提供 <code>Learn more</code> / <code>Connect</code>，不自动执行写入类操作</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.0.1 数据来源与状态定义（工程约束）</h3>
+                <div class="content-box">
+                    <ul>
+                        <li><strong>Integration status 接口：</strong>存在 <code>integration status</code> 查询接口（用于判定"未连接/已连接"）</li>
+                        <li><strong>缓存：</strong>连接状态有缓存；进入绑定流程或绑定完成回调时需重新查一次最新状态</li>
+                        <li><strong>连接粒度：</strong>连接为 <strong>user 级</strong>；推荐与展示均基于"当前 user"的连接状态</li>
+                        <li><strong>绑定完成后的回流：</strong>OAuth/Link 完成后回到 AI 小助手；推荐卡更新为"已连接"，随后 <strong>Resume 原 Action</strong>，AI 继续推理流程</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.0.2 频控与轰炸防护（必须）</h3>
+                <div class="content-box">
+                    <ul>
+                        <li><strong>单次 Assistant 回复最多 1 个推荐：</strong>在一次 AI 推理/回复周期内，只允许弹出 <strong>1 张</strong>连接建议卡（或 1 段连接建议文本）</li>
+                        <li><strong>多候选只取第一个：</strong>若同一回复内命中多个 App，仅推荐排序后的第一个</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.1 本期实现范围：A 档场景识别（仅做 1-4）</h3>
+                <p style="margin-bottom: 16px; color: var(--gray-600);">触发推荐的前置条件：<strong>目标 App 未连接/未授权</strong>（系统状态可查）且命中以下任一规则。</p>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h4>触发规则（优先级：A1 > A4 > A3 > A2）</h4>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>规则 ID</th>
+                                <th>场景（低幻觉）</th>
+                                <th>触发信号（必须可验证）</th>
+                                <th>推荐输出</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>A1</code></td>
+                                <td>工具/Action 执行失败指向未连接</td>
+                                <td>connector/tool call 失败且系统状态显示未连接；若是业务参数错误则不触发</td>
+                                <td>文本提示 + Connect；Why：引用失败原因</td>
+                            </tr>
+                            <tr>
+                                <td><code>A2</code></td>
+                                <td>用户显式意图 + 明确应用名/对象</td>
+                                <td>用户原话中同时出现：动词 + App + 对象；缺对象则不触发，改为追问</td>
+                                <td>Why：引用用户原话关键片段</td>
+                            </tr>
+                            <tr>
+                                <td><code>A3</code></td>
+                                <td>可验证的 URL/资源标识出现</td>
+                                <td>命中 URL Regex 或出现资源 ID（如 Jira ABC-123）</td>
+                                <td>Why：To open/read this link, connect &lt;App&gt;</td>
+                            </tr>
+                            <tr>
+                                <td><code>A4</code></td>
+                                <td>Agent 计划步骤明确依赖某集成</td>
+                                <td>Plan/Workflow 中出现明确步骤：Fetch from / Update / Send via &lt;App&gt;</td>
+                                <td>Why：引用 plan 步骤</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>冲突处理 & 冷启动兜底</h4>
+                    <ul>
+                        <li><strong>冲突处理（多规则同时命中）：</strong>一次只推荐 1 个 App，优先级：A1 > A4 > A3 > A2</li>
+                        <li><strong>冷启动兜底：</strong>如无法抽取证据片段（Why），则不出卡（避免"黑盒推荐"）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.1.1 推荐卡片 UI 模板（参考 Gemini）</h3>
+                <div class="content-box">
+                    <ul>
+                        <li><strong>Header：</strong><code>&lt;App Icon&gt; &lt;App Name&gt;</code></li>
+                        <li><strong>Title：</strong><code>Connect &lt;App&gt; to continue</code></li>
+                        <li><strong>Description（价值陈述）：</strong><code>Connect to enable read/write access for this step.</code></li>
+                        <li><strong>Why（必须展示证据）：</strong>从 A1-A4 的触发信号中抽取 1 条（错误原因/URL/plan step/用户原话片段）</li>
+                        <li><strong>Actions：</strong>
+                            <ul>
+                                <li><code>Learn more</code>：打开权限说明/将解锁的能力说明</li>
+                                <li><code>Connect</code>：拉起 OAuth/授权流程</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.1.2 防幻觉约束（必须遵守）</h3>
+                <div class="warning-box">
+                    <ul>
+                        <li>卡片文案中<strong>不得出现</strong>"你可能/应该/我猜你想…"等推断性表达</li>
+                        <li>不得以"业务常识"补全缺失信息（例如没看到 Jira 链接就说"你在做 bug 所以需要 Jira"）</li>
+                        <li>不得承诺连接后一定能完成任务（只说"解锁能力/继续执行该步骤"）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.2 Surface 1：Assistant（任务流引导）</h3>
+
+                <div class="mermaid-container">
+                    <div class="mermaid-header">
+                        <h3>Suggest Link Card 流程图（Assistant Surface）</h3>
+                        <span class="mermaid-badge">Flowchart</span>
+                    </div>
+                    <div class="mermaid-body">
+                        <pre class="mermaid">
+flowchart TD
+    START["AI 推理回复周期开始"] --> CHECK{"遍历触发规则 A1-A4"}
+
+    CHECK -->|"A1 tool call 失败"| A1_1{"失败原因是未连接?"}
+    A1_1 -->|"否 业务错误"| SKIP["不触发推荐"]
+    A1_1 -->|"是"| HIT
+
+    CHECK -->|"A4 plan step 引用 tool"| A4_1["查 tool dictionary 得到 appId"]
+    A4_1 --> A4_2{"appId 在 featured list?"}
+    A4_2 -->|"否 且用户未点名"| SKIP
+    A4_2 -->|"是"| A4_3{"同类 App 冲突?"}
+    A4_3 -->|"是 且用户未指定"| SKIP
+    A4_3 -->|"否"| A4_4{"查 integration status"}
+    A4_4 -->|"已连接"| SKIP
+    A4_4 -->|"未连接"| HIT
+
+    CHECK -->|"A3 URL 或资源 ID"| A3_1{"命中 regex?"}
+    A3_1 -->|"否"| SKIP
+    A3_1 -->|"是"| A3_2{"查 integration status"}
+    A3_2 -->|"已连接"| SKIP
+    A3_2 -->|"未连接"| HIT
+
+    CHECK -->|"A2 用户显式意图"| A2_1{"动词+App+对象 齐全?"}
+    A2_1 -->|"缺对象"| ASK["AI 追问补全对象"]
+    ASK --> A2_1
+    A2_1 -->|"齐全"| A2_2{"查 integration status"}
+    A2_2 -->|"已连接"| SKIP
+    A2_2 -->|"未连接"| HIT
+
+    CHECK -->|"无命中"| SKIP
+
+    HIT["命中 - 取优先级最高的 1 个 App"] --> FREQ{"本次回复已有推荐?"}
+    FREQ -->|"是"| SKIP
+    FREQ -->|"否"| CARD["展示 Suggest Link Card"]
+    CARD --> USER{"用户操作"}
+    USER -->|"Connect"| OAUTH["跳转 Link 模块"]
+    USER -->|"Dismiss"| DISMISS["记录 dismissed"]
+    USER -->|"Learn more"| INFO["打开权限说明页"]
+    OAUTH --> CALLBACK{"绑定回调"}
+    CALLBACK -->|"已绑定"| ALREADY["Toast App 已绑定"]
+    CALLBACK -->|"绑定成功"| SUCCESS["卡片更新已连接, Resume 原 Action"]
+    CALLBACK -->|"绑定失败"| FAIL["显示失败原因, 保留 Connect"]
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="content-box">
+                    <h4>典型场景</h4>
+                    <ul>
+                        <li><strong>A1：</strong>执行某个 Action（如 "Send Email via Gmail"）失败，错误显示未授权</li>
+                        <li><strong>A4：</strong>Agent plan 明确需要调用某 App，但系统状态显示未连接</li>
+                        <li><strong>A2：</strong>用户明确提出"在 Jira 建 issue / 发 Slack 给团队"等意图，但检测到未连接</li>
+                    </ul>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>A1 的交互补充（工程实现）</h4>
+                    <ul>
+                        <li><strong>失败后呈现形式：</strong>在 chat stream 里用一段 AI 文本说明"未连接，无法调用工具"，并附带 1 个 Connect CTA</li>
+                        <li><strong>成功后行为：</strong>绑定完成回到小助手，卡片更新为"已连接"，系统自动 <strong>Resume 原 action</strong>，AI 继续推理/执行</li>
+                        <li><strong>失败/重复绑定处理：</strong>进入绑定流程时重新查 status；若发现已绑定，toast：<code>&lt;App&gt; 已绑定 &lt;账号&gt;</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.3 Surface 2：Group Chat URL Regex Trigger（群聊正则引导）</h3>
+
+                <div class="mermaid-container">
+                    <div class="mermaid-header">
+                        <h3>Suggest Link in Group Chat 流程图</h3>
+                        <span class="mermaid-badge">Flowchart</span>
+                    </div>
+                    <div class="mermaid-body">
+                        <pre class="mermaid">
+flowchart TD
+    MSG["群聊收到新消息"] --> EXTRACT["提取消息中的 URL"]
+    EXTRACT --> HAS{"包含 URL?"}
+    HAS -->|"否"| NOOP["不处理"]
+    HAS -->|"是"| REGEX{"URL 命中白名单 regex?"}
+    REGEX -->|"否 非白名单域名"| NOOP
+    REGEX -->|"是"| MAP["匹配到目标 App"]
+    MAP --> STATUS{"查 integration status - 已连接?"}
+    STATUS -->|"已连接"| READ["AI 直接读取链接内容"]
+    STATUS -->|"未连接"| CHIP["展示 Smart Chip"]
+    CHIP --> USER{"用户操作"}
+    USER -->|"点击 Connect"| LINK["跳转 Link 模块走 OAuth"]
+    USER -->|"点击 X 关闭"| CLOSE["Smart Chip 消失, 记录 dismissed"]
+    USER -->|"忽略"| IDLE["Smart Chip 保留"]
+    LINK --> CB{"绑定回调"}
+    CB -->|"已绑定"| TOAST["Toast App 已绑定"]
+    CB -->|"绑定成功"| REPROCESS["AI Re-process 该消息"]
+    CB -->|"绑定失败"| ERR["显示失败原因, 保留 Smart Chip"]
+    REPROCESS --> ACTION{"是否触发 Action?"}
+    ACTION -->|"是"| DRAFT["生成 Action 确认卡片"]
+    ACTION -->|"否"| READY["链接内容已可访问"]
+    TOAST --> REPROCESS
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="content-box">
+                    <h4>场景说明</h4>
+                    <p>用户在群里发送链接，AI 无法读取链接内容</p>
+                    <p style="margin-top: 8px;"><strong>Trigger：</strong>实时监听群消息，匹配高频 SaaS 工具 URL 规则（Link Formula）</p>
+                    <p style="margin-top: 8px;"><strong>白名单约束：</strong>不在白名单域名/regex 命中列表内，本期 <strong>不触发</strong> 推荐（避免误判）</p>
+                </div>
+
+                <div class="table-container" style="margin-top: 16px;">
+                    <div class="table-header">
+                        <h4>URL Regex 白名单</h4>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>App / Category</th>
+                                <th>Pattern 示例</th>
+                                <th>Smart Chip Copy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Google Docs</td>
+                                <td><code>docs.google.com/document/*</code></td>
+                                <td>📝 Link Docs to read content</td>
+                            </tr>
+                            <tr>
+                                <td>Google Sheets</td>
+                                <td><code>docs.google.com/spreadsheets/*</code></td>
+                                <td>📊 Link Sheets to analyze data</td>
+                            </tr>
+                            <tr>
+                                <td>Google Slides</td>
+                                <td><code>docs.google.com/presentation/*</code></td>
+                                <td>📽️ Link Slides to view deck</td>
+                            </tr>
+                            <tr>
+                                <td>Figma</td>
+                                <td><code>figma.com/file/*</code></td>
+                                <td>🔗 Link Figma to view file</td>
+                            </tr>
+                            <tr>
+                                <td>Notion</td>
+                                <td><code>notion.so/*</code></td>
+                                <td>🔗 Link Notion to open page</td>
+                            </tr>
+                            <tr>
+                                <td>Jira</td>
+                                <td><code>*.atlassian.net/browse/*</code></td>
+                                <td>🐛 Link Jira to track ticket</td>
+                            </tr>
+                            <tr>
+                                <td>Confluence</td>
+                                <td><code>*.atlassian.net/wiki/*</code></td>
+                                <td>📘 Link Confluence to read spec</td>
+                            </tr>
+                            <tr>
+                                <td>Linear</td>
+                                <td><code>linear.app/*/issue/*</code></td>
+                                <td>🔗 Link Linear to view issue</td>
+                            </tr>
+                            <tr>
+                                <td>Zoom</td>
+                                <td><code>zoom.us/j/*</code></td>
+                                <td>🔗 Link Zoom to open meeting</td>
+                            </tr>
+                            <tr>
+                                <td>Miro</td>
+                                <td><code>miro.com/app/board/*</code></td>
+                                <td>🧠 Link Miro to view whiteboard</td>
+                            </tr>
+                            <tr>
+                                <td>Loom</td>
+                                <td><code>loom.com/share/*</code></td>
+                                <td>🎬 Link Loom to watch video</td>
+                            </tr>
+                            <tr>
+                                <td>Airtable</td>
+                                <td><code>airtable.com/app*</code></td>
+                                <td>🗃️ Link Airtable to sync base</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>Interaction（交互设计）</h4>
+                    <ul>
+                        <li><strong>Smart Chip（胶囊提示）：</strong>在包含链接的消息气泡右下方或正下方，显示一个微型 Bar</li>
+                        <li><strong>UI：</strong>✨ Link &lt;App&gt; to open this link [Logo] [x]</li>
+                        <li><strong>Behavior：</strong>点击后直接弹出 OAuth 授权窗，授权完成后 AI 自动读取该链接内容并 Re-process 该消息</li>
+                    </ul>
+                </div>
+
+                <!-- Type C Prototype Embed -->
+                <div class="inline-prototype">
+                    <div class="inline-prototype-header">
+                        <div class="inline-prototype-title">
+                            <div class="inline-prototype-icon type-c">🔗</div>
+                            <h4>交互原型：Smart Link Suggestion</h4>
+                        </div>
+                        <a href="prototype-type-c.html" class="prototype-open-btn">打开完整原型 →</a>
+                    </div>
+                    <table class="step-preview-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">状态名称</th>
+                                <th style="width: 55%;">交互逻辑</th>
+                                <th style="width: 25%;">原型预览</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">1</span>URL Detected</span></td>
+                                <td class="step-logic">群聊消息命中 URL 白名单 Regex；系统识别目标 App（如 Figma）</td>
+                                <td><a href="prototype-type-c.html#url-detected" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">2</span>Show Chip</span></td>
+                                <td class="step-logic">检测到 App 未连接；在消息下方展示 Smart Chip：✨ Link Figma to view file [Connect] [×]</td>
+                                <td><a href="prototype-type-c.html#show-chip" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">3</span>Connecting</span></td>
+                                <td class="step-logic">用户点击 Connect；跳转 OAuth 授权流程；Smart Chip 显示 "Connecting..."</td>
+                                <td><a href="prototype-type-c.html#connecting" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">4</span>Connected</span></td>
+                                <td class="step-logic">OAuth 成功；Smart Chip 更新为 "✓ Figma 已连接"；AI 自动 Re-process 消息</td>
+                                <td><a href="prototype-type-c.html#connected" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">5</span>Re-process</span></td>
+                                <td class="step-logic">AI 读取链接内容；判断是否触发 Action；展示内容摘要或 Action Card</td>
+                                <td><a href="prototype-type-c.html#reprocess" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                            <tr>
+                                <td><span class="step-name"><span class="step-number-badge">6</span>Dismissed</span></td>
+                                <td class="step-logic">用户点击 × 关闭 Smart Chip；记录 dismissed 状态；不再对该消息推荐</td>
+                                <td><a href="prototype-type-c.html#dismissed" class="step-preview-link">查看状态 →</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.5 Featured Apps（本期覆盖）</h3>
+                <div class="content-box">
+                    <p>本期优先覆盖以下 featured apps（可控、常用、低幻觉）：</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Calendar</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Outlook Calendar</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">OneDrive</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Gmail</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Outlook (Email)</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Notion</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Drive</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Sheets</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Docs</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Google Slides</span>
+                        <span class="tag" style="background: var(--primary-light); color: var(--primary);">Zoom</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.6 指标与评估（本期）</h3>
+                <div class="content-box">
+                    <ul>
+                        <li><strong>打扰度：</strong>推荐次数分布、每会话/每用户的 link_suggested 频率、dismiss 率</li>
+                        <li><strong>转化：</strong>link_clicked -> link_connected 转化率</li>
+                        <li><strong>效果提升：</strong>连接后任务成功率/完成率是否提升（连接前 vs 连接后）</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Section 4: Prototypes -->
+        <section class="section" id="prototypes">
+            <div class="section-header">
+                <span class="section-number">Quick Links</span>
+                <h2 class="section-title">原型快速导航</h2>
+                <p class="section-subtitle">快速跳转到各类型的完整交互原型</p>
+            </div>
+
+            <div class="prototype-section">
+                <div class="prototype-grid">
+                    <a href="prototype-type-a.html" class="prototype-card">
+                        <div class="card-icon type-a">📊</div>
+                        <h3 class="card-title">Type A: State Mutation Card</h3>
+                        <p class="card-subtitle">状态变更型 - Update HubSpot, Jira, Linear</p>
+                        <div class="card-tags">
+                            <span class="tag">6 个状态</span>
+                            <span class="tag">完整流程</span>
+                        </div>
+                        <span class="card-link">打开原型 →</span>
+                    </a>
+
+                    <a href="prototype-type-b.html" class="prototype-card">
+                        <div class="card-icon type-b">✉️</div>
+                        <h3 class="card-title">Type B: Content Dispatch Card</h3>
+                        <p class="card-subtitle">内容分发型 - Send Email, Slack Message</p>
+                        <div class="card-tags">
+                            <span class="tag">6 个状态</span>
+                            <span class="tag">完整流程</span>
+                        </div>
+                        <span class="card-link">打开原型 →</span>
+                    </a>
+
+                    <a href="prototype-type-c.html" class="prototype-card">
+                        <div class="card-icon type-c">🔗</div>
+                        <h3 class="card-title">Type C: Smart Link Suggestion</h3>
+                        <p class="card-subtitle">智能连接引导 - URL Regex Trigger</p>
+                        <div class="card-tags">
+                            <span class="tag">6 个状态</span>
+                            <span class="tag">完整流程</span>
+                        </div>
+                        <span class="card-link">打开原型 →</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Tanka Memory PRD - Phase 2: Proactive Action Card</p>
+        <p style="margin-top: 4px;">Design inspired by <a href="https://tanka.ai" target="_blank">tanka.ai</a></p>
+    </footer>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 15
+            },
+            themeVariables: {
+                primaryColor: '#e8f4fd',
+                primaryTextColor: '#111827',
+                primaryBorderColor: '#0096f8',
+                lineColor: '#9ca3af',
+                secondaryColor: '#f3f4f6',
+                tertiaryColor: '#f9fafb'
+            }
+        });
+    </script>
+</body>
+</html>

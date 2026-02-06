@@ -274,47 +274,135 @@
             display: block;
         }
 
-        /* Success Toast */
-        .success-toast {
-            background: var(--success-light);
-            border: 1px solid var(--success);
-            border-radius: 10px;
-            padding: 10px 14px;
+        /* Chat Bubbles */
+        .chat-bubble {
             margin-bottom: 12px;
+            max-width: 85%;
+        }
+
+        .chat-bubble.user {
+            margin-left: auto;
+        }
+
+        .chat-bubble.ai {
+            margin-right: auto;
+        }
+
+        .bubble-content {
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .chat-bubble.user .bubble-content {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-bubble.ai .bubble-content {
+            background: var(--white);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+            border-bottom-left-radius: 4px;
+        }
+
+        .bubble-time {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .chat-bubble.ai .bubble-time {
+            text-align: left;
+        }
+
+        /* Skeleton Card */
+        .skeleton-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-header {
             display: flex;
             align-items: center;
             gap: 10px;
+            margin-bottom: 16px;
         }
 
-        .success-toast .icon {
-            width: 20px;
-            height: 20px;
-            background: var(--success);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.7rem;
+        .skeleton-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
         }
 
-        .success-toast .text {
+        .skeleton-title {
             flex: 1;
         }
 
-        .success-toast .text h4 {
+        .skeleton-line {
+            height: 12px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .skeleton-line.short {
+            width: 60%;
+        }
+
+        .skeleton-line.medium {
+            width: 80%;
+        }
+
+        .skeleton-body {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Processing indicator */
+        .processing-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            margin-top: 12px;
             font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--success);
+            color: var(--primary);
         }
 
-        .success-toast .text p {
-            font-size: 0.7rem;
-            color: #065f46;
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        /* Email Card (Sent State) */
-        .email-card {
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tool Call Card */
+        .tool-call-card {
             background: var(--white);
             border-radius: 12px;
             border: 1px solid var(--gray-200);
@@ -322,86 +410,103 @@
             margin-bottom: 12px;
         }
 
-        .email-card-header {
-            padding: 10px 14px;
+        .tool-call-header {
+            padding: 12px 14px;
             display: flex;
             align-items: center;
             gap: 8px;
+            background: var(--gray-50);
             border-bottom: 1px solid var(--gray-100);
-            font-size: 0.75rem;
-            color: var(--gray-500);
         }
 
-        .email-card-header .sender-label {
-            color: var(--primary);
-            font-weight: 500;
+        .tool-call-header .icon {
+            font-size: 1rem;
         }
 
-        .email-card-body {
+        .tool-call-header span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .tool-call-body {
             padding: 14px;
         }
 
-        .email-content {
-            font-size: 0.8rem;
-            color: var(--gray-700);
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        .email-assets {
+        .tool-item {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
-            color: var(--gray-500);
-            margin-bottom: 12px;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            margin-bottom: 8px;
         }
 
-        .email-recipient {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            color: var(--gray-600);
+        .tool-item:last-child {
+            margin-bottom: 0;
         }
 
-        .recipient-logo {
-            width: 20px;
-            height: 20px;
-            background: var(--success);
-            border-radius: 50%;
+        .tool-item .tool-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 0.6rem;
-            font-weight: 700;
+            font-size: 0.75rem;
         }
 
-        /* Success Status */
-        .success-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--success);
+        .tool-item .tool-icon.gmail {
+            background: var(--gmail);
+            color: white;
+        }
+
+        .tool-item .tool-icon.jira {
+            background: var(--jira);
+            color: white;
+        }
+
+        .tool-item .tool-icon.check {
+            background: var(--success);
+            color: white;
+        }
+
+        .tool-item .tool-icon.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .tool-item .tool-info {
+            flex: 1;
+        }
+
+        .tool-item .tool-name {
             font-size: 0.8rem;
             font-weight: 500;
-            margin-bottom: 16px;
+            color: var(--gray-900);
         }
 
-        /* AI Suggestion Bubble */
-        .ai-suggestion-bubble {
-            background: var(--gray-100);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 16px;
-            border: 1px solid var(--gray-200);
+        .tool-item .tool-status {
+            font-size: 0.7rem;
+            color: var(--gray-500);
         }
 
-        .ai-suggestion-bubble p {
-            font-size: 0.8rem;
-            color: var(--gray-700);
-            line-height: 1.6;
+        .tool-item .tool-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .tool-item .tool-badge.connected {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .tool-item .tool-badge.not-connected {
+            background: var(--warning);
+            color: white;
         }
 
         /* Suggest Link Section */
@@ -565,19 +670,6 @@
             padding: 10px 16px;
             color: var(--gray-500);
             font-size: 0.8rem;
-        }
-
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--gray-200);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
 
         /* Connected State */
@@ -792,21 +884,8 @@
             font-family: inherit;
         }
 
-        /* Processing indicator */
-        .processing-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px;
-            background: var(--primary-light);
-            border-radius: 8px;
-            margin-top: 12px;
-            font-size: 0.8rem;
-            color: var(--primary);
-        }
-
-        /* AI Response Card */
-        .ai-response-card {
+        /* Action Card (Same as Type A) */
+        .action-card {
             background: var(--white);
             border-radius: 12px;
             border: 1px solid var(--gray-200);
@@ -814,95 +893,169 @@
             margin-top: 12px;
         }
 
-        .ai-response-header {
-            padding: 12px 14px;
+        .card-header {
+            padding: 14px 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             border-bottom: 1px solid var(--gray-100);
-            background: var(--gray-50);
         }
 
-        .ai-response-header .icon {
-            color: var(--success);
-        }
-
-        .ai-response-header span {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--gray-700);
-        }
-
-        .ai-response-body {
-            padding: 14px;
-        }
-
-        .ai-response-body p {
-            font-size: 0.8rem;
-            color: var(--gray-700);
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-
-        .ai-response-body ul {
-            margin: 8px 0;
-            padding-left: 18px;
-        }
-
-        .ai-response-body li {
-            font-size: 0.8rem;
-            color: var(--gray-600);
-            line-height: 1.6;
-            margin-bottom: 4px;
-        }
-
-        .jira-ticket-preview {
-            background: var(--jira-light);
-            border: 1px solid #b3d4ff;
+        .app-icon {
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            padding: 12px;
-            margin-top: 12px;
-        }
-
-        .jira-ticket-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .jira-ticket-header .jira-icon {
-            width: 20px;
-            height: 20px;
-            background: var(--jira);
-            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
         }
 
-        .jira-ticket-header .jira-icon svg {
-            width: 12px;
-            height: 12px;
-            fill: white;
+        .app-icon.jira { background: var(--jira); }
+
+        .card-header-text {
+            flex: 1;
         }
 
-        .jira-ticket-header span {
-            font-size: 0.75rem;
+        .card-header-text h4 {
+            font-size: 0.875rem;
             font-weight: 600;
-            color: var(--jira);
+            color: var(--gray-900);
         }
 
-        .jira-ticket-title {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--gray-900);
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-badge.drafting { background: var(--jira-light); color: var(--jira); }
+        .status-badge.pending { background: var(--jira-light); color: var(--jira); }
+        .status-badge.success { background: var(--success-light); color: var(--success); }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .action-type {
+            font-size: 0.75rem;
+            color: var(--gray-500);
             margin-bottom: 4px;
         }
 
-        .jira-ticket-id {
-            font-size: 0.7rem;
+        .action-object {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+        }
+
+        /* Field Row */
+        .field-row {
+            margin-bottom: 14px;
+        }
+
+        .field-label {
+            font-size: 0.75rem;
             color: var(--gray-500);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .field-value {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: var(--white);
+            color: var(--gray-900);
+            border: 1px solid var(--gray-300);
+        }
+
+        .field-value.dropdown {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .field-value .priority-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .field-value .priority-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .field-value .priority-badge .dot.high { background: var(--error); }
+
+        .card-footer {
+            padding: 12px 16px;
+            background: var(--gray-50);
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .card-footer button {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        .btn-confirm {
+            background: var(--jira);
+            border: none;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #0047b3;
+        }
+
+        .btn-confirm.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Success Card State */
+        .success-header {
+            background: var(--success-light);
+        }
+
+        .success-header .card-header-text h4 {
+            color: var(--success);
+        }
+
+        .success-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--success-light);
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: var(--success);
         }
 
         /* Dismissed state */
@@ -913,6 +1066,7 @@
             text-align: center;
             color: var(--gray-500);
             font-size: 0.8rem;
+            margin-top: 12px;
         }
 
         /* Chat Input */
@@ -946,12 +1100,6 @@
             font-size: 1.1rem;
             cursor: pointer;
         }
-
-        /* Jira SVG Icon */
-        .jira-svg {
-            width: 20px;
-            height: 20px;
-        }
     </style>
 </head>
 <body>
@@ -960,32 +1108,34 @@
 
         <div class="page-header">
             <h1 class="page-title">Suggest Link: Chain Reaction</h1>
-            <p class="page-subtitle">链式触发建议连接 - Action 完成后建议连接相关服务以获得更多能力</p>
+            <p class="page-subtitle">链式触发建议连接 - AI 规划任务时检测到 Tool 未连接，引导用户授权后继续执行</p>
         </div>
 
         <div class="state-nav">
-            <button class="state-btn active" data-state="action-completed">1. Action Completed</button>
-            <button class="state-btn" data-state="show-suggest">2. Show Suggest Card</button>
-            <button class="state-btn" data-state="oauth-flow">3. OAuth Flow</button>
-            <button class="state-btn" data-state="connecting">4. Connecting</button>
-            <button class="state-btn" data-state="connected">5. Connected</button>
-            <button class="state-btn" data-state="continue-action">6. Continue Action</button>
-            <button class="state-btn" data-state="dismissed">7. Dismissed</button>
+            <button class="state-btn active" data-state="context-planning">1. Context Planning</button>
+            <button class="state-btn" data-state="tool-check">2. Tool Check</button>
+            <button class="state-btn" data-state="show-suggest">3. Show Suggest Card</button>
+            <button class="state-btn" data-state="oauth-flow">4. OAuth Flow</button>
+            <button class="state-btn" data-state="connecting">5. Connecting</button>
+            <button class="state-btn" data-state="connected">6. Connected</button>
+            <button class="state-btn" data-state="action-card">7. Action Card</button>
+            <button class="state-btn" data-state="fulfilled">8. Fulfilled</button>
+            <button class="state-btn" data-state="dismissed">9. Dismissed</button>
         </div>
 
         <div class="content-layout">
             <div class="info-panel">
-                <h3 class="info-title" id="info-title">Action Completed - 操作完成</h3>
+                <h3 class="info-title" id="info-title">Context Planning - 上下文规划</h3>
                 <div class="info-content" id="info-content">
-                    <p>用户完成了一个 Action（如发送邮件），系统检测到可以通过连接其他服务来增强后续能力。</p>
+                    <p>用户输入指令后，AI 开始分析上下文并规划需要调用的 Tools。</p>
                     <ul class="info-list">
-                        <li><strong>触发条件：</strong>Action 执行成功后</li>
-                        <li><strong>场景示例：</strong>发送客户反馈邮件后，建议连接 Jira 创建 Bug Ticket</li>
-                        <li><strong>UI 状态：</strong>显示成功 Toast 和已发送邮件卡片</li>
+                        <li><strong>触发条件：</strong>用户输入任务指令</li>
+                        <li><strong>AI 行为：</strong>解析意图、查询 Tool Dictionary</li>
+                        <li><strong>UI 状态：</strong>显示 Skeleton Card 和 "Thinking..." 提示</li>
                     </ul>
                     <div class="trigger-box">
-                        <div class="trigger-label">当前触发</div>
-                        <div class="trigger-value">Email sent → Suggest connect Jira for bug tracking</div>
+                        <div class="trigger-label">用户指令</div>
+                        <div class="trigger-value">"帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket"</div>
                     </div>
                 </div>
             </div>
@@ -1005,59 +1155,83 @@
                         <div class="header-actions">☰</div>
                     </div>
                     <div class="phone-content">
-                        <!-- State 1: Action Completed -->
-                        <div class="state-view active" data-view="action-completed">
-                            <div class="success-toast">
-                                <div class="icon">✓</div>
-                                <div class="text">
-                                    <h4>Email sent successfully</h4>
-                                    <p>Your message has been delivered to Glean Inc.</p>
+                        <!-- State 1: Context Planning -->
+                        <div class="state-view active" data-view="context-planning">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">
+                                    帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket
+                                </div>
+                                <div class="bubble-time">15:12</div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton-header">
+                                    <div class="skeleton-icon"></div>
+                                    <div class="skeleton-title">
+                                        <div class="skeleton-line short"></div>
+                                    </div>
+                                </div>
+                                <div class="skeleton-body">
+                                    <div class="skeleton-line medium"></div>
+                                    <div class="skeleton-line"></div>
+                                    <div class="skeleton-line short"></div>
                                 </div>
                             </div>
-                            <div class="email-card">
-                                <div class="email-card-header">
-                                    <span class="sender-label">You</span>
-                                </div>
-                                <div class="email-card-body">
-                                    <div class="email-content">
-                                        Thank you for bringing the API integration performance issue to our attention. We understand that you're experiencing slow response times when processing large amounts of data. Our engineering team has been notified and will prioritize this issue.
-                                    </div>
-                                    <div class="email-assets">
-                                        📎 2 assets from this Work
-                                    </div>
-                                    <div class="email-recipient">
-                                        Send to <div class="recipient-logo">G</div> Glean Inc.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="success-status">
-                                ✓ Email sent successfully
+                            <div class="processing-status">
+                                <div class="spinner"></div>
+                                分析任务上下文，规划执行步骤...
                             </div>
                         </div>
 
-                        <!-- State 2: Show Suggest Card -->
+                        <!-- State 2: Tool Check -->
+                        <div class="state-view" data-view="tool-check">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">
+                                    帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket
+                                </div>
+                                <div class="bubble-time">15:12</div>
+                            </div>
+                            <div class="tool-call-card">
+                                <div class="tool-call-header">
+                                    <span class="icon">🔧</span>
+                                    <span>Tool Call Planning</span>
+                                </div>
+                                <div class="tool-call-body">
+                                    <div class="tool-item">
+                                        <div class="tool-icon check">✓</div>
+                                        <div class="tool-info">
+                                            <div class="tool-name">Memory Context</div>
+                                            <div class="tool-status">已读取客户反馈邮件上下文</div>
+                                        </div>
+                                        <span class="tool-badge connected">Ready</span>
+                                    </div>
+                                    <div class="tool-item">
+                                        <div class="tool-icon warning">!</div>
+                                        <div class="tool-info">
+                                            <div class="tool-name">Jira: Create Issue</div>
+                                            <div class="tool-status">需要连接 Jira 才能创建 Ticket</div>
+                                        </div>
+                                        <span class="tool-badge not-connected">未连接</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="processing-status">
+                                <div class="spinner"></div>
+                                检测到 Jira 未连接，准备引导授权...
+                            </div>
+                        </div>
+
+                        <!-- State 3: Show Suggest Card -->
                         <div class="state-view" data-view="show-suggest">
-                            <div class="email-card" style="margin-bottom: 8px;">
-                                <div class="email-card-header">
-                                    <span class="sender-label">You</span>
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">
+                                    帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket
                                 </div>
-                                <div class="email-card-body">
-                                    <div class="email-content" style="font-size: 0.75rem;">
-                                        Thank you for bringing the API integration performance issue to our attention. We understand that you're experiencing slow response times when processing large amounts of data. Our engineering team has been notified and will prioritize this issue.
-                                    </div>
-                                    <div class="email-assets">
-                                        📎 2 assets from this Work
-                                    </div>
-                                    <div class="email-recipient">
-                                        Send to <div class="recipient-logo">G</div> Glean Inc.
-                                    </div>
+                                <div class="bubble-time">15:12</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">
+                                    我理解你想创建一个 Bug Ticket。不过你还没有连接 Jira，连接后我就能帮你自动创建 Ticket 了。
                                 </div>
-                            </div>
-                            <div class="success-status">
-                                ✓ Email sent successfully
-                            </div>
-                            <div class="ai-suggestion-bubble">
-                                <p>为了更好地管理客户的 bug 和反馈，您可以利用连接 JIRA 来进行团队协作。</p>
                             </div>
                             <div class="suggest-link-label">
                                 <span class="sparkle">✨</span> Suggest link for more context
@@ -1088,7 +1262,7 @@
                             </div>
                         </div>
 
-                        <!-- State 3: OAuth Flow -->
+                        <!-- State 4: OAuth Flow -->
                         <div class="state-view" data-view="oauth-flow">
                             <div class="oauth-overlay">
                                 <div class="oauth-header">
@@ -1133,26 +1307,18 @@
                             </div>
                         </div>
 
-                        <!-- State 4: Connecting -->
+                        <!-- State 5: Connecting -->
                         <div class="state-view" data-view="connecting">
-                            <div class="email-card" style="margin-bottom: 8px;">
-                                <div class="email-card-header">
-                                    <span class="sender-label">You</span>
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">
+                                    帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket
                                 </div>
-                                <div class="email-card-body">
-                                    <div class="email-content" style="font-size: 0.75rem;">
-                                        Thank you for bringing the API integration performance issue to our attention...
-                                    </div>
-                                    <div class="email-recipient">
-                                        Send to <div class="recipient-logo">G</div> Glean Inc.
-                                    </div>
+                                <div class="bubble-time">15:12</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">
+                                    正在连接 Jira，请稍候...
                                 </div>
-                            </div>
-                            <div class="success-status">
-                                ✓ Email sent successfully
-                            </div>
-                            <div class="ai-suggestion-bubble">
-                                <p>正在连接 Jira，请稍候...</p>
                             </div>
                             <div class="suggest-link-label">
                                 <span class="sparkle">✨</span> Suggest link for more context
@@ -1175,29 +1341,18 @@
                             </div>
                         </div>
 
-                        <!-- State 5: Connected -->
+                        <!-- State 6: Connected -->
                         <div class="state-view" data-view="connected">
-                            <div class="email-card" style="margin-bottom: 8px;">
-                                <div class="email-card-header">
-                                    <span class="sender-label">You</span>
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">
+                                    帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket
                                 </div>
-                                <div class="email-card-body">
-                                    <div class="email-content" style="font-size: 0.75rem;">
-                                        Thank you for bringing the API integration performance issue to our attention...
-                                    </div>
-                                    <div class="email-recipient">
-                                        Send to <div class="recipient-logo">G</div> Glean Inc.
-                                    </div>
+                                <div class="bubble-time">15:12</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">
+                                    Jira 连接成功！正在根据上下文生成 Bug Ticket...
                                 </div>
-                            </div>
-                            <div class="success-status">
-                                ✓ Email sent successfully
-                            </div>
-                            <div class="ai-suggestion-bubble">
-                                <p>Jira 连接成功！正在分析你的任务上下文...</p>
-                            </div>
-                            <div class="suggest-link-label">
-                                <span class="sparkle">✨</span> Suggest link for more context
                             </div>
                             <div class="suggest-link-card">
                                 <div class="suggest-link-header">
@@ -1216,75 +1371,134 @@
                             </div>
                             <div class="processing-status">
                                 <div class="spinner"></div>
-                                正在分析上下文，准备创建 Bug Ticket...
+                                正在生成 Bug Ticket...
                             </div>
                         </div>
 
-                        <!-- State 6: Continue Action -->
-                        <div class="state-view" data-view="continue-action">
-                            <div class="email-card" style="margin-bottom: 8px;">
-                                <div class="email-card-header">
-                                    <span class="sender-label">You</span>
+                        <!-- State 7: Action Card (Same as Type A) -->
+                        <div class="state-view" data-view="action-card">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">
+                                    帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket
                                 </div>
-                                <div class="email-card-body">
-                                    <div class="email-content" style="font-size: 0.75rem;">
-                                        Thank you for bringing the API integration performance issue...
-                                    </div>
-                                    <div class="email-recipient">
-                                        Send to <div class="recipient-logo">G</div> Glean Inc.
-                                    </div>
+                                <div class="bubble-time">15:12</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">
+                                    已根据客户反馈生成 Bug Ticket，请确认信息：
                                 </div>
                             </div>
-                            <div class="success-status">
-                                ✓ Email sent successfully
-                            </div>
-                            <div class="ai-response-card">
-                                <div class="ai-response-header">
-                                    <span class="icon">✓</span>
-                                    <span>Tanka AI</span>
+                            <div class="action-card">
+                                <div class="card-header">
+                                    <div class="app-icon jira">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px; fill: white;">
+                                            <path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.005 1.005 0 0 0 23.013 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="card-header-text">
+                                        <h4>Create Jira Issue</h4>
+                                    </div>
+                                    <span class="status-badge drafting">Drafting</span>
                                 </div>
-                                <div class="ai-response-body">
-                                    <p>已成功连接 Jira！基于邮件内容，我已为你创建了一个 Bug Ticket：</p>
-                                    <div class="jira-ticket-preview">
-                                        <div class="jira-ticket-header">
-                                            <div class="jira-icon">
-                                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.005 1.005 0 0 0 23.013 0z"/>
-                                                </svg>
-                                            </div>
-                                            <span>Bug Ticket Created</span>
+                                <div class="card-body">
+                                    <div class="action-type">Bug Ticket</div>
+                                    <div class="action-object">API Performance Issue</div>
+                                    <div class="field-row">
+                                        <div class="field-label">Summary</div>
+                                        <div class="field-value">API Performance Issue - Slow response for large data processing</div>
+                                    </div>
+                                    <div class="field-row">
+                                        <div class="field-label">Project</div>
+                                        <div class="field-value dropdown">
+                                            <span>Engineering (ENG)</span>
+                                            <span>▼</span>
                                         </div>
-                                        <div class="jira-ticket-title">API Performance Issue - Slow response for large data processing</div>
-                                        <div class="jira-ticket-id">ENG-1234 · Priority: High · Assignee: Engineering Team</div>
                                     </div>
-                                    <p style="margin-top: 12px; font-size: 0.75rem; color: var(--gray-500);">需要我修改 Ticket 详情或添加更多信息吗？</p>
+                                    <div class="field-row">
+                                        <div class="field-label">Priority</div>
+                                        <div class="field-value dropdown">
+                                            <span class="priority-badge">
+                                                <span class="dot high"></span>
+                                                High
+                                            </span>
+                                            <span>▼</span>
+                                        </div>
+                                    </div>
+                                    <div class="field-row">
+                                        <div class="field-label">Assignee</div>
+                                        <div class="field-value dropdown">
+                                            <span>Engineering Team</span>
+                                            <span>▼</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn-edit">Edit</button>
+                                    <button class="btn-confirm" onclick="switchState('fulfilled')">Create Issue</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- State 7: Dismissed -->
+                        <!-- State 8: Fulfilled -->
+                        <div class="state-view" data-view="fulfilled">
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">
+                                    帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket
+                                </div>
+                                <div class="bubble-time">15:12</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">
+                                    Bug Ticket 已创建成功！
+                                </div>
+                            </div>
+                            <div class="action-card">
+                                <div class="card-header success-header">
+                                    <div class="app-icon jira">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px; fill: white;">
+                                            <path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.005 1.005 0 0 0 23.013 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="card-header-text">
+                                        <h4>Issue Created</h4>
+                                    </div>
+                                    <span class="status-badge success">✓ Created</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="action-type">Bug Ticket · ENG-1234</div>
+                                    <div class="action-object">API Performance Issue - Slow response for large data processing</div>
+                                    <div class="field-row">
+                                        <div class="field-label">Project</div>
+                                        <div class="field-value" style="background: var(--gray-50); border: none;">Engineering (ENG)</div>
+                                    </div>
+                                    <div class="field-row">
+                                        <div class="field-label">Priority</div>
+                                        <div class="field-value" style="background: var(--gray-50); border: none;">
+                                            <span class="priority-badge">
+                                                <span class="dot high"></span>
+                                                High
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="success-info">
+                                        ✓ Created just now · <a href="#" style="color: var(--jira); text-decoration: none;">View in Jira →</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- State 9: Dismissed -->
                         <div class="state-view" data-view="dismissed">
-                            <div class="email-card" style="margin-bottom: 8px;">
-                                <div class="email-card-header">
-                                    <span class="sender-label">You</span>
+                            <div class="chat-bubble user">
+                                <div class="bubble-content">
+                                    帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket
                                 </div>
-                                <div class="email-card-body">
-                                    <div class="email-content" style="font-size: 0.75rem;">
-                                        Thank you for bringing the API integration performance issue to our attention. We understand that you're experiencing slow response times when processing large amounts of data. Our engineering team has been notified and will prioritize this issue.
-                                    </div>
-                                    <div class="email-assets">
-                                        📎 2 assets from this Work
-                                    </div>
-                                    <div class="email-recipient">
-                                        Send to <div class="recipient-logo">G</div> Glean Inc.
-                                    </div>
+                                <div class="bubble-time">15:12</div>
+                            </div>
+                            <div class="chat-bubble ai">
+                                <div class="bubble-content">
+                                    我理解你想创建一个 Bug Ticket，但由于 Jira 未连接，我暂时无法帮你创建。你可以稍后在设置中连接 Jira，然后再次尝试。
                                 </div>
-                            </div>
-                            <div class="success-status">
-                                ✓ Email sent successfully
-                            </div>
-                            <div class="ai-suggestion-bubble">
-                                <p>邮件已成功发送。如果你之后需要连接 Jira 来跟踪 Bug，可以在设置中进行连接。</p>
                             </div>
                             <div class="dismissed-notice">
                                 建议连接已关闭
@@ -1303,27 +1517,42 @@
 
     <script>
         const stateInfo = {
-            'action-completed': {
-                title: 'Action Completed - 操作完成',
+            'context-planning': {
+                title: 'Context Planning - 上下文规划',
                 content: `
-                    <p>用户完成了一个 Action（如发送邮件），系统检测到可以通过连接其他服务来增强后续能力。</p>
+                    <p>用户输入指令后，AI 开始分析上下文并规划需要调用的 Tools。</p>
                     <ul class="info-list">
-                        <li><strong>触发条件：</strong>Action 执行成功后</li>
-                        <li><strong>场景示例：</strong>发送客户反馈邮件后，建议连接 Jira 创建 Bug Ticket</li>
-                        <li><strong>UI 状态：</strong>显示成功 Toast 和已发送邮件卡片</li>
+                        <li><strong>触发条件：</strong>用户输入任务指令</li>
+                        <li><strong>AI 行为：</strong>解析意图、查询 Tool Dictionary</li>
+                        <li><strong>UI 状态：</strong>显示 Skeleton Card 和 "Thinking..." 提示</li>
                     </ul>
                     <div class="trigger-box">
-                        <div class="trigger-label">当前触发</div>
-                        <div class="trigger-value">Email sent → Suggest connect Jira for bug tracking</div>
+                        <div class="trigger-label">用户指令</div>
+                        <div class="trigger-value">"帮我把客户反馈的 API 性能问题创建一个 Jira Bug Ticket"</div>
+                    </div>
+                `
+            },
+            'tool-check': {
+                title: 'Tool Check - 检查 Tool 连接状态',
+                content: `
+                    <p>AI 确定需要调用的 Tools，并检查各 Tool 的连接状态。</p>
+                    <ul class="info-list">
+                        <li><strong>已连接：</strong>Memory Context（用于读取邮件上下文）</li>
+                        <li><strong>未连接：</strong>Jira: Create Issue</li>
+                        <li><strong>下一步：</strong>引导用户连接未授权的 Tool</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">Tool Check 结果</div>
+                        <div class="trigger-value">Jira tool required but not connected</div>
                     </div>
                 `
             },
             'show-suggest': {
                 title: 'Show Suggest Card - 显示建议连接卡片',
                 content: `
-                    <p>显示 AI 建议气泡和 Suggest Link Card，引导用户连接相关服务。</p>
+                    <p>显示 AI 建议气泡和 Suggest Link Card，引导用户连接 Jira。</p>
                     <ul class="info-list">
-                        <li><strong>AI 建议：</strong>解释为什么建议连接该服务</li>
+                        <li><strong>AI 建议：</strong>解释为什么需要连接该服务</li>
                         <li><strong>Card 内容：</strong>App Logo + 标题 + 描述 + Why 原因</li>
                         <li><strong>操作按钮：</strong>[Learn more] / [Connect]</li>
                         <li><strong>关闭按钮：</strong>用户可以 dismiss 建议</li>
@@ -1368,30 +1597,45 @@
             'connected': {
                 title: 'Connected - 连接成功',
                 content: `
-                    <p>服务连接成功，系统准备继续执行后续任务。</p>
+                    <p>服务连接成功，系统准备继续执行原任务。</p>
                     <ul class="info-list">
                         <li><strong>UI 状态：</strong>显示绿色成功 Badge</li>
-                        <li><strong>AI 提示：</strong>告知连接成功，正在分析上下文</li>
-                        <li><strong>自动触发：</strong>Re-process 原始任务上下文</li>
+                        <li><strong>AI 提示：</strong>告知连接成功，正在生成内容</li>
+                        <li><strong>自动触发：</strong>Re-process 原始任务，调用 Jira API</li>
                     </ul>
                     <div class="trigger-box">
                         <div class="trigger-label">下一步</div>
-                        <div class="trigger-value">Auto re-process with new capability</div>
+                        <div class="trigger-value">Resume original task with new capability</div>
                     </div>
                 `
             },
-            'continue-action': {
-                title: 'Continue Action - 继续执行',
+            'action-card': {
+                title: 'Action Card - 状态变更卡片',
                 content: `
-                    <p>连接成功后，AI 利用新能力继续执行任务。</p>
+                    <p>连接成功后，显示和 Type A 一样的 State Mutation Card。</p>
                     <ul class="info-list">
-                        <li><strong>场景示例：</strong>自动创建 Jira Bug Ticket</li>
-                        <li><strong>展示内容：</strong>已创建的 Ticket 预览</li>
-                        <li><strong>用户选项：</strong>可以修改或添加更多信息</li>
+                        <li><strong>卡片样式：</strong>与 Type A State Mutation Card 完全一致</li>
+                        <li><strong>字段编辑：</strong>Summary / Project / Priority / Assignee</li>
+                        <li><strong>操作按钮：</strong>[Edit] / [Create Issue]</li>
                     </ul>
                     <div class="trigger-box">
-                        <div class="trigger-label">链式反应完成</div>
-                        <div class="trigger-value">Email sent → Jira connected → Ticket created</div>
+                        <div class="trigger-label">设计要点</div>
+                        <div class="trigger-value">复用 Type A 的 Drafting 状态 UI</div>
+                    </div>
+                `
+            },
+            'fulfilled': {
+                title: 'Fulfilled - 创建成功',
+                content: `
+                    <p>API 返回成功，Jira Issue 已创建。</p>
+                    <ul class="info-list">
+                        <li><strong>UI 状态：</strong>Header 变绿，显示成功 Badge</li>
+                        <li><strong>Issue ID：</strong>显示新创建的 ENG-1234</li>
+                        <li><strong>操作链接：</strong>View in Jira</li>
+                    </ul>
+                    <div class="trigger-box">
+                        <div class="trigger-label">完整链路</div>
+                        <div class="trigger-value">Planning → Tool Check → Connect → Action → Fulfilled</div>
                     </div>
                 `
             },
@@ -1401,7 +1645,7 @@
                     <p>用户点击关闭按钮，dismiss 了建议连接。</p>
                     <ul class="info-list">
                         <li><strong>UI 状态：</strong>Suggest Card 消失，显示关闭提示</li>
-                        <li><strong>AI 回应：</strong>提示用户可以稍后在设置中连接</li>
+                        <li><strong>AI 回应：</strong>解释无法完成任务，提示可以稍后连接</li>
                         <li><strong>记录状态：</strong>不再对该消息重复推荐</li>
                     </ul>
                     <div class="trigger-box">

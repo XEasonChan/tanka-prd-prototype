@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanka Link - Tools Directory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-frame {
+            width: 390px;
+            height: 740px;
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            overflow: hidden;
+            background: var(--white);
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notch {
+            width: 80px;
+            height: 24px;
+            background: #1a1a1a;
+            border-radius: 12px;
+        }
+
+        .phone-body {
+            height: calc(100% - 44px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Views */
+        .view { display: none; flex-direction: column; height: 100%; }
+        .view.active { display: flex; }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 8px 20px 4px;
+            flex-shrink: 0;
+        }
+
+        .header-back {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0;
+            color: #333;
+            line-height: 1;
+        }
+
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 17px;
+            color: var(--gray-900);
+        }
+
+        .header-action {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            align-items: center;
+            padding: 8px 0 0;
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .tabs-scroll {
+            display: flex;
+            overflow-x: auto;
+            flex: 1;
+            padding: 0 16px;
+            gap: 0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .tabs-scroll::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 8px 14px 12px;
+            font-size: 13px;
+            font-weight: 400;
+            color: #888;
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-all {
+            background: none;
+            border: none;
+            padding: 8px 16px 12px 8px;
+            font-size: 14px;
+            cursor: pointer;
+            color: var(--primary);
+            font-weight: 500;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            font-family: inherit;
+        }
+
+        /* Tool Grid */
+        .tool-grid-wrap {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-grid-container {
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px 16px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .tool-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .tool-icon-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: #f5f5f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tool-icon-wrap img {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+
+        .tool-icon-wrap .fallback-letter {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            display: none;
+        }
+
+        .tool-icon-wrap.fallback {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .tool-icon-wrap.fallback img { display: none; }
+        .tool-icon-wrap.fallback .fallback-letter { display: flex; }
+
+        .tool-name {
+            font-size: 11px;
+            color: #333;
+            text-align: center;
+            line-height: 1.2;
+            max-width: 72px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* Next Category Indicator — overscroll overlay */
+        .next-cat-zone {
+            position: absolute;
+            bottom: 16px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            opacity: 0;
+            transform: translateY(6px) scale(0.85);
+            transition: opacity 0.15s, transform 0.15s;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .next-cat-zone.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .next-cat-ring {
+            width: 30px;
+            height: 30px;
+            transform: rotate(-90deg);
+            margin-bottom: 4px;
+        }
+
+        .next-cat-ring .ring-bg {
+            fill: none;
+            stroke: var(--gray-200);
+            stroke-width: 2.5;
+        }
+
+        .next-cat-ring .ring-fill {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-dasharray: 94.25;
+            stroke-dashoffset: 94.25;
+        }
+
+        .next-cat-label {
+            font-size: 11px;
+            color: var(--gray-400);
+            font-weight: 500;
+            white-space: nowrap;
+            transition: color 0.15s;
+        }
+
+        .next-cat-zone.complete .next-cat-label {
+            color: var(--primary);
+        }
+
+        /* Search View */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            gap: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #e5e5e5;
+            background: #f7f7f7;
+            font-size: 15px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary);
+            background: var(--white);
+        }
+
+        .search-bar .clear-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .search-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .search-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .search-item:hover { background: #fafafa; }
+
+        .search-item-icon {
+            margin-right: 14px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .search-item-icon img {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+
+        .search-item-icon .fallback-letter {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--white);
+            display: none;
+        }
+
+        .search-item-icon.fallback {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .search-item-icon.fallback img { display: none; }
+        .search-item-icon.fallback .fallback-letter { display: flex; }
+
+        .search-item-name {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .search-item-arrow { color: #ccc; font-size: 18px; }
+
+        /* Detail View */
+        .detail-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .detail-body {
+            flex: 1;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .detail-icon-wrap {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .detail-icon-wrap img {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+
+        .detail-icon-wrap .fallback-letter {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--white);
+            display: none;
+        }
+
+        .detail-icon-wrap.fallback {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .detail-icon-wrap.fallback img { display: none; }
+        .detail-icon-wrap.fallback .fallback-letter { display: flex; }
+
+        .detail-name {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        .detail-status {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .detail-desc {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            text-align: center;
+            max-width: 320px;
+        }
+
+        .detail-footer {
+            padding: 16px 24px 32px;
+            flex-shrink: 0;
+        }
+
+        .detail-footer .link-btn {
+            width: 100%;
+            padding: 14px 0;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .detail-footer .link-btn:hover {
+            background: #333;
+        }
+
+        .detail-terms {
+            text-align: center;
+            padding-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        .detail-terms span {
+            font-size: 11px;
+            color: #bbb;
+        }
+
+        .detail-terms a {
+            color: #999;
+            text-decoration: none;
+        }
+
+        /* All Categories View */
+        .cat-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .cat-label {
+            padding: 16px 20px 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #999;
+            flex-shrink: 0;
+        }
+
+        .cat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 12px;
+        }
+
+        .cat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 12px;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .cat-item:hover { background: #fafafa; }
+
+        .cat-item-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .cat-item-arrow { color: #ccc; }
+
+        /* Info Panel (side by side on wide screens) */
+        .page-container {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .info-panel {
+            width: 360px;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+            display: none;
+        }
+
+        .info-panel h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+        }
+
+        .info-panel p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .logo-source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .logo-source-badge.svgl { background: #e8f4fd; color: #0096f8; }
+        .logo-source-badge.favicon { background: #fef3c7; color: #b45309; }
+        .logo-source-badge.fallback { background: #f3f4f6; color: #6b7280; }
+
+        @media (min-width: 900px) {
+            .info-panel { display: block; }
+        }
+
+        /* Scheme Switcher */
+        .scheme-switcher {
+            display: flex;
+            margin-bottom: 12px;
+            background: #f0f0f2;
+            border-radius: 10px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .scheme-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .scheme-btn.active {
+            background: white;
+            color: #111;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .scheme-btn strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .scheme-stats {
+            margin-bottom: 12px;
+            background: var(--white);
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid var(--gray-200);
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--gray-600);
+        }
+
+        .scheme-stats .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 0;
+        }
+
+        .scheme-stats .stat-label {
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .scheme-stats .stat-count {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 24px;
+            text-align: right;
+        }
+
+        .scheme-stats .stat-bar {
+            flex: 1;
+            height: 4px;
+            background: var(--gray-100);
+            border-radius: 2px;
+            margin: 0 8px;
+            overflow: hidden;
+        }
+
+        .scheme-stats .stat-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .scheme-stats h4 {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="info-panel" id="infoPanel">
+            <h3>Category Scheme Comparison</h3>
+            <p><strong>Background:</strong> As the tool directory grows to 100+ apps, category design becomes a key UX decision. Too many categories increase tab-switching effort; too few means each list is long and harder to scan.</p>
+            <p><strong>Scheme A — 5 Categories</strong></p>
+            <p>Fewer tabs, less switching. Users can browse without jumping between categories too often. Tradeoff: some lists (e.g. Productivity ~46, Sales & Marketing ~36) are long and require more scrolling.</p>
+            <p><strong>Scheme B — 11 Categories</strong></p>
+            <p>More granular groupings keep each list short and scannable (most have 4–17 items). Users can jump directly to a specific domain. Tradeoff: 11 tabs means more horizontal scrolling on the tab bar, and users need to know which category a tool belongs to.</p>
+            <p><strong>Core Tradeoff:</strong></p>
+            <p>Fewer categories = less tab navigation overhead, but longer scroll per category.<br>More categories = faster in-category lookup, but more cognitive load choosing the right tab.</p>
+        </div>
+
+        <div>
+            <div class="scheme-switcher">
+                <button class="scheme-btn active" id="schemeBtnA" onclick="switchScheme('A')">
+                    <strong>Scheme A</strong>5 Categories
+                </button>
+                <button class="scheme-btn" id="schemeBtnB" onclick="switchScheme('B')">
+                    <strong>Scheme B</strong>11 Categories
+                </button>
+            </div>
+            <div class="scheme-stats" id="schemeStats"></div>
+            <div class="phone-frame">
+                <div class="status-bar">
+                    <div class="notch"></div>
+                </div>
+                <div class="phone-body">
+                    <!-- MAIN VIEW -->
+                    <div class="view active" id="mainView">
+                        <div class="header">
+                            <button class="header-back">&lsaquo;</button>
+                            <span class="header-title">Tools</span>
+                            <button class="header-action" onclick="showSearch()">&#128269;</button>
+                        </div>
+                        <div class="tabs-container">
+                            <div class="tabs-scroll" id="tabsScroll"></div>
+                            <button class="tab-all" onclick="showAllCats()">All &#9662;</button>
+                        </div>
+                        <div class="tool-grid-wrap" id="toolGridWrap">
+                            <div class="tool-grid-container">
+                                <div class="tool-grid" id="toolGrid"></div>
+                                <div class="empty-state" id="emptyGrid" style="display:none;">No tools in this category</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEARCH VIEW -->
+                    <div class="view" id="searchView">
+                        <div class="search-bar">
+                            <button class="header-back" onclick="hideSearch()">&lsaquo;</button>
+                            <input type="text" id="searchInput" placeholder="Search" oninput="onSearch()">
+                            <button class="clear-btn" id="clearSearch" onclick="clearSearchInput()" style="display:none;">&times;</button>
+                        </div>
+                        <div class="search-list" id="searchList"></div>
+                    </div>
+
+                    <!-- DETAIL VIEW -->
+                    <div class="view" id="detailView">
+                        <div class="detail-header">
+                            <button class="header-back" onclick="hideDetail()">&lsaquo;</button>
+                            <span style="flex:1"></span>
+                            <button class="header-back" onclick="hideDetail()" style="font-size:18px;color:#999;">&times;</button>
+                        </div>
+                        <div class="detail-body">
+                            <div class="detail-icon-wrap" id="detailIcon">
+                                <img id="detailImg" src="" alt="">
+                                <span class="fallback-letter" id="detailLetter"></span>
+                            </div>
+                            <div class="detail-name" id="detailName"></div>
+                            <div class="detail-status">Unlinked</div>
+                            <p class="detail-desc" id="detailDesc"></p>
+                        </div>
+                        <div class="detail-footer">
+                            <button class="link-btn">Link</button>
+                        </div>
+                        <div class="detail-terms">
+                            <span>Learn more in the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</span>
+                        </div>
+                    </div>
+
+                    <!-- ALL CATEGORIES VIEW -->
+                    <div class="view" id="allCatsView">
+                        <div class="cat-header">
+                            <button class="header-back" onclick="hideAllCats()">&lsaquo;</button>
+                            <span class="header-title">Tools</span>
+                            <span style="width:22px;"></span>
+                        </div>
+                        <div class="cat-label">All Categories</div>
+                        <div class="cat-list" id="catList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ==================== DATA ====================
+    // Scheme A: 5 broad categories
+    const CATS_A = [
+        "Productivity",
+        "Customer & Growth",
+        "Finance & Ops",
+        "Data & Analytics",
+        "Content & Design",
+    ];
+
+    // Scheme B: 11 fine-grained categories (order per design spec, minus Featured)
+    const CATS_B = [
+        "Files & Docs",
+        "Email & Messengers",
+        "Calendars",
+        "Meeting & Voice",
+        "Project & Task",
+        "Customer & Growth",
+        "Finance & Revenue",
+        "HR & Recruiting",
+        "Data & Analytics",
+        "Design & Creative",
+        "AI Models",
+    ];
+
+    let currentScheme = 'A'; // 'A' or 'B'
+
+    const TOOLS = [
+        // Customer & Growth
+        { n: "Salesforce", c: "Customer & Growth", d: "salesforce.com", desc: "Leading CRM platform to manage your sales pipeline, customer relationships, and business growth all in one place." },
+        { n: "HubSpot", c: "Customer & Growth", d: "hubspot.com", desc: "All-in-one CRM, marketing, sales, and service platform to grow your business." },
+        { n: "Pipedrive", c: "Customer & Growth", d: "pipedrive.com", desc: "Sales-focused CRM designed to help small teams manage leads and deals efficiently." },
+        { n: "Zoho CRM", c: "Customer & Growth", d: "zoho.com", desc: "Comprehensive CRM with sales automation, analytics, and multichannel communication." },
+        { n: "Freshsales", c: "Customer & Growth", d: "freshworks.com", desc: "AI-powered CRM for sales teams with built-in phone, email, and chat." },
+        { n: "Close", c: "Customer & Growth", d: "close.com", desc: "CRM built for inside sales teams with calling, email, and SMS built in." },
+        { n: "Copper", c: "Customer & Growth", d: "copper.com", desc: "Google-recommended CRM that integrates natively with Google Workspace." },
+        { n: "Insightly", c: "Customer & Growth", d: "insightly.com", desc: "Modern CRM with project management capabilities for growing businesses." },
+        { n: "Attio", c: "Customer & Growth", d: "attio.com", desc: "Next-generation CRM built for the modern era with powerful data models." },
+        { n: "Apollo.io", c: "Customer & Growth", d: "apollo.io", desc: "Sales intelligence and engagement platform for prospecting and outreach." },
+        { n: "Gong", c: "Customer & Growth", d: "gong.io", desc: "Revenue intelligence platform that captures customer interactions for insights." },
+        { n: "Outreach", c: "Customer & Growth", d: "outreach.io", desc: "Sales execution platform to help teams create and close more pipeline." },
+        { n: "Salesloft", c: "Customer & Growth", d: "salesloft.com", desc: "Sales engagement platform for modern selling teams." },
+        { n: "Zendesk", c: "Customer & Growth", d: "zendesk.com", desc: "Customer service and engagement platform with ticketing and live chat." },
+        { n: "Freshdesk", c: "Customer & Growth", d: "freshdesk.com", desc: "Cloud-based customer support software with multi-channel capabilities." },
+        { n: "Intercom", c: "Customer & Growth", d: "intercom.com", desc: "Customer messaging platform for sales, marketing, and support." },
+        { n: "Front", c: "Customer & Growth", d: "front.com", desc: "Customer operations platform combining email with CRM functionality." },
+        { n: "Help Scout", c: "Customer & Growth", d: "helpscout.com", desc: "Customer service platform designed for growing businesses." },
+        { n: "Gainsight", c: "Customer & Growth", d: "gainsight.com", desc: "Customer success platform to reduce churn and drive growth." },
+        { n: "Klaviyo", c: "Customer & Growth", d: "klaviyo.com", desc: "Marketing automation platform for email and SMS marketing." },
+        { n: "Marketo", c: "Customer & Growth", d: "marketo.com", desc: "Enterprise marketing automation platform by Adobe." },
+        { n: "ActiveCampaign", c: "Customer & Growth", d: "activecampaign.com", desc: "Email marketing, automation, and CRM tools for businesses." },
+        { n: "Mailchimp", c: "Customer & Growth", d: "mailchimp.com", desc: "All-in-one marketing platform for email campaigns and audience management." },
+        { n: "SendGrid", c: "Customer & Growth", d: "sendgrid.com", desc: "Cloud-based email delivery and marketing service by Twilio." },
+        { n: "Brevo", c: "Customer & Growth", d: "brevo.com", desc: "Digital marketing platform formerly known as Sendinblue." },
+        { n: "Google Ads", c: "Customer & Growth", d: "ads.google.com", desc: "Online advertising platform by Google for search and display ads." },
+        { n: "Facebook Ads", c: "Customer & Growth", d: "facebook.com", desc: "Social media advertising platform for Facebook and Instagram." },
+        { n: "LinkedIn", c: "Customer & Growth", d: "linkedin.com", desc: "Professional networking platform for B2B sales and recruiting." },
+        { n: "ZoomInfo", c: "Customer & Growth", d: "zoominfo.com", desc: "B2B data platform for go-to-market intelligence." },
+        { n: "Dixa", c: "Customer & Growth", d: "dixa.com", desc: "Conversational customer service platform for seamless support." },
+        { n: "Pardot", c: "Customer & Growth", d: "pardot.com", desc: "B2B marketing automation by Salesforce for lead generation." },
+        { n: "Mailgun", c: "Customer & Growth", d: "mailgun.com", desc: "Email API service for sending, receiving, and tracking emails." },
+        { n: "Resend", c: "Customer & Growth", d: "resend.com", desc: "Modern email API built for developers." },
+        { n: "Emarsys", c: "Customer & Growth", d: "emarsys.com", desc: "Omnichannel customer engagement platform by SAP." },
+        { n: "Reddit", c: "Customer & Growth", d: "reddit.com", desc: "Community-driven platform for discussions and social engagement." },
+        { n: "Twitter Ads", c: "Customer & Growth", d: "ads.x.com", desc: "Social media advertising platform for X (formerly Twitter)." },
+
+        // Productivity
+        { n: "Slack", c: "Productivity", d: "slack.com", desc: "Team communication platform with channels, DMs, and app integrations." },
+        { n: "Gmail", c: "Productivity", d: "gmail.com", desc: "Google's email service. Connect to sync and manage your emails seamlessly." },
+        { n: "Outlook", c: "Productivity", d: "outlook.com", desc: "Microsoft's email and calendar service for personal and business use." },
+        { n: "WhatsApp", c: "Productivity", d: "whatsapp.com", desc: "Popular messaging app for text, voice, and video communication." },
+        { n: "Telegram", c: "Productivity", d: "telegram.org", desc: "Cloud-based messaging app with a focus on speed and security." },
+        { n: "Discord", c: "Productivity", d: "discord.com", desc: "Communication platform for communities with voice, video, and text." },
+        { n: "LINE Official", c: "Productivity", d: "line.me", desc: "Official LINE messaging platform for business communication." },
+        { n: "Google Calendar", c: "Productivity", d: "calendar.google.com", desc: "Google's calendar service for scheduling and time management." },
+        { n: "Outlook Calendar", c: "Productivity", d: "outlook.com", desc: "Microsoft's calendar and scheduling tool integrated with Outlook." },
+        { n: "Calendly", c: "Productivity", d: "calendly.com", desc: "Automated scheduling tool for setting up meetings with clients and partners." },
+        { n: "Cal.com", c: "Productivity", d: "cal.com", desc: "Open-source scheduling infrastructure for modern businesses." },
+        { n: "Zoom", c: "Productivity", d: "zoom.us", desc: "Video conferencing platform for meetings, webinars, and collaboration." },
+        { n: "Loom", c: "Content & Design", d: "loom.com", desc: "Async video messaging tool to record and share screen recordings." },
+        { n: "Fireflies", c: "Productivity", d: "fireflies.ai", desc: "AI meeting assistant that transcribes and summarizes your meetings." },
+        { n: "tl;dv", c: "Productivity", d: "tldv.io", desc: "Meeting recorder with AI summaries for Google Meet and Zoom." },
+        { n: "Otter.ai", c: "Productivity", d: "otter.ai", desc: "AI meeting assistant for real-time transcription and notes." },
+        { n: "Notion", c: "Productivity", d: "notion.so", desc: "All-in-one workspace for notes, docs, wikis, and project management." },
+        { n: "Google Drive", c: "Productivity", d: "drive.google.com", desc: "Cloud storage and file sharing service by Google." },
+        { n: "Google Docs", c: "Productivity", d: "docs.google.com", desc: "Online document editor for collaborative writing." },
+        { n: "Google Sheets", c: "Productivity", d: "sheets.google.com", desc: "Online spreadsheet application by Google." },
+        { n: "Google Slides", c: "Productivity", d: "slides.google.com", desc: "Online presentation tool by Google for creating slideshows." },
+        { n: "OneDrive", c: "Productivity", d: "onedrive.live.com", desc: "Microsoft's cloud storage service for files and documents." },
+        { n: "SharePoint", c: "Productivity", d: "sharepoint.com", desc: "Microsoft's collaboration platform for document management and intranets." },
+        { n: "Dropbox", c: "Productivity", d: "dropbox.com", desc: "Cloud storage and file synchronization service." },
+        { n: "Box", c: "Productivity", d: "box.com", desc: "Cloud content management platform for secure file sharing." },
+        { n: "Confluence", c: "Productivity", d: "atlassian.com", desc: "Team workspace by Atlassian for documentation and knowledge sharing." },
+        { n: "Coda", c: "Productivity", d: "coda.io", desc: "All-in-one doc that combines documents, spreadsheets, and apps." },
+        { n: "Microsoft 365", c: "Productivity", d: "microsoft.com", desc: "Microsoft's suite of productivity tools including Office apps." },
+        { n: "DocuSign", c: "Productivity", d: "docusign.com", desc: "Electronic signature platform for digital document signing." },
+        { n: "PandaDoc", c: "Productivity", d: "pandadoc.com", desc: "Document automation software for proposals, contracts, and e-signatures." },
+        { n: "Typeform", c: "Content & Design", d: "typeform.com", desc: "Online form builder for surveys, quizzes, and interactive content." },
+        { n: "Jotform", c: "Content & Design", d: "jotform.com", desc: "Online form builder for creating forms and collecting data." },
+        { n: "Asana", c: "Productivity", d: "asana.com", desc: "Work management platform for teams to organize and track projects." },
+        { n: "Monday.com", c: "Productivity", d: "monday.com", desc: "Work OS platform for managing projects, workflows, and team collaboration." },
+        { n: "ClickUp", c: "Productivity", d: "clickup.com", desc: "All-in-one productivity platform for tasks, docs, and goals." },
+        { n: "Trello", c: "Productivity", d: "trello.com", desc: "Visual project management tool using boards, lists, and cards." },
+        { n: "Jira", c: "Productivity", d: "atlassian.com", desc: "Issue and project tracking tool by Atlassian for software teams." },
+        { n: "Linear", c: "Productivity", d: "linear.app", desc: "Modern project management tool built for software development teams." },
+        { n: "GitHub", c: "Productivity", d: "github.com", desc: "Code hosting platform for version control and collaboration." },
+        { n: "GitLab", c: "Productivity", d: "gitlab.com", desc: "DevOps platform for the complete software development lifecycle." },
+        { n: "Wrike", c: "Productivity", d: "wrike.com", desc: "Collaborative work management platform for teams of all sizes." },
+        { n: "Basecamp", c: "Productivity", d: "basecamp.com", desc: "Project management and team communication tool." },
+        { n: "Todoist", c: "Productivity", d: "todoist.com", desc: "Task management app for organizing work and life." },
+        { n: "Hive", c: "Productivity", d: "hive.com", desc: "Project management platform for teams to plan and track work." },
+        { n: "Shortcut", c: "Productivity", d: "shortcut.com", desc: "Project management tool designed for software development teams." },
+        { n: "Productboard", c: "Productivity", d: "productboard.com", desc: "Product management platform to understand customer needs." },
+        { n: "Miro", c: "Productivity", d: "miro.com", desc: "Online collaborative whiteboard for visual project planning." },
+        { n: "Tita", c: "Productivity", d: "tita.com", desc: "OKR and project management platform for goal-driven teams." },
+        { n: "Quip", c: "Productivity", d: "quip.com", desc: "Collaborative productivity platform by Salesforce." },
+
+        // Finance & Ops
+        { n: "QuickBooks", c: "Finance & Ops", d: "quickbooks.intuit.com", desc: "Accounting software for small businesses to manage finances." },
+        { n: "Xero", c: "Finance & Ops", d: "xero.com", desc: "Cloud-based accounting platform for small and medium businesses." },
+        { n: "NetSuite", c: "Finance & Ops", d: "netsuite.com", desc: "Cloud ERP platform by Oracle for financials and operations." },
+        { n: "Sage Intacct", c: "Finance & Ops", d: "sageintacct.com", desc: "Cloud financial management software for growing businesses." },
+        { n: "FreshBooks", c: "Finance & Ops", d: "freshbooks.com", desc: "Invoicing and accounting software for freelancers and small businesses." },
+        { n: "Stripe", c: "Finance & Ops", d: "stripe.com", desc: "Payment processing platform for internet businesses." },
+        { n: "PayPal Business", c: "Finance & Ops", d: "paypal.com", desc: "Online payment system for businesses to send and receive payments." },
+        { n: "RevenueCat", c: "Finance & Ops", d: "revenuecat.com", desc: "Subscription management platform for mobile apps." },
+        { n: "Tremendous", c: "Finance & Ops", d: "tremendous.com", desc: "Platform for sending digital rewards, incentives, and payouts." },
+        { n: "Workday", c: "Finance & Ops", d: "workday.com", desc: "Enterprise cloud platform for finance, HR, and planning." },
+        { n: "BambooHR", c: "Finance & Ops", d: "bamboohr.com", desc: "HR software for small and medium businesses." },
+        { n: "Gusto", c: "Finance & Ops", d: "gusto.com", desc: "Payroll, benefits, and HR platform for modern businesses." },
+        { n: "Rippling", c: "Finance & Ops", d: "rippling.com", desc: "Unified workforce platform for HR, IT, and finance." },
+        { n: "Deel", c: "Finance & Ops", d: "deel.com", desc: "Global payroll and compliance platform for remote teams." },
+        { n: "Greenhouse", c: "Finance & Ops", d: "greenhouse.io", desc: "Hiring platform for structured recruiting and onboarding." },
+        { n: "Lever", c: "Finance & Ops", d: "lever.co", desc: "Talent acquisition suite for collaborative hiring." },
+        { n: "Ashby", c: "Finance & Ops", d: "ashbyhq.com", desc: "All-in-one recruiting platform with analytics." },
+        { n: "ServiceNow", c: "Finance & Ops", d: "servicenow.com", desc: "Digital workflow platform for enterprise service management." },
+
+        // Data & Analytics
+        { n: "Amplitude", c: "Data & Analytics", d: "amplitude.com", desc: "Product analytics platform for understanding user behavior." },
+        { n: "Segment", c: "Data & Analytics", d: "segment.com", desc: "Customer data platform to collect, clean, and control data." },
+        { n: "Snowflake", c: "Data & Analytics", d: "snowflake.com", desc: "Cloud data platform for data warehousing and analytics." },
+        { n: "Tableau", c: "Data & Analytics", d: "tableau.com", desc: "Business intelligence and data visualization platform." },
+        { n: "Metabase", c: "Data & Analytics", d: "metabase.com", desc: "Open-source business intelligence tool for data visualization." },
+        { n: "PostHog", c: "Data & Analytics", d: "posthog.com", desc: "Open-source product analytics platform with feature flags." },
+        { n: "Heap", c: "Data & Analytics", d: "heap.io", desc: "Digital insights platform that auto-captures user interactions." },
+        { n: "Google Analytics", c: "Data & Analytics", d: "analytics.google.com", desc: "Web analytics service to track and report website traffic." },
+        { n: "Airtable", c: "Data & Analytics", d: "airtable.com", desc: "Low-code platform for building collaborative databases and apps." },
+        { n: "Polygon", c: "Data & Analytics", d: "polygon.io", desc: "Financial data platform for real-time market data." },
+        { n: "Statsig", c: "Data & Analytics", d: "statsig.com", desc: "Feature management and experimentation platform." },
+        { n: "Explorium", c: "Data & Analytics", d: "explorium.ai", desc: "External data platform for enriching analytics and ML models." },
+        { n: "Similarweb", c: "Data & Analytics", d: "similarweb.com", desc: "Digital intelligence platform for market and competitive analysis." },
+        { n: "Google Search Console", c: "Data & Analytics", d: "search.google.com", desc: "Google tool to monitor and troubleshoot site search performance." },
+        { n: "Milvus", c: "Data & Analytics", d: "milvus.io", desc: "Open-source vector database for AI-powered similarity search." },
+        { n: "Ahrefs", c: "Data & Analytics", d: "ahrefs.com", desc: "SEO toolset for backlink analysis, keyword research, and auditing." },
+        { n: "Optimizely", c: "Data & Analytics", d: "optimizely.com", desc: "Digital experience platform for A/B testing and personalization." },
+        { n: "Contentful", c: "Content & Design", d: "contentful.com", desc: "Headless CMS for managing structured content across platforms." },
+        { n: "DeepSeek", c: "Data & Analytics", d: "deepseek.com", desc: "AI large language model for advanced reasoning and code generation." },
+
+        // Content & Design
+        { n: "Figma", c: "Content & Design", d: "figma.com", desc: "Collaborative interface design tool for teams." },
+        { n: "Canva", c: "Content & Design", d: "canva.com", desc: "Online design platform for creating visual content easily." },
+        { n: "Webflow", c: "Content & Design", d: "webflow.com", desc: "Visual web development platform for building responsive websites." },
+        { n: "WordPress", c: "Content & Design", d: "wordpress.com", desc: "Open-source content management system for building websites." },
+        { n: "Wix", c: "Content & Design", d: "wix.com", desc: "Website builder platform for creating professional websites." },
+        { n: "HeyGen", c: "Content & Design", d: "heygen.com", desc: "AI video generation platform for creating engaging videos." },
+        { n: "InVideo", c: "Content & Design", d: "invideo.io", desc: "Online video editor for creating professional videos quickly." },
+    ];
+
+    // ==================== SCHEME B CATEGORY MAP ====================
+    // Maps tool name -> 11-category assignment
+    const CAT_B_MAP = {
+        // Customer & Growth (CRM, Support, Marketing, Ads)
+        "Salesforce": "Customer & Growth",
+        "HubSpot": "Customer & Growth",
+        "Pipedrive": "Customer & Growth",
+        "Zoho CRM": "Customer & Growth",
+        "Freshsales": "Customer & Growth",
+        "Close": "Customer & Growth",
+        "Copper": "Customer & Growth",
+        "Insightly": "Customer & Growth",
+        "Attio": "Customer & Growth",
+        "Apollo.io": "Customer & Growth",
+        "Gong": "Customer & Growth",
+        "Outreach": "Customer & Growth",
+        "Salesloft": "Customer & Growth",
+        "Zendesk": "Customer & Growth",
+        "Freshdesk": "Customer & Growth",
+        "Intercom": "Customer & Growth",
+        "Front": "Customer & Growth",
+        "Help Scout": "Customer & Growth",
+        "Gainsight": "Customer & Growth",
+        "Dixa": "Customer & Growth",
+        "Klaviyo": "Customer & Growth",
+        "Marketo": "Customer & Growth",
+        "ActiveCampaign": "Customer & Growth",
+        "Pardot": "Customer & Growth",
+        "Mailchimp": "Customer & Growth",
+        "SendGrid": "Customer & Growth",
+        "Brevo": "Customer & Growth",
+        "Mailgun": "Customer & Growth",
+        "Resend": "Customer & Growth",
+        "Emarsys": "Customer & Growth",
+        "Google Ads": "Customer & Growth",
+        "Facebook Ads": "Customer & Growth",
+        "Twitter Ads": "Customer & Growth",
+        "LinkedIn": "Customer & Growth",
+        "Reddit": "Customer & Growth",
+        "ZoomInfo": "Customer & Growth",
+        "ServiceNow": "Customer & Growth",
+        // Emails & Messengers
+        "Gmail": "Email & Messengers",
+        "Outlook": "Email & Messengers",
+        "Slack": "Email & Messengers",
+        "WhatsApp": "Email & Messengers",
+        "Telegram": "Email & Messengers",
+        "Discord": "Email & Messengers",
+        "LINE Official": "Email & Messengers",
+        // Calendars
+        "Google Calendar": "Calendars",
+        "Outlook Calendar": "Calendars",
+        "Calendly": "Calendars",
+        "Cal.com": "Calendars",
+        // Meeting & Voice
+        "Zoom": "Meeting & Voice",
+        "Loom": "Meeting & Voice",
+        "Fireflies": "Meeting & Voice",
+        "tl;dv": "Meeting & Voice",
+        "Otter.ai": "Meeting & Voice",
+        // Project & Task
+        "Asana": "Project & Task",
+        "Monday.com": "Project & Task",
+        "ClickUp": "Project & Task",
+        "Trello": "Project & Task",
+        "Jira": "Project & Task",
+        "Linear": "Project & Task",
+        "GitHub": "Project & Task",
+        "GitLab": "Project & Task",
+        "Wrike": "Project & Task",
+        "Basecamp": "Project & Task",
+        "Todoist": "Project & Task",
+        "Hive": "Project & Task",
+        "Shortcut": "Project & Task",
+        "Productboard": "Project & Task",
+        "Miro": "Project & Task",
+        "Tita": "Project & Task",
+        "Jotform": "Project & Task",
+        // Files & Docs
+        "Notion": "Files & Docs",
+        "Google Drive": "Files & Docs",
+        "Google Docs": "Files & Docs",
+        "Google Sheets": "Files & Docs",
+        "Google Slides": "Files & Docs",
+        "OneDrive": "Files & Docs",
+        "SharePoint": "Files & Docs",
+        "Dropbox": "Files & Docs",
+        "Box": "Files & Docs",
+        "Confluence": "Files & Docs",
+        "Coda": "Files & Docs",
+        "Quip": "Files & Docs",
+        "Microsoft 365": "Files & Docs",
+        "DocuSign": "Files & Docs",
+        "PandaDoc": "Files & Docs",
+        "Typeform": "Files & Docs",
+        "Contentful": "Files & Docs",
+        // Finance & Revenue
+        "QuickBooks": "Finance & Revenue",
+        "Xero": "Finance & Revenue",
+        "NetSuite": "Finance & Revenue",
+        "Sage Intacct": "Finance & Revenue",
+        "FreshBooks": "Finance & Revenue",
+        "Stripe": "Finance & Revenue",
+        "PayPal Business": "Finance & Revenue",
+        "RevenueCat": "Finance & Revenue",
+        "Tremendous": "Finance & Revenue",
+        // HR & Recruiting
+        "Workday": "HR & Recruiting",
+        "BambooHR": "HR & Recruiting",
+        "Gusto": "HR & Recruiting",
+        "Rippling": "HR & Recruiting",
+        "Deel": "HR & Recruiting",
+        "Greenhouse": "HR & Recruiting",
+        "Lever": "HR & Recruiting",
+        "Ashby": "HR & Recruiting",
+        // Data & Analytics
+        "Amplitude": "Data & Analytics",
+        "Segment": "Data & Analytics",
+        "Snowflake": "Data & Analytics",
+        "Tableau": "Data & Analytics",
+        "Metabase": "Data & Analytics",
+        "PostHog": "Data & Analytics",
+        "Heap": "Data & Analytics",
+        "Google Analytics": "Data & Analytics",
+        "Airtable": "Data & Analytics",
+        "Polygon": "Data & Analytics",
+        "Statsig": "Data & Analytics",
+        "Explorium": "Data & Analytics",
+        "Similarweb": "Data & Analytics",
+        "Google Search Console": "Data & Analytics",
+        "Milvus": "Data & Analytics",
+        "Ahrefs": "Data & Analytics",
+        "Optimizely": "Data & Analytics",
+        // Design & Creative
+        "Figma": "Design & Creative",
+        "Canva": "Design & Creative",
+        "Webflow": "Design & Creative",
+        "WordPress": "Design & Creative",
+        "Wix": "Design & Creative",
+        "HeyGen": "Design & Creative",
+        "InVideo": "Design & Creative",
+        // AI & LLM
+        "DeepSeek": "AI Models",
+    };
+
+    // ==================== LOGO STRATEGY ====================
+    // SVGL name mapping: tool name -> svgl filename (without .svg)
+    // Only map tools that exist on svgl.app
+    const SVGL_MAP = {
+        "Slack": "slack",
+        "Gmail": "google-gmail",
+        "Google Calendar": "google-calendar",
+        "Google Drive": "google-drive",
+        "Google Docs": "google-docs",
+        "Google Sheets": "google-sheets",
+        "Google Slides": "google-slides",
+        "Google Ads": "google-ads",
+        "Google Analytics": "google-analytics",
+        "Google Search Console": "google",
+        "Notion": "notion",
+        "Figma": "figma",
+        "GitHub": "github-dark",
+        "GitLab": "gitlab",
+        "Discord": "discord",
+        "Telegram": "telegram",
+        "WhatsApp": "whatsapp",
+        "Zoom": "zoom",
+        "Loom": "loom",
+        "Stripe": "stripe",
+        "PayPal Business": "paypal",
+        "Salesforce": "salesforce",
+        "HubSpot": "hubspot",
+        "Jira": "jira",
+        "Confluence": "confluence",
+        "Linear": "linear",
+        "Asana": "asana",
+        "Trello": "trello",
+        "ClickUp": "clickup",
+        "Monday.com": "monday",
+        "Airtable": "airtable",
+        "Miro": "miro",
+        "Dropbox": "dropbox",
+        "OneDrive": "onedrive",
+        "SharePoint": "sharepoint",
+        "Webflow": "webflow",
+        "WordPress": "wordpress",
+        "Wix": "wix",
+        "Canva": "canva",
+        "Todoist": "todoist",
+        "Calendly": "calendly",
+        "Cal.com": "cal",
+        "Typeform": "typeform",
+        "Mailchimp": "mailchimp",
+        "Intercom": "intercom",
+        "Zendesk": "zendesk",
+        "Segment": "segment",
+        "Snowflake": "snowflake",
+        "Amplitude": "amplitude",
+        "PostHog": "posthog",
+        "Metabase": "metabase",
+        "Contentful": "contentful",
+        "DeepSeek": "deepseek",
+        "Xero": "xero",
+        "Gusto": "gusto",
+        "Rippling": "rippling",
+        "Deel": "deel",
+        "Microsoft 365": "microsoft",
+        "Outlook": "microsoft-outlook",
+        "Outlook Calendar": "microsoft-outlook",
+        "DocuSign": "docusign",
+        "ServiceNow": "servicenow",
+        "Tableau": "tableau",
+        "Optimizely": "optimizely",
+        "Freshdesk": "freshdesk",
+        "Workday": "workday",
+        "Box": "box",
+        "Coda": "coda",
+        "Otter.ai": "otter",
+        "Productboard": "productboard",
+        "Wrike": "wrike",
+        "Hive": "hive",
+        "BambooHR": "bamboohr",
+        "Greenhouse": "greenhouse",
+        "Lever": "lever",
+        "Ashby": "ashby",
+        "Resend": "resend",
+        "Reddit": "reddit",
+    };
+
+    // Color palette for letter fallbacks
+    const COLORS = [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+        '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+        '#F1948A', '#82E0AA', '#F8C471', '#D7BDE2', '#A3E4D7',
+    ];
+
+    function getColorForName(name) {
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return COLORS[Math.abs(hash) % COLORS.length];
+    }
+
+    function getSvglUrl(toolName) {
+        const slug = SVGL_MAP[toolName];
+        if (slug) return `https://svgl.app/library/${slug}.svg`;
+        return null;
+    }
+
+    function getFaviconUrl(domain) {
+        return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+    }
+
+    // Setup image with fallback chain: SVGL -> Favicon -> Letter
+    function setupLogo(imgEl, letterEl, wrapEl, tool) {
+        const svglUrl = getSvglUrl(tool.n);
+        const faviconUrl = getFaviconUrl(tool.d);
+        const letter = tool.n.charAt(0).toUpperCase();
+
+        letterEl.textContent = letter;
+        wrapEl.style.setProperty('--fallback-bg', getColorForName(tool.n));
+
+        if (svglUrl) {
+            imgEl.src = svglUrl;
+            imgEl.onerror = function() {
+                // SVGL failed, try favicon
+                imgEl.onerror = function() {
+                    // Favicon also failed, show letter
+                    wrapEl.classList.add('fallback');
+                    wrapEl.style.background = `linear-gradient(135deg, ${getColorForName(tool.n)}, ${getColorForName(tool.n + 'x')})`;
+                };
+                imgEl.src = faviconUrl;
+            };
+        } else {
+            // No SVGL mapping, try favicon first
+            imgEl.src = faviconUrl;
+            imgEl.onerror = function() {
+                wrapEl.classList.add('fallback');
+                wrapEl.style.background = `linear-gradient(135deg, ${getColorForName(tool.n)}, ${getColorForName(tool.n + 'x')})`;
+            };
+        }
+    }
+
+    // ==================== STATE ====================
+    let currentCat = "Productivity";
+
+    function getActiveCats() {
+        return currentScheme === 'A' ? CATS_A : CATS_B;
+    }
+
+    function getToolCat(tool) {
+        if (currentScheme === 'A') return tool.c;
+        return CAT_B_MAP[tool.n] || tool.c;
+    }
+
+    // ==================== RENDER ====================
+    function renderTabs() {
+        const container = document.getElementById('tabsScroll');
+        container.innerHTML = '';
+        getActiveCats().forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn' + (cat === currentCat ? ' active' : '');
+            btn.textContent = cat;
+            btn.onclick = () => selectCat(cat);
+            container.appendChild(btn);
+        });
+    }
+
+    const RING_CIRCUMFERENCE = 94.25; // 2 * π * 15
+    const OVERSCROLL_TRIGGER = 80;   // px of overscroll to complete ring
+
+    function renderGrid() {
+        const grid = document.getElementById('toolGrid');
+        const empty = document.getElementById('emptyGrid');
+        const gridContainer = document.querySelector('.tool-grid-container');
+        const wrap = document.getElementById('toolGridWrap');
+        const filtered = TOOLS.filter(t => getToolCat(t) === currentCat);
+
+        // Remove old next-cat zone
+        const oldZone = wrap.querySelector('.next-cat-zone');
+        if (oldZone) oldZone.remove();
+
+        grid.innerHTML = '';
+        if (filtered.length === 0) {
+            empty.style.display = 'block';
+            return;
+        }
+        empty.style.display = 'none';
+
+        filtered.forEach(tool => {
+            const item = document.createElement('div');
+            item.className = 'tool-item';
+            item.onclick = () => showDetail(tool);
+
+            const iconWrap = document.createElement('div');
+            iconWrap.className = 'tool-icon-wrap';
+
+            const img = document.createElement('img');
+            img.alt = tool.n;
+
+            const letter = document.createElement('span');
+            letter.className = 'fallback-letter';
+
+            iconWrap.appendChild(img);
+            iconWrap.appendChild(letter);
+
+            const name = document.createElement('span');
+            name.className = 'tool-name';
+            name.textContent = tool.n;
+
+            item.appendChild(iconWrap);
+            item.appendChild(name);
+            grid.appendChild(item);
+
+            setupLogo(img, letter, iconWrap, tool);
+        });
+
+        // Add next-category overlay (if not the last category)
+        const cats = getActiveCats();
+        const currentIdx = cats.indexOf(currentCat);
+        if (currentIdx < cats.length - 1) {
+            const nextCatName = cats[currentIdx + 1];
+            const zone = document.createElement('div');
+            zone.className = 'next-cat-zone';
+            zone.id = 'nextCatZone';
+            zone.innerHTML = `
+                <svg class="next-cat-ring" viewBox="0 0 36 36">
+                    <circle class="ring-bg" cx="18" cy="18" r="15" />
+                    <circle class="ring-fill" cx="18" cy="18" r="15" />
+                </svg>
+                <span class="next-cat-label">${nextCatName}</span>
+            `;
+            wrap.appendChild(zone);
+        }
+
+        // Scroll grid to top
+        gridContainer.scrollTop = 0;
+    }
+
+    // ==================== OVERSCROLL DETECTION ====================
+    (function() {
+        const gridContainer = document.querySelector('.tool-grid-container');
+        let nextCatName = null;
+        let ringFill = null;
+        let zone = null;
+        let triggered = false;
+
+        // Helpers
+        function isAtBottom() {
+            return gridContainer.scrollTop + gridContainer.clientHeight >= gridContainer.scrollHeight - 2;
+        }
+
+        function getNextCatContext() {
+            zone = document.getElementById('nextCatZone');
+            if (!zone) return false;
+            ringFill = zone.querySelector('.ring-fill');
+            nextCatName = zone.querySelector('.next-cat-label').textContent;
+            return true;
+        }
+
+        function updateRing(progress) {
+            if (!ringFill) return;
+            const p = Math.max(0, Math.min(1, progress));
+            ringFill.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - p);
+            if (p > 0.05) {
+                zone.classList.add('active');
+            }
+            if (p >= 1) {
+                zone.classList.add('complete');
+            } else {
+                zone.classList.remove('complete');
+            }
+        }
+
+        function resetRing() {
+            if (!zone) return;
+            zone.classList.remove('active', 'complete');
+            if (ringFill) ringFill.style.strokeDashoffset = RING_CIRCUMFERENCE;
+        }
+
+        function triggerNext() {
+            if (triggered || !nextCatName) return;
+            triggered = true;
+            setTimeout(() => {
+                selectCat(nextCatName);
+                triggered = false;
+            }, 180);
+        }
+
+        // --- Touch overscroll ---
+        let touchActive = false;
+        let touchAnchorY = 0;
+
+        gridContainer.addEventListener('touchstart', (e) => {
+            touchActive = false;
+            triggered = false;
+        }, { passive: true });
+
+        gridContainer.addEventListener('touchmove', (e) => {
+            if (triggered) return;
+            if (!getNextCatContext()) return;
+
+            if (!isAtBottom()) {
+                // Not at bottom yet — reset if we were tracking
+                if (touchActive) { touchActive = false; resetRing(); }
+                return;
+            }
+
+            if (!touchActive) {
+                // Just hit bottom — start tracking from this point
+                touchActive = true;
+                touchAnchorY = e.touches[0].clientY;
+                return;
+            }
+
+            // Calculate overscroll distance (finger moving up = positive delta = pulling down)
+            const delta = touchAnchorY - e.touches[0].clientY;
+            if (delta > 0) {
+                const progress = delta / OVERSCROLL_TRIGGER;
+                updateRing(progress);
+                if (progress >= 1) triggerNext();
+            } else {
+                resetRing();
+            }
+        }, { passive: true });
+
+        gridContainer.addEventListener('touchend', () => {
+            if (!triggered) resetRing();
+            touchActive = false;
+        }, { passive: true });
+
+        // --- Wheel overscroll (desktop) ---
+        let wheelAccum = 0;
+        let wheelTimer = null;
+
+        gridContainer.addEventListener('wheel', (e) => {
+            if (triggered) return;
+            if (!getNextCatContext()) return;
+
+            if (isAtBottom() && e.deltaY > 0) {
+                // At bottom, scrolling down further
+                wheelAccum += e.deltaY * 0.4;
+                const progress = wheelAccum / OVERSCROLL_TRIGGER;
+                updateRing(progress);
+
+                if (progress >= 1) {
+                    triggerNext();
+                    wheelAccum = 0;
+                    clearTimeout(wheelTimer);
+                    return;
+                }
+
+                // Reset after pause
+                clearTimeout(wheelTimer);
+                wheelTimer = setTimeout(() => {
+                    wheelAccum = 0;
+                    resetRing();
+                }, 500);
+
+                e.preventDefault();
+            } else {
+                if (wheelAccum > 0) {
+                    wheelAccum = 0;
+                    resetRing();
+                }
+            }
+        }, { passive: false });
+    })();
+
+    function scrollActiveTabIntoView() {
+        const container = document.getElementById('tabsScroll');
+        const activeTab = container.querySelector('.tab-btn.active');
+        if (activeTab) {
+            const containerRect = container.getBoundingClientRect();
+            const tabRect = activeTab.getBoundingClientRect();
+            const scrollLeft = activeTab.offsetLeft - container.offsetLeft - (containerRect.width / 2) + (tabRect.width / 2);
+            container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
+        }
+    }
+
+    function selectCat(cat) {
+        currentCat = cat;
+        renderTabs();
+        renderGrid();
+        scrollActiveTabIntoView();
+    }
+
+    // ==================== VIEWS ====================
+    function switchView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+    }
+
+    // Search
+    function showSearch() {
+        switchView('searchView');
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchInput').focus();
+        renderSearchList('');
+    }
+
+    function hideSearch() {
+        switchView('mainView');
+    }
+
+    function clearSearchInput() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('clearSearch').style.display = 'none';
+        renderSearchList('');
+        document.getElementById('searchInput').focus();
+    }
+
+    function onSearch() {
+        const q = document.getElementById('searchInput').value;
+        document.getElementById('clearSearch').style.display = q ? 'block' : 'none';
+        renderSearchList(q);
+    }
+
+    function renderSearchList(query) {
+        const list = document.getElementById('searchList');
+        let filtered;
+        if (!query.trim()) {
+            filtered = TOOLS.slice().sort((a, b) => a.n.localeCompare(b.n));
+        } else {
+            filtered = TOOLS.filter(t => t.n.toLowerCase().includes(query.toLowerCase())).sort((a, b) => a.n.localeCompare(b.n));
+        }
+
+        list.innerHTML = '';
+        if (filtered.length === 0) {
+            list.innerHTML = '<div style="padding:40px;text-align:center;color:#999;">No tools found</div>';
+            return;
+        }
+
+        filtered.forEach(tool => {
+            const item = document.createElement('div');
+            item.className = 'search-item';
+            item.onclick = () => showDetail(tool);
+
+            const iconWrap = document.createElement('span');
+            iconWrap.className = 'search-item-icon';
+
+            const img = document.createElement('img');
+            img.alt = tool.n;
+
+            const letter = document.createElement('span');
+            letter.className = 'fallback-letter';
+
+            iconWrap.appendChild(img);
+            iconWrap.appendChild(letter);
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'search-item-name';
+            nameSpan.textContent = tool.n;
+
+            const arrow = document.createElement('span');
+            arrow.className = 'search-item-arrow';
+            arrow.textContent = '\u203A';
+
+            item.appendChild(iconWrap);
+            item.appendChild(nameSpan);
+            item.appendChild(arrow);
+            list.appendChild(item);
+
+            setupLogo(img, letter, iconWrap, tool);
+        });
+    }
+
+    // Detail
+    let previousView = 'mainView';
+
+    function showDetail(tool) {
+        // Remember where we came from
+        const activeView = document.querySelector('.view.active');
+        if (activeView) previousView = activeView.id;
+
+        switchView('detailView');
+
+        const imgEl = document.getElementById('detailImg');
+        const letterEl = document.getElementById('detailLetter');
+        const wrapEl = document.getElementById('detailIcon');
+
+        // Reset
+        wrapEl.classList.remove('fallback');
+        wrapEl.style.background = '#f5f5f5';
+
+        document.getElementById('detailName').textContent = tool.n;
+        document.getElementById('detailDesc').textContent = tool.desc;
+
+        setupLogo(imgEl, letterEl, wrapEl, tool);
+    }
+
+    function hideDetail() {
+        switchView(previousView);
+    }
+
+    // All Categories
+    function showAllCats() {
+        switchView('allCatsView');
+        renderCatList();
+    }
+
+    function hideAllCats() {
+        switchView('mainView');
+    }
+
+    function renderCatList() {
+        const list = document.getElementById('catList');
+        list.innerHTML = '';
+        getActiveCats().forEach(cat => {
+            const item = document.createElement('div');
+            item.className = 'cat-item';
+            item.onclick = () => {
+                hideAllCats();
+                selectCat(cat);
+                // Ensure scroll happens after view switch and render
+                requestAnimationFrame(() => {
+                    scrollActiveTabIntoView();
+                });
+            };
+
+            const name = document.createElement('span');
+            name.className = 'cat-item-name';
+            name.textContent = cat;
+
+            const arrow = document.createElement('span');
+            arrow.className = 'cat-item-arrow';
+            arrow.textContent = '\u203A';
+
+            item.appendChild(name);
+            item.appendChild(arrow);
+            list.appendChild(item);
+        });
+    }
+
+    // ==================== SWIPE SUPPORT ====================
+    (function() {
+        const gridContainer = document.querySelector('.tool-grid-container');
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+        const SWIPE_THRESHOLD = 50;
+        const SWIPE_ANGLE_LIMIT = 30; // degrees - must be mostly horizontal
+
+        gridContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        gridContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+            const absDx = Math.abs(dx);
+            const absDy = Math.abs(dy);
+
+            // Check it's a horizontal swipe (not vertical scrolling)
+            if (absDx < SWIPE_THRESHOLD) return;
+            const angle = Math.atan2(absDy, absDx) * (180 / Math.PI);
+            if (angle > SWIPE_ANGLE_LIMIT) return;
+
+            const cats = getActiveCats();
+            const currentIdx = cats.indexOf(currentCat);
+            if (dx < 0 && currentIdx < cats.length - 1) {
+                // Swipe left -> next tab
+                selectCat(cats[currentIdx + 1]);
+            } else if (dx > 0 && currentIdx > 0) {
+                // Swipe right -> previous tab
+                selectCat(cats[currentIdx - 1]);
+            }
+        }
+    })();
+
+    // ==================== SCHEME SWITCHING ====================
+    function switchScheme(scheme) {
+        if (currentScheme === scheme) return;
+        currentScheme = scheme;
+
+        // Update switcher UI
+        document.getElementById('schemeBtnA').classList.toggle('active', scheme === 'A');
+        document.getElementById('schemeBtnB').classList.toggle('active', scheme === 'B');
+
+        // Reset to first category of the new scheme
+        const cats = getActiveCats();
+        currentCat = cats[0];
+
+        renderTabs();
+        renderGrid();
+        renderSchemeStats();
+        scrollActiveTabIntoView();
+    }
+
+    function renderSchemeStats() {
+        const container = document.getElementById('schemeStats');
+        const cats = getActiveCats();
+        const maxCount = Math.max(...cats.map(cat =>
+            TOOLS.filter(t => getToolCat(t) === cat).length
+        ));
+
+        let html = `<h4>${currentScheme === 'A' ? 'Scheme A' : 'Scheme B'} — ${cats.length} Categories · ${TOOLS.length} Tools</h4>`;
+        cats.forEach(cat => {
+            const count = TOOLS.filter(t => getToolCat(t) === cat).length;
+            const pct = Math.round((count / maxCount) * 100);
+            html += `<div class="stat-row">
+                <span class="stat-label">${cat}</span>
+                <div class="stat-bar"><div class="stat-bar-fill" style="width:${pct}%"></div></div>
+                <span class="stat-count">${count}</span>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    // ==================== INIT ====================
+    renderTabs();
+    renderGrid();
+    renderSchemeStats();
+    </script>
+</body>
+</html>

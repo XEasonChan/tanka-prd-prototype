@@ -171,6 +171,14 @@
             height: 100%;
             overflow-y: auto;
             padding: 20px 16px;
+            background: var(--white);
+            position: relative;
+            z-index: 2;
+            transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .tool-grid-container.overscrolling {
+            transition: none;
         }
 
         .tool-grid {
@@ -239,27 +247,27 @@
             font-size: 14px;
         }
 
-        /* Next Category Indicator — overscroll overlay */
+        /* Next Category Indicator — rubber-band overscroll zone */
         .next-cat-zone {
             position: absolute;
-            bottom: 16px;
+            bottom: 0;
             left: 0;
             right: 0;
+            height: 88px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 8px;
             opacity: 0;
-            transform: translateY(6px) scale(0.85);
-            transition: opacity 0.15s, transform 0.15s;
+            transform: scale(0.9);
+            transition: opacity 0.2s, transform 0.2s;
             pointer-events: none;
-            z-index: 2;
+            z-index: 1;
         }
 
         .next-cat-zone.active {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: scale(1);
         }
 
         .next-cat-ring {
@@ -695,6 +703,8 @@
             <p>More granular groupings keep each list short and scannable (most have 4–17 items). Users can jump directly to a specific domain. Tradeoff: 11 tabs means more horizontal scrolling on the tab bar, and users need to know which category a tool belongs to.</p>
             <p><strong>Core Tradeoff:</strong></p>
             <p>Fewer categories = less tab navigation overhead, but longer scroll per category.<br>More categories = faster in-category lookup, but more cognitive load choosing the right tab.</p>
+            <p><strong>Interaction — Overscroll Category Switch</strong></p>
+            <p>When a user scrolls to the bottom of a category list and continues scrolling down, a rubber-band effect pulls the content upward to reveal an extra row-height zone beneath the list. A circular progress ring fills proportionally to the overscroll depth (requiring ~1.5× row height of pull to complete, while only showing 1 row of visual expansion — preventing accidental triggers). At 100%, the view auto-transitions to the next category. Releasing before completion triggers a spring-back animation that snaps everything back to the default list height.</p>
         </div>
 
         <div>
@@ -1259,7 +1269,8 @@
     }
 
     const RING_CIRCUMFERENCE = 94.25; // 2 * π * 15
-    const OVERSCROLL_TRIGGER = 80;   // px of overscroll to complete ring
+    const OVERSCROLL_VISUAL = 88;    // max visual rubber-band expansion (1 row height)
+    const OVERSCROLL_TRIGGER = 132;  // total pull distance to trigger switch (1.5 rows)
 
     function renderGrid() {
         const grid = document.getElementById('toolGrid');
@@ -1267,6 +1278,10 @@
         const gridContainer = document.querySelector('.tool-grid-container');
         const wrap = document.getElementById('toolGridWrap');
         const filtered = TOOLS.filter(t => getToolCat(t) === currentCat);
+
+        // Reset any overscroll rubber-band transform
+        gridContainer.style.transform = '';
+        gridContainer.classList.remove('overscrolling');
 
         // Remove old next-cat zone
         const oldZone = wrap.querySelector('.next-cat-zone');
@@ -1329,7 +1344,7 @@
         gridContainer.scrollTop = 0;
     }
 
-    // ==================== OVERSCROLL DETECTION ====================
+    // ==================== OVERSCROLL DETECTION (rubber-band) ====================
     (function() {
         const gridContainer = document.querySelector('.tool-grid-container');
         let nextCatName = null;
@@ -1337,7 +1352,6 @@
         let zone = null;
         let triggered = false;
 
-        // Helpers
         function isAtBottom() {
             return gridContainer.scrollTop + gridContainer.clientHeight >= gridContainer.scrollHeight - 2;
         }
@@ -1350,23 +1364,35 @@
             return true;
         }
 
-        function updateRing(progress) {
-            if (!ringFill) return;
-            const p = Math.max(0, Math.min(1, progress));
-            ringFill.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - p);
-            if (p > 0.05) {
-                zone.classList.add('active');
-            }
-            if (p >= 1) {
-                zone.classList.add('complete');
-            } else {
-                zone.classList.remove('complete');
-            }
+        // Rubber-band: translate the scroll container upward to reveal the zone beneath
+        function updateOverscroll(delta) {
+            if (!ringFill || !zone) return;
+            const ringProgress = Math.max(0, Math.min(1, delta / OVERSCROLL_TRIGGER));
+            const visualDelta = Math.min(delta, OVERSCROLL_VISUAL);
+
+            // Ring fill
+            ringFill.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - ringProgress);
+
+            // Slide container up (rubber-band)
+            gridContainer.classList.add('overscrolling');
+            gridContainer.style.transform = `translateY(-${visualDelta}px)`;
+
+            // Show/hide zone
+            if (visualDelta > 2) zone.classList.add('active');
+            else zone.classList.remove('active');
+
+            if (ringProgress >= 1) zone.classList.add('complete');
+            else zone.classList.remove('complete');
+
+            return ringProgress;
         }
 
-        function resetRing() {
-            if (!zone) return;
-            zone.classList.remove('active', 'complete');
+        function resetOverscroll() {
+            // Re-enable CSS transition for spring-back, then snap to 0
+            gridContainer.classList.remove('overscrolling');
+            gridContainer.style.transform = 'translateY(0)';
+
+            if (zone) zone.classList.remove('active', 'complete');
             if (ringFill) ringFill.style.strokeDashoffset = RING_CIRCUMFERENCE;
         }
 
@@ -1383,7 +1409,7 @@
         let touchActive = false;
         let touchAnchorY = 0;
 
-        gridContainer.addEventListener('touchstart', (e) => {
+        gridContainer.addEventListener('touchstart', () => {
             touchActive = false;
             triggered = false;
         }, { passive: true });
@@ -1392,32 +1418,31 @@
             if (triggered) return;
             if (!getNextCatContext()) return;
 
-            if (!isAtBottom()) {
-                // Not at bottom yet — reset if we were tracking
-                if (touchActive) { touchActive = false; resetRing(); }
+            if (touchActive) {
+                // Already in overscroll mode — track delta
+                const delta = touchAnchorY - e.touches[0].clientY;
+                if (delta > 0) {
+                    const p = updateOverscroll(delta);
+                    if (p >= 1) triggerNext();
+                } else {
+                    updateOverscroll(0);
+                    if (delta < -10) {
+                        touchActive = false;
+                        resetOverscroll();
+                    }
+                }
                 return;
             }
 
-            if (!touchActive) {
-                // Just hit bottom — start tracking from this point
-                touchActive = true;
-                touchAnchorY = e.touches[0].clientY;
-                return;
-            }
+            if (!isAtBottom()) return;
 
-            // Calculate overscroll distance (finger moving up = positive delta = pulling down)
-            const delta = touchAnchorY - e.touches[0].clientY;
-            if (delta > 0) {
-                const progress = delta / OVERSCROLL_TRIGGER;
-                updateRing(progress);
-                if (progress >= 1) triggerNext();
-            } else {
-                resetRing();
-            }
+            // Just hit bottom — start tracking from this touch point
+            touchActive = true;
+            touchAnchorY = e.touches[0].clientY;
         }, { passive: true });
 
         gridContainer.addEventListener('touchend', () => {
-            if (!triggered) resetRing();
+            if (!triggered) resetOverscroll();
             touchActive = false;
         }, { passive: true });
 
@@ -1430,30 +1455,27 @@
             if (!getNextCatContext()) return;
 
             if (isAtBottom() && e.deltaY > 0) {
-                // At bottom, scrolling down further
                 wheelAccum += e.deltaY * 0.4;
-                const progress = wheelAccum / OVERSCROLL_TRIGGER;
-                updateRing(progress);
+                const p = updateOverscroll(wheelAccum);
 
-                if (progress >= 1) {
+                if (p >= 1) {
                     triggerNext();
                     wheelAccum = 0;
                     clearTimeout(wheelTimer);
                     return;
                 }
 
-                // Reset after pause
                 clearTimeout(wheelTimer);
                 wheelTimer = setTimeout(() => {
                     wheelAccum = 0;
-                    resetRing();
+                    resetOverscroll();
                 }, 500);
 
                 e.preventDefault();
             } else {
                 if (wheelAccum > 0) {
                     wheelAccum = 0;
-                    resetRing();
+                    resetOverscroll();
                 }
             }
         }, { passive: false });

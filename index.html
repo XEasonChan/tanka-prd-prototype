@@ -1450,6 +1450,133 @@ flowchart TD
                         • Clarify 对话不应影响用户体验流畅性，应快速完成
                     </div>
                 </div>
+
+                <h4 style="margin-top: 24px; color: var(--primary); font-size: 1rem; font-weight: 600;">🎛️ Skill-based Preference Management（基于 Skill 的偏好管理）</h4>
+
+                <div class="info-box" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #10b981; border-radius: 12px; padding: 20px; margin-top: 16px; margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 12px 0; color: #065f46; font-size: 14px; font-weight: 600;">💡 设计理念</h4>
+                    <p style="margin: 0; color: #047857; font-size: 13px; line-height: 1.8;">
+                        将所有 Action 的<strong>分类逻辑</strong>和<strong>用户偏好</strong>统一管理在一个 <strong>Connector Preference Skill</strong> 中。首次遇到多 App 场景时通过对话询问用户偏好，<strong>记录并保存该偏好</strong>，后续自动路由到用户首选的 App，无需重复询问。用户可随时在 Skill 设置中修改偏好。
+                    </p>
+                </div>
+
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div class="content-box">
+                        <h4>Skill 职责范围</h4>
+                        <ul style="line-height: 1.8;">
+                            <li><strong>Action 分类管理：</strong>定义所有 Action 类型（如"创建日程"、"发送邮件"）及对应的 App 映射</li>
+                            <li><strong>Connector 判断：</strong>检测用户请求时有哪些已绑定的 App 可以完成该操作</li>
+                            <li><strong>偏好存储：</strong>记录用户对每类 Action 的首选 App</li>
+                            <li><strong>自动路由：</strong>根据已保存的偏好，直接弹出对应 App 的 Action Card</li>
+                            <li><strong>偏好管理：</strong>提供界面让用户查看和修改所有偏好设置</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-box">
+                        <h4>工作流程示意</h4>
+                        <div style="background: var(--gray-50); padding: 16px; border-radius: 8px; font-size: 0.8rem; line-height: 1.8;">
+                            <strong style="color: var(--primary);">首次请求：</strong><br>
+                            1️⃣ 用户："创建一个明天的会议"<br>
+                            2️⃣ Skill 检测：Google Cal ✓ | Outlook ✓<br>
+                            3️⃣ AI 询问："你想用哪个创建会议？"<br>
+                            4️⃣ 用户选择："Google Calendar"<br>
+                            5️⃣ <strong>Skill 保存偏好</strong>：创建日程 → Google Cal<br>
+                            6️⃣ 弹出 Google Calendar Action Card<br><br>
+
+                            <strong style="color: var(--success);">后续请求：</strong><br>
+                            1️⃣ 用户："帮我创建下周一的会议"<br>
+                            2️⃣ Skill 读取偏好：创建日程 → Google Cal<br>
+                            3️⃣ <strong>直接弹出</strong> Google Calendar Action Card<br>
+                            <span style="color: var(--gray-500);">（无需再次询问）</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>偏好存储数据结构</h4>
+                    <pre style="background: var(--gray-900); color: #a5d6ff; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.75rem; line-height: 1.6;"><code>{
+  "user_preferences": {
+    "create_calendar_event": "google_calendar",
+    "send_email": "gmail",
+    "update_crm_contact": "hubspot",
+    "create_task_issue": "linear",
+    "generate_sales_report": "hubspot",
+    "send_im_message": {
+      "work": "slack",
+      "personal": "whatsapp"
+    }
+  },
+  "last_updated": "2024-12-15T10:30:00Z"
+}</code></pre>
+                    <p style="margin-top: 12px; font-size: 0.85rem; color: var(--gray-600);">
+                        <strong>Key 说明：</strong>使用标准化的 Action Type ID（如 <code>create_calendar_event</code>），Value 为用户首选的 App ID。
+                    </p>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>Skill 配置界面（用户可修改偏好）</h4>
+                    <div style="background: var(--gray-50); padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200);">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                            <thead style="background: var(--white);">
+                                <tr>
+                                    <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--gray-200);">操作类型</th>
+                                    <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--gray-200);">当前首选 App</th>
+                                    <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--gray-200);">可用选项</th>
+                                    <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--gray-200);">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid var(--gray-200);">
+                                    <td style="padding: 10px;">创建日程</td>
+                                    <td style="padding: 10px;"><strong style="color: var(--primary);">Google Calendar</strong></td>
+                                    <td style="padding: 10px; color: var(--gray-500);">Google Calendar, Outlook Calendar</td>
+                                    <td style="padding: 10px;"><button style="font-size: 0.75rem; padding: 4px 8px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer;">Change</button></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--gray-200);">
+                                    <td style="padding: 10px;">发送邮件</td>
+                                    <td style="padding: 10px;"><strong style="color: var(--primary);">Gmail</strong></td>
+                                    <td style="padding: 10px; color: var(--gray-500);">Gmail, Outlook</td>
+                                    <td style="padding: 10px;"><button style="font-size: 0.75rem; padding: 4px 8px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer;">Change</button></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--gray-200);">
+                                    <td style="padding: 10px;">更新 CRM 联系人</td>
+                                    <td style="padding: 10px;"><strong style="color: var(--primary);">HubSpot</strong></td>
+                                    <td style="padding: 10px; color: var(--gray-500);">HubSpot, Salesforce</td>
+                                    <td style="padding: 10px;"><button style="font-size: 0.75rem; padding: 4px 8px; background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 4px; cursor: pointer;">Change</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;">创建任务 Issue</td>
+                                    <td style="padding: 10px; color: var(--gray-400);"><em>未设置</em></td>
+                                    <td style="padding: 10px; color: var(--gray-500);">Linear, Jira</td>
+                                    <td style="padding: 10px;"><button style="font-size: 0.75rem; padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Set</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="trigger-box" style="margin-top: 16px; background: var(--primary-light); border-color: var(--primary);">
+                    <div class="trigger-label" style="color: var(--primary);">🎯 实现优势</div>
+                    <div class="trigger-value" style="color: var(--gray-700);">
+                        <strong>1. 减少重复询问</strong> - 用户只需在首次使用时做出选择，后续自动应用偏好<br>
+                        <strong>2. 统一管理入口</strong> - 所有 Action 分类和偏好逻辑集中在 Skill 中，便于维护和扩展<br>
+                        <strong>3. 用户可控</strong> - 通过 Skill 设置界面，用户可随时查看和修改偏好，透明度高<br>
+                        <strong>4. 智能回退</strong> - 如果首选 App 断连或不可用，自动回退到 Clarify 流程
+                    </div>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>与 Multi-App Clarification 的关系</h4>
+                    <p style="font-size: 0.9rem; line-height: 1.8; color: var(--gray-700);">
+                        <strong>Multi-App Clarification</strong> 是偏好管理的<strong>首次触发机制</strong>：当检测到多个可用 App 且用户<strong>尚未设置偏好</strong>时，通过对话 Clarify 询问用户选择，然后将该选择保存到 Skill 的偏好存储中。后续相同类型的请求将<strong>跳过 Clarify</strong>，直接使用保存的偏好。
+                    </p>
+                    <div style="margin-top: 12px; padding: 14px; background: var(--gray-50); border-left: 4px solid var(--success); border-radius: 4px;">
+                        <strong style="color: var(--success);">工作流程：</strong><br>
+                        <code style="font-size: 0.8rem; color: var(--gray-600);">
+                        检测多 App → 检查偏好 → 有偏好 ✓ 直接弹卡片 | 无偏好 ✗ 触发 Clarify → 保存偏好 → 弹卡片
+                        </code>
+                    </div>
+                </div>
             </div>
 
             <div class="subsection">

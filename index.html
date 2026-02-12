@@ -1286,7 +1286,11 @@ flowchart TD
     C --> D{"是否需要 tool call"}
     D -->|"是"| E{"查 tool dictionary 得到 appId"}
     D -->|"否"| F["直接文本回复"]
-    E --> G{"查 integration status - App 已连接?"}
+    E --> E1{"检测到多个已连接的 App?"}
+    E1 -->|"是 (如 Google Cal + Outlook)"| E2["AI 在对话中 Clarify:<br/>你想用 Google Calendar<br/>还是 Outlook Calendar?"]
+    E2 --> E3["用户选择其中一个 App"]
+    E3 --> G
+    E1 -->|"否 (仅一个或未连接)"| G{"查 integration status - App 已连接?"}
     G -->|"未连接"| H["触发 Suggest Link Card"]
     H --> H1["用户完成连接"]
     H1 --> I
@@ -1353,7 +1357,103 @@ flowchart TD
             </div>
 
             <div class="subsection">
-                <h3 class="subsection-title">3.2 Type A: State Mutation Card（状态变更型）</h3>
+                <h3 class="subsection-title">3.2 Multi-App Clarification（多工具澄清机制）</h3>
+                <div class="info-box" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border: 1px solid #0ea5e9; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 12px 0; color: #075985; font-size: 14px; font-weight: 600;">🎯 核心场景</h4>
+                    <p style="margin: 0; color: #0c4a6e; font-size: 13px; line-height: 1.8;">
+                        当用户的请求可以由<strong>多个已绑定的 App</strong> 完成时（例如"创建一个明天的会议"可以用 Google Calendar 或 Outlook Calendar），系统应该<strong>先在对话中进行 Clarify</strong>，询问用户具体要使用哪个工具，然后再弹出对应的 Action Card。
+                    </p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="content-box">
+                        <h4>触发条件</h4>
+                        <ul>
+                            <li>✅ 用户请求的操作类型明确（如"创建日程"）</li>
+                            <li>✅ 检测到<strong>2 个或以上</strong>已连接的 App 可完成该操作</li>
+                            <li>✅ 用户<strong>未明确指定</strong>要使用哪个 App</li>
+                        </ul>
+                        <div style="margin-top: 12px; padding: 10px; background: var(--gray-50); border-radius: 6px; border-left: 3px solid var(--primary);">
+                            <strong style="color: var(--primary); font-size: 0.85rem;">示例：</strong>
+                            <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--gray-600);">
+                                用户："帮我创建一个明天下午 2 点的会议"<br>
+                                系统检测：Google Calendar ✓ | Outlook Calendar ✓<br>
+                                → 触发 Clarify
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="content-box">
+                        <h4>交互流程</h4>
+                        <ol style="line-height: 1.8; font-size: 0.9rem;">
+                            <li><strong>AI 识别意图</strong> - 识别为"创建日程"操作</li>
+                            <li><strong>检测可用 App</strong> - 发现 Google Cal + Outlook 都已连接</li>
+                            <li><strong>对话中 Clarify</strong> - AI 询问：<br>
+                                <code style="font-size: 0.75rem;">"你想用 Google Calendar 还是 Outlook Calendar 创建这个会议？"</code>
+                            </li>
+                            <li><strong>用户选择</strong> - "用 Google Calendar"</li>
+                            <li><strong>弹出 Action Card</strong> - 显示 Google Calendar 的 Create Event 卡片</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>典型场景示例</h4>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead style="background: var(--gray-50);">
+                            <tr>
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--gray-200);">用户请求</th>
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--gray-200);">可用 App</th>
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid var(--gray-200);">Clarify 话术</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--gray-200);">
+                                <td style="padding: 10px;">"创建一个明天的会议"</td>
+                                <td style="padding: 10px;">Google Calendar<br>Outlook Calendar</td>
+                                <td style="padding: 10px; color: var(--primary);">"你想用 <strong>Google Calendar</strong> 还是 <strong>Outlook Calendar</strong> 创建这个会议？"</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--gray-200);">
+                                <td style="padding: 10px;">"发个邮件给 Sarah"</td>
+                                <td style="padding: 10px;">Gmail<br>Outlook</td>
+                                <td style="padding: 10px; color: var(--primary);">"你想用 <strong>Gmail</strong> 还是 <strong>Outlook</strong> 发送这封邮件？"</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--gray-200);">
+                                <td style="padding: 10px;">"更新 Sarah 的联系信息"</td>
+                                <td style="padding: 10px;">HubSpot<br>Salesforce</td>
+                                <td style="padding: 10px; color: var(--primary);">"你想在 <strong>HubSpot</strong> 还是 <strong>Salesforce</strong> 中更新 Sarah 的信息？"</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px;">"生成销售报告"</td>
+                                <td style="padding: 10px;">HubSpot<br>Salesforce</td>
+                                <td style="padding: 10px; color: var(--primary);">"你想基于 <strong>HubSpot</strong> 还是 <strong>Salesforce</strong> 的数据生成报告？"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>实现要点</h4>
+                    <ul style="line-height: 1.8;">
+                        <li><strong>智能推荐：</strong>如果用户有使用偏好（如最近一次用了 Google Calendar），可在 Clarify 时标注"（最常用）"</li>
+                        <li><strong>快速选择：</strong>Clarify 消息可提供快捷按钮，而不仅仅是文本回复</li>
+                        <li><strong>避免重复：</strong>如果用户明确说"用 Google Calendar 创建会议"，则跳过 Clarify，直接弹卡片</li>
+                        <li><strong>单一 App：</strong>如果只有一个 App 已连接，直接使用，无需 Clarify</li>
+                    </ul>
+                </div>
+
+                <div class="trigger-box" style="margin-top: 16px; background: var(--warning-light); border-color: var(--warning);">
+                    <div class="trigger-label" style="color: var(--warning);">⚠️ 注意事项</div>
+                    <div class="trigger-value" style="color: var(--gray-700);">
+                        • Clarify 应简洁明了，避免过多选项（建议不超过 3 个）<br>
+                        • 如果超过 3 个可用 App，可以只展示最常用的 2-3 个，其他放入"更多选项"<br>
+                        • Clarify 对话不应影响用户体验流畅性，应快速完成
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.3 Type A: State Mutation Card（状态变更型）</h3>
                 <div class="content-box">
                     <h4>适用场景</h4>
                     <p>Update Jira Status, Change HubSpot Deal Stage, Mark Linear Issue as Done</p>

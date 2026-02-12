@@ -8,6 +8,21 @@ Log Activity","• Deal ID / Contact ID
 • GET /pipelines 获取 Stage 枚举
 • PATCH /deals/:id 更新 Stage
 • Context: Agent 需识别 Deal 名称并匹配 ID",-
+Type A 状态变更型,CRM,HubSpot,"Batch Create/Update Contact
+Batch Create/Update Companies
+Add Contact to List
+Create Workflow
+Create Associations","• Contact Properties (Email, Name, Phone, etc.)
+• Company Properties
+• List ID
+• Workflow Name
+• Association Type","• POST /contacts/batch/create 批量创建联系人
+• POST /contacts/batch/update 批量更新联系人
+• POST /companies/batch/upsert 批量创建/更新公司
+• POST /lists/:id/add 添加联系人到列表
+• POST /workflows 创建工作流
+• POST /associations 创建关联关系
+• Context: Agent 需处理批量数据并验证格式",-
 Type A 状态变更型,CRM,Salesforce,"Update Opportunity
 Change Lead Status","• Opportunity ID
 • Current Stage
@@ -24,6 +39,19 @@ Priority Change","• Issue ID
 • GET /team/:id/states 获取 Status 枚举
 • GET /team/:id/members 获取成员列表
 • PATCH /issue/:id 更新状态",-
+Type A 状态变更型,项目管理,Linear,"Create Issue
+Add Comment
+Add Attachment
+Delete Issue","• Project ID
+• Issue Title
+• Issue Description
+• Assignee (optional)
+• Priority (optional)
+• Comment Text / Attachment File","• POST /issue 创建 Issue
+• POST /issue/:id/comments 添加评论
+• POST /issue/:id/attachments 添加附件
+• DELETE /issue/:id 删除 Issue
+• Context: Agent 需从对话提取 Issue 信息",-
 Type A 状态变更型,项目管理,Jira,"Status Transition
 Assignee Update
 Priority Change","• Issue Key
@@ -34,6 +62,22 @@ Priority Change","• Issue Key
 • GET /issue/:key/transitions 获取可用转换
 • GET /user/search 搜索用户
 • POST /issue/:key/transitions",-
+Type A 状态变更型,项目管理,Jira,"Create Issue
+Add Comment
+Add Attachment
+Delete Issue
+Create/Delete Project","• Project Key
+• Issue Type
+• Summary
+• Description
+• Assignee (optional)
+• Comment Text / Attachment File","• POST /issue 创建 Issue
+• POST /issue/:key/comment 添加评论
+• POST /issue/:key/attachments 添加附件
+• DELETE /issue/:key 删除 Issue
+• POST /project 创建项目
+• DELETE /project/:key 删除项目
+• Context: Agent 需从对话提取 Issue 信息",-
 Type A 状态变更型,即时通讯 - Work IM,Slack,"Send Message
 Update Message
 Reply in Thread","• Channel ID / DM ID
@@ -208,3 +252,106 @@ Team Performance","• Date Range (Start/End)
 • GET /sobjects/User 获取用户列表
 • Context: Agent 需整合多个数据源
 • AI 生成业绩洞察和预测分析",-
+Type A 状态变更型,日程管理,Outlook Calendar,"Create Event
+Update Event
+Send Invite","• Event Title
+• Start/End Time
+• Attendees List
+• Calendar ID
+• Description","• GET /calendars 获取日历列表
+• POST /calendars/:id/events 创建事件
+• PATCH /calendars/:id/events/:eventId 更新事件
+• Agent 需从对话提取时间、参与者信息",-
+Type A 状态变更型,日程管理,Calendly,"Create Schedule Link
+Get Event
+List Event Invitees","• Event Type
+• Date/Time
+• Duration
+• Invitee Email/Name","• GET /event_types 获取事件类型
+• POST /scheduling_links 创建调度链接
+• GET /scheduled_events/:uuid 获取事件详情
+• GET /scheduled_events/:uuid/invitees 获取参会者列表
+• Context: Agent 需理解用户调度需求",-
+Type A 状态变更型,会议管理,Zoom,"Create Meeting
+Delete Meeting
+Get Meeting Link
+Delete Meeting User","• Meeting Topic
+• Start Time
+• Duration
+• Attendees (optional)
+• Meeting ID (for delete/get)","• POST /meetings 创建会议
+• DELETE /meetings/:id 删除会议
+• GET /meetings/:id 获取会议链接
+• DELETE /meetings/:id/registrants/:registrantId 删除参会者
+• Context: Agent 需从对话提取会议信息",-
+Type A 状态变更型,开发工具,Github,"Create Issue
+Create Branch
+Create Pull Request
+Create/Update File
+Add Comment
+Create Repository
+Create Workflow Dispatch","• Repository Name
+• Issue Title/Body
+• Branch Name
+• PR Title/Body
+• File Path/Content
+• Comment Text
+• Workflow Name","• POST /repos/:owner/:repo/issues 创建 Issue
+• POST /repos/:owner/:repo/git/refs 创建分支
+• POST /repos/:owner/:repo/pulls 创建 PR
+• PUT /repos/:owner/:repo/contents/:path 创建/更新文件
+• POST /repos/:owner/:repo/issues/:number/comments 添加评论
+• POST /user/repos 创建仓库
+• POST /repos/:owner/:repo/actions/workflows/:id/dispatches 触发工作流
+• Context: Agent 需识别仓库和分支信息",-
+Type A 状态变更型,开发工具,Gitlab,"Create Issue
+Create Branch
+Create Pull Request
+Create/Update File
+Add Comment
+Create Repository","• Project ID
+• Issue Title/Description
+• Branch Name
+• MR Title/Description
+• File Path/Content
+• Comment Text","• POST /projects/:id/issues 创建 Issue
+• POST /projects/:id/repository/branches 创建分支
+• POST /projects/:id/merge_requests 创建 MR
+• POST /projects/:id/repository/files/:path 创建文件
+• PUT /projects/:id/repository/files/:path 更新文件
+• POST /projects/:id/issues/:issue_id/notes 添加评论
+• POST /projects 创建项目
+• Context: Agent 需识别项目和分支信息",-
+Type B 内容分发型,协作文档,Google Sheet,"Create Comment
+Create New Row
+Create New Sheet","• Spreadsheet ID
+• Sheet Name
+• Row Data (cells)
+• Comment Text
+• Cell Range","• POST /spreadsheets/:id/values/:range:append 添加行
+• POST /spreadsheets/:id 创建新工作表
+• POST /spreadsheets/:id/comments 创建评论
+• GET /spreadsheets/:id 获取表格信息
+• Context: Agent 需理解表格结构并格式化数据",-
+Type B 内容分发型,协作文档,Google Slide,"Create Slide
+Create Presentation
+Delete Slide","• Presentation ID
+• Slide Index
+• Slide Content (Title, Text, Images)
+• Presentation Title","• POST /presentations 创建演示文稿
+• POST /presentations/:id/batchUpdate 创建幻灯片
+• POST /presentations/:id/batchUpdate (deleteObject) 删除幻灯片
+• GET /presentations/:id 获取演示文稿信息
+• Context: Agent 需理解演示内容结构",-
+Type B 内容分发型,协作文档,Notion,"Create Page
+Create Comment
+Create Database","• Page Title
+• Page Content (blocks)
+• Parent Page/Database ID
+• Comment Text
+• Database Properties","• POST /pages 创建页面
+• POST /comments 创建评论
+• POST /databases 创建数据库
+• GET /databases/:id 获取数据库结构
+• GET /pages/:id 获取页面内容
+• Context: Agent 需理解 Notion 的 Block 结构",-

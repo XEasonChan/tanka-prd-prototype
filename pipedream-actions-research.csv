@@ -1,0 +1,100 @@
+App Name,Category (Scheme A),Pipedream Slug,On Pipedream,Action Count,Actions
+Asana,Productivity,asana,Yes,13,"Create Task; Add Task To Section; Create new project; Create new Project in Asana; Create Project; Create Subtask; Create Task Comment; Find a User; Find Section in Project; Find Task by ID; Search Projects; Search Tasks; Update Task"
+Trello,Productivity,trello,Yes,27,"Create a Card; Find a List; Trello Get Card; Update Card; Add a Member to a Card; Add Attachment to Card via URL; Archive Card; Close a Board; Complete a Checklist Item; Copy a Board; Create a Board; Create a Checklist; Create a Checklist Item; Create a Comment; Create a List; Create Label; Delete a Checklist; Find a Label; Find Checklist; Find Checklist Item; Remove Label From Card; Search Boards; Search Cards; Search Members; Trello Add Image Attachment to Card; Trello Create Multiple Checklist Items; Trello List Rename"
+Hive,Productivity,hive,Yes,0,
+Productboard,Productivity,productboard,Yes,0,
+Monday.com,Productivity,monday,Yes,3,"Get Item by Id; Find items in board by column value; Post an update to an item"
+ClickUp,Productivity,clickup,Yes,2,"Create ClickUp Task; Get or Create Clickup Task"
+Todoist,Productivity,todoist,Yes,46,"Create Project; Create Task; Export Project As File; Find Project; Get All Labels; Update Project; Add Comment to Task or Project; Add Project; Add Project Note; Add Task Note; Close Task; Create Filter; Create Label; Create Section; Delete Comment; Delete Filter; Delete Label; Delete Project; Delete Section; Delete Task or Project Note; Find Task; Get Active Task; Get Active Tasks; Get All Comments; Get All Projects; Get Comment; Get Label; Get Productivity Status; Get Project; Get Section; Import Template Into Project; List All Filters; List All Items; List All Sections; Make API Call; Mark Task Completed; Move Task; Share Project; Uncomplete Task; Update Comment; Update Filter; Update Label; Update Section; Update Task; Update Task or Project Note; Upload File"
+Wrike,Productivity,wrike,Yes,1,"Wrike: Create Task"
+Basecamp,Productivity,basecamp,Yes,0,
+Shortcut,Productivity,shortcut,Yes,0,
+Miro,Productivity,N/A,No,0,Not on Pipedream
+tl;dv,Productivity,N/A,No,0,Not on Pipedream
+Otter.ai,Productivity,N/A,No,0,Not on Pipedream
+Microsoft 365,Productivity,microsoft_365,Yes,0,
+Quip,Productivity,N/A,No,0,Not on Pipedream
+Box,Productivity,box,Yes,175,"DELETE /collaboration_whitelist_entries/{id}; DELETE /collaborations/{id}; DELETE /comments/{id}; DELETE /files/{id}; DELETE /folders/{id}; GET /collaborations; GET /collections; GET /events; GET /files/{id}; GET /folders/{id}; GET /groups; GET /search; GET /users; POST /collaborations; POST /comments; POST /files/content; POST /folders; POST /tasks; POST /users; POST /webhooks; PUT /collaborations/{id}; PUT /files/{id}; PUT /folders/{id}; ... (175 total REST API endpoints)"
+Coda,Productivity,coda,Yes,28,"POST /docs/{docId}/tables/{tableIdOrName}/rows; DELETE /docs/{docId}; GET /docs; GET /docs/{docId}; GET /docs/{docId}/controls; GET /docs/{docId}/folders; GET /docs/{docId}/formulas; GET /docs/{docId}/sections; GET /docs/{docId}/tables; GET /docs/{docId}/tables/{tableIdOrName}/columns; GET /docs/{docId}/tables/{tableIdOrName}/rows; GET /docs/{docId}/views; GET /resolveBrowserLink; GET /whoami; POST /docs; PUT /docs/{docId}/tables/{tableIdOrName}/rows/{rowIdOrName}; ... (28 total)"
+DocuSign,Productivity,docusign,Yes,0,
+PandaDoc,Productivity,pandadoc,Yes,0,
+LINE Official,Productivity,N/A,No,0,Not on Pipedream
+Cal.com,Productivity,cal_com,Yes,0,
+Pipedrive,Customer & Growth,pipedrive,Yes,4,"Add Activity; Add Deal; Add Organization; Update Deal"
+Zendesk,Customer & Growth,zendesk,Yes,0,
+Insightly,Customer & Growth,insightly,Yes,0,
+Gainsight,Customer & Growth,N/A,No,0,Not on Pipedream
+Emarsys,Customer & Growth,N/A,No,0,Not on Pipedream
+Intercom,Customer & Growth,intercom,Yes,21,"Add or update contact with custom_attributes; Find first contact by email; List All Tags; Tag contact; Create Contact; Create Conversation; Create Data Attribute; Create or Update Company; Create or Update Tag; Get Admins; Get Counts; Intercom Create Contact With Source; List All Activity Logs; List All Admins; List All Contacts; List All Conversations; List Data Events; Retrieve Admin; Retrieve Company; Set Admin Away; Submit Data Event"
+Zoho CRM,Customer & Growth,zoho_crm,Yes,10,"Create Object; Delete Object; Download Attachment; Get Object; List Fields; List Modules; List Objects; Make API Call; Search Objects; Update Object"
+Apollo.io,Customer & Growth,apollo_io,Yes,0,
+Klaviyo,Customer & Growth,klaviyo,Yes,1,"Get Lists"
+Mailgun,Customer & Growth,mailgun,Yes,3,"Send Mail; Add Member To List; asd"
+LinkedIn,Customer & Growth,linkedin,Yes,31,"Get Current Member Profile; Create Ad Account; Create Comment; Create Like On Comment; Create Like On Share; Delete Comment; Delete Like; Delete Share; Fetch Ad Account; Get Member Profile; Get Multiple Member Profiles; Get Organization Administrators; Post Share; Query Analytics Finder; Retrieve Comments On Shares; Retrieve Likes On Shares; Search Organization; Share Content; Share Text And Mentions; Upload Image; ... (31 total)"
+Google Ads,Customer & Growth,google_ads,Yes,0,
+Dixa,Customer & Growth,dixa,Yes,0,
+Facebook Ads,Customer & Growth,N/A,No,0,Not on Pipedream
+Attio,Customer & Growth,attio,Yes,0,
+Outreach,Customer & Growth,outreach,Yes,0,
+Freshdesk,Customer & Growth,freshdesk,Yes,1,"List All Tickets"
+Marketo,Customer & Growth,marketo,Yes,0,
+ActiveCampaign,Customer & Growth,activecampaign,Yes,26,"Add Contact to Automation; Add Contact Note; Create Account; Create ActiveCampaign contact; Create Contact; Create Deal; Create New Campaign; Create Note; Create or Update Contact; Create Tracked Event; Find Contact; Find Deal; Get ActiveCampaign Contact by Email; Get All Accounts; Get All Automations; Get All Lists; Get Contact; Get Contact Tags; Get Deal; List All Contacts; List All Deals; Tag ActiveCampaign Contact; Update Account; Update Deal; ... (26 total)"
+Reddit,Customer & Growth,reddit,Yes,196,"GET /api/v1/me; POST /api/comment; POST /api/compose; POST /api/submit; POST /api/vote; GET /r/{subreddit}/comments/{article}; GET /r/{subreddit}/search; GET /subreddits/search; ... (196 total REST API endpoints)"
+Salesloft,Customer & Growth,salesloft,Yes,0,
+Brevo,Customer & Growth,brevo,Yes,0,
+Salesforce,Customer & Growth,salesforce_rest_api,Yes,50,"Create Account; Create Contact; Create Attachment; Create Campaign; Create Campaign Member; Create Case; Create Event; Create Lead; Create Note; Create Opportunity; Create Record; Create Task; Delete Account; Delete Contact; Delete Lead; Delete Record; Get Field Values; Insert Blob Data; Make API Call; SOQL Search; SOSL Search; Update Account; Update Contact; Update Lead; Update Opportunity; Update Record; Update Task; ... (50 total)"
+Freshsales,Customer & Growth,freshsales,Yes,0,
+Close,Customer & Growth,close,Yes,0,
+Copper,Customer & Growth,copper,Yes,0,
+Gong,Customer & Growth,gong,Yes,0,
+Front,Customer & Growth,frontapp,Yes,7,"Create Contact; Import Message; Send new message; Send New Message; Send Reply; Update Contact; Update Conversation"
+Help Scout,Customer & Growth,help_scout,Yes,0,
+Pardot,Customer & Growth,N/A,No,0,Not on Pipedream
+Resend,Customer & Growth,resend,Yes,0,
+ZoomInfo,Customer & Growth,zoominfo,Yes,0,
+Twitter Ads,Customer & Growth,twitter,Yes,28,"Search Twitter; Post Tweet; Get Followers; Follow User; Like Tweet; Search Users; Upload Media to Twitter; Add Member To List; Create List; Delete Tweet; Get Likes; Get Members Of List; Get Retweets; Get Tweet; List Lists; List Mentions; Post Tweet; Retweet; Search Tweets; Unlike Tweet; Unretweet; ... (28 total)"
+Gusto,Finance & Ops,gusto,Yes,0,
+Rippling,Finance & Ops,rippling,Yes,0,
+Deel,Finance & Ops,N/A,No,0,Not on Pipedream
+Ashby,Finance & Ops,ashby,Yes,0,
+BambooHR,Finance & Ops,bamboohr,Yes,0,
+Greenhouse,Finance & Ops,greenhouse,Yes,0,
+Workday,Finance & Ops,workday,Yes,0,
+Lever,Finance & Ops,N/A,No,0,Not on Pipedream
+Stripe,Finance & Ops,stripe,Yes,1,"POST /v1/setup_intents/{intent}/confirm"
+Sage Intacct,Finance & Ops,sage_intacct,Yes,0,
+RevenueCat,Finance & Ops,N/A,No,0,Not on Pipedream
+QuickBooks,Finance & Ops,quickbooks,Yes,86,"Create Account; Create Check; Create Credit Memo; Create Customer; Create Deposit; Create Estimate; Create Invoice; Create Item; Create Journal Entry; Create Payment; Create Purchase; Create Purchase Order; Create Sales Receipt; Create Vendor; Delete Bill; Delete Invoice; Delete Payment; Download Estimate; Download Invoice; Get Account; Get Bill; Get Customer; Get Estimate; Get Invoice; Get Item; Get Payment; Get Sales Receipt; Get Vendor; Make an API Call; Search Accounts; Search Bills; Search Customers; Search Invoices; Search Items; Update Account; Update Customer; Update Invoice; Update Vendor; Upload File; ... (86 total)"
+Tremendous,Finance & Ops,tremendous,Yes,0,
+Xero,Finance & Ops,xero_accounting_api,Yes,48,"Add Contacts to Contact Group; Create Bank Transaction; Create Bank Transfer; Create Credit Note; Create Employee; Create Item; Create Manual Journal; Create or Update Contact; Create Payment; Create Purchase Bill; Create Purchase Order; Create Quote Draft; Create Sales Invoice; Delete Contact Group; Download Attachment; Download Invoice; Email Invoice; Get Contact; Get Credit Note; Get Employee; Get Invoice; Get Item; Get Payment; List Accounts; List Contacts; List Credit Notes; List Invoices; List Items; List Payments; List Tax Rates; Make API Call; Update Contact; Upload File; ... (48 total)"
+PayPal Business,Finance & Ops,paypal,Yes,1,"Get user info"
+NetSuite,Finance & Ops,netsuite,Yes,0,
+FreshBooks,Finance & Ops,freshbooks,Yes,0,
+ServiceNow,Finance & Ops,servicenow,Yes,5,"Create Table Record; Delete Table Record By SysId; Get Table Record By SysId; Get Table Records; Update Table Record"
+Metabase,Data & Analytics,metabase,Yes,0,
+Heap,Data & Analytics,heap,Yes,3,"Add Account Properties; Add User Properties; Track"
+Polygon,Data & Analytics,polygon,Yes,0,
+Similarweb,Data & Analytics,N/A,No,0,Not on Pipedream
+Milvus,Data & Analytics,milvus,Yes,0,
+Optimizely,Data & Analytics,N/A,No,0,Not on Pipedream
+Segment,Data & Analytics,segment,Yes,6,"Track actions; Associate user with group; Associate identities; Identify user; Record page views; Record screen views"
+Statsig,Data & Analytics,N/A,No,0,Not on Pipedream
+Explorium,Data & Analytics,explorium,Yes,0,
+Amplitude,Data & Analytics,amplitude,Yes,0,
+Snowflake,Data & Analytics,snowflake,Yes,0,
+PostHog,Data & Analytics,posthog,Yes,0,
+Google Search Console,Data & Analytics,google_search_console,Yes,0,
+Tableau,Data & Analytics,tableau,Yes,0,
+Ahrefs,Data & Analytics,ahrefs,Yes,0,
+Mixpanel,Data & Analytics,mixpanel,Yes,0,
+Jotform,Content & Design,jotform,Yes,1,"Get user details"
+Loom,Content & Design,N/A,No,0,Not on Pipedream
+Contentful,Content & Design,contentful,Yes,0,
+WordPress,Content & Design,wordpress_org,Yes,0,
+Webflow,Content & Design,webflow,Yes,7,"Create Live Item; Create Item; Fulfill Order; Get a collection item; Refund Order; Unfulfill Order; Update Item"
+InVideo,Content & Design,N/A,No,0,Not on Pipedream
+Canva,Content & Design,canva,Yes,0,
+Wix,Content & Design,N/A,No,0,Not on Pipedream
+HeyGen,Content & Design,heygen,Yes,0,
+Kling AI,Content & Design,N/A,No,0,Not on Pipedream
+Framer,Content & Design,N/A,No,0,Not on Pipedream

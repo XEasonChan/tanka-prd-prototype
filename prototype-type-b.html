@@ -17,6 +17,20 @@
             --error-light: #fee2e2;
             --gmail: #ea4335;
             --gmail-light: #fef2f2;
+            --outlook: #0078D4;
+            --outlook-light: #e6f2fa;
+            --mailchimp: #FFE01B;
+            --mailchimp-light: #fffbea;
+            --sendgrid: #1A82E2;
+            --sendgrid-light: #e8f4fd;
+            --typeform: #262627;
+            --typeform-light: #f5f5f5;
+            --surveymonkey: #00BF6F;
+            --surveymonkey-light: #e6f9f2;
+            --confluence: #0052CC;
+            --confluence-light: #e6f0fa;
+            --googledocs: #4285F4;
+            --googledocs-light: #e8f0fe;
             --slack: #4A154B;
             --slack-light: #f5f0f6;
             --gray-900: #111827;
@@ -167,6 +181,8 @@
 
         .phone-content { background: var(--gray-50); min-height: 520px; padding: 16px; overflow-y: auto; }
 
+        .example-content { display: none; }
+        .example-content.active { display: block; }
         .state-view { display: none; }
         .state-view.active { display: block; }
 
@@ -359,6 +375,172 @@
         .step-number.done { background: var(--success); color: white; }
         .step-content h4 { font-size: 0.8rem; font-weight: 600; color: var(--gray-700); margin-bottom: 2px; }
         .step-content p { font-size: 0.75rem; color: var(--gray-500); }
+
+        /* Example Switcher */
+        .example-switcher {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .example-btn {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--gray-200);
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+        }
+
+        .example-btn:hover { border-color: var(--primary); }
+        .example-btn.active { border-color: var(--primary); background: var(--primary-light); }
+
+        .example-btn .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .example-btn .text h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+        }
+
+        .example-btn.active .text h4 { color: var(--primary); }
+
+        .icon.gmail { background: var(--gmail); }
+        .icon.outlook { background: var(--outlook); }
+        .icon.mailchimp { background: var(--mailchimp); color: var(--gray-900); }
+        .icon.sendgrid { background: var(--sendgrid); }
+        .icon.typeform { background: var(--typeform); }
+        .icon.surveymonkey { background: var(--surveymonkey); }
+        .icon.confluence { background: var(--confluence); }
+        .icon.googledocs { background: var(--googledocs); }
+
+        /* Suggested Apps */
+        .suggested-apps {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--gray-50);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .suggested-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .suggested-app-list {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .suggested-app {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--gray-700);
+        }
+
+        .suggested-app-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.65rem;
+            color: transparent;
+            background-size: 12px 12px;
+            background-position: center;
+            background-repeat: no-repeat;
+            flex-shrink: 0;
+        }
+
+        .suggested-app-icon.gmail {
+            background-color: var(--gmail);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/%3E%3C/svg%3E');
+        }
+
+        .suggested-app-icon.outlook {
+            background-color: var(--outlook);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M7.88 12.04q0 .45-.11.87-.1.41-.33.74-.22.33-.58.52-.37.2-.87.2t-.85-.2q-.35-.21-.57-.55-.22-.33-.33-.75-.1-.42-.1-.86t.1-.87q.1-.43.34-.76.22-.34.59-.54.36-.2.87-.2t.86.2q.35.21.57.55.22.34.31.77.1.43.1.88zM24 12v9.38q0 .46-.33.8-.33.32-.8.32H7.13q-.46 0-.8-.33-.32-.33-.32-.8V18H1q-.41 0-.7-.3-.3-.29-.3-.7V7q0-.41.3-.7Q.58 6 1 6h6.5V2.55q0-.44.3-.75.3-.3.75-.3h12.9q.44 0 .75.3.3.3.3.75V10.85l1.24.72h.01q.1.07.18.18.07.12.07.25zm-6-8.25v3h3v-3zm0 4.5v3h3v-3zm0 4.5v1.83l3.05-1.83zm-5.25-9v3h3.75v-3zm0 4.5v3h3.75v-3zm0 4.5v2.03l2.41 1.5 1.34-.8v-2.73zM9 3.75V6h2l.13.01.12.04v-2.3zM5.98 15.98q.9 0 1.6-.3.7-.32 1.19-.86.48-.55.73-1.28.25-.74.25-1.61 0-.83-.25-1.55-.24-.71-.71-1.24t-1.15-.83q-.68-.3-1.55-.3-.92 0-1.64.3-.71.3-1.2.85-.5.54-.75 1.3-.25.74-.25 1.63 0 .85.26 1.56.26.72.74 1.23.48.52 1.17.81.69.3 1.56.3zM7.5 21h12.39L12 16.08V17q0 .41-.3.7-.29.3-.7.3H7.5zm15-.13v-7.24l-5.9 3.54Z"/%3E%3C/svg%3E');
+        }
+
+        .suggested-app-icon.mailchimp {
+            background-color: var(--mailchimp);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="%23241C15" d="M14.622 15.084c-.207 0-.355.096-.562.096-.857 0-1.656-.562-2.13-1.422-.563.325-1.184.443-1.812.443-1.835 0-3.309-1.481-3.309-3.316 0-1.839 1.481-3.309 3.316-3.309 1.84 0 3.316 1.481 3.316 3.316 0 .768-.271 1.481-.739 2.049.68 1.422 1.954 2.13 3.316 2.13.473 0 .857-.091 1.184-.271.355-.207.621-.502.799-.857.059.094.178.328.271.562.09.234.149.383.207.383.034 0 .12-.154.237-.405.118-.255.237-.628.237-.745 0-.031-.059-.059-.09-.09-.443-.355-.68-.979-.68-1.599 0-.473.207-.562.443-.562.505 0 .857.622 1.007 1.244 0 0 .024.147.033.221.033-.133.033-.244.033-.387 0-2.487-2.049-4.537-4.537-4.537a4.52 4.52 0 0 0-2.576.799l.208.384c.061.12.115.241.115.325 0 .094-.061.146-.215.146-.062 0-.119-.032-.183-.061-.119-.062-.271-.123-.503-.123-.621 0-1.092.562-1.092 1.303 0 .412.146.655.323.953.178.297.355.621.355 1.122a1.93 1.93 0 0 1-.151.713 1.913 1.913 0 0 1-1.755 1.092c-1.066 0-1.927-.855-1.927-1.925 0-1.029.828-1.87 1.85-1.925a.35.35 0 0 0 .357-.354.344.344 0 0 0-.357-.354c-1.453.059-2.608 1.273-2.608 2.726 0 1.507 1.214 2.729 2.729 2.729 1.092 0 2.021-.623 2.455-1.505.563.855 1.539 1.422 2.606 1.422.296 0 .59-.059.859-.149-.061.244-.09.502-.09.768 0 1.659 1.362 3.02 3.02 3.02 1.363 0 2.487-.916 2.933-2.13a5.01 5.01 0 0 0 1.184.146c2.842 0 5.178-2.337 5.178-5.179 0-2.487-1.747-4.568-4.094-5.089-.027-.184-.205-.329-.413-.329-.214 0-.386.172-.386.386 0 .062.032.123.061.154-1.838-.621-3.797.326-4.842 1.988-.088-.12-.266-.298-.503-.298-.062 0-.148.03-.237.09-.09.062-.148.123-.148.214 0 .062.029.119.062.119.088 0 .233.09.445.238.24.177.562.446.679.709-.117.296-.178.621-.178.95.002 1.364 1.127 2.485 2.493 2.485zm5.293-10.271a4.51 4.51 0 0 1 2.336 3.793 5.195 5.195 0 0 1-.857-.062c-.562-.59-.889-1.395-.889-2.251 0-.537.146-1.037.411-1.48zM9.937 9.906c0-1.243.978-2.222 2.222-2.222 1.239 0 2.222.978 2.222 2.222 0 1.239-.978 2.222-2.222 2.222-1.239 0-2.222-.978-2.222-2.222zm5.059 6.089c0-1.066.857-1.925 1.925-1.925.385 0 .732.146 1.033.385-.324.531-.828.947-1.422 1.184a1.89 1.89 0 0 1-1.536-.644zm5.623-6.089a3.89 3.89 0 0 0-.503-1.867 5.4 5.4 0 0 1 .59-.036c2.251 0 4.094 1.839 4.094 4.094a4.11 4.11 0 0 1-1.865 3.463 3.05 3.05 0 0 0-2.316-4.654z"/%3E%3C/svg%3E');
+        }
+
+        .suggested-app-icon.sendgrid {
+            background-color: var(--sendgrid);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M13.277 10.924v2.139h2.138v-2.139zm-2.144 0H8.995v2.139h2.138zm0 4.281H8.995v2.138h2.138zm-6.42-8.562H2.574v2.138h2.139zm2.137 0H4.711v2.138H6.85zm2.145 0H6.85v2.138h2.145zm8.562 0h-2.139v2.138h2.139zm-2.139 12.843h2.139v-2.138h-2.139zm-2.143 0h2.138v-2.138h-2.138zm6.42 0h2.139v-2.138h-2.139zm2.139-6.424h-2.139v2.143h2.139zm0-2.138h-2.139v2.138h2.139zM2.574 15.205h2.139v-2.143H2.574zm0-2.281h2.139v-2.139H2.574zm12.703 6.562h2.139v-2.138h-2.139zM4.711 19.486H6.85v-2.138H4.711zM24 .566L23.434 0H.566L0 .566v22.868l.566.566h22.868l.566-.566zm-1.138 22.3H1.139V1.134h21.723z"/%3E%3C/svg%3E');
+        }
+
+        .suggested-app-icon.typeform {
+            background-color: var(--typeform);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M15.677 14.519c-.264 0-.527-.068-.768-.203l-2.17-1.302a1.5 1.5 0 0 1-.698-1.273c0-.517.268-.997.707-1.267l2.172-1.34a1.532 1.532 0 0 1 1.549 0l2.17 1.34c.44.27.708.75.708 1.267 0 .502-.252.97-.698 1.273l-2.17 1.302c-.242.135-.505.203-.769.203m0-4.827a.38.38 0 0 0-.192.051l-2.172 1.34a.375.375 0 0 0-.177.317c0 .125.063.242.174.318l2.17 1.302a.383.383 0 0 0 .388 0l2.17-1.302a.375.375 0 0 0 .174-.318.375.375 0 0 0-.177-.317l-2.17-1.34a.38.38 0 0 0-.192-.051M6.21 8.458H3.633c-.31 0-.563-.252-.563-.563s.252-.563.563-.563H6.21c.31 0 .563.252.563.563s-.252.563-.563.563m13.597.563c.31 0 .563-.252.563-.563s-.252-.563-.563-.563h-2.577c-.31 0-.563.252-.563.563s.252.563.563.563zM6.21 12.522H3.633c-.31 0-.563-.252-.563-.563s.252-.563.563-.563H6.21c.31 0 .563.252.563.563s-.252.563-.563.563m13.597.563c.31 0 .563-.252.563-.563s-.252-.563-.563-.563h-2.577c-.31 0-.563.252-.563.563s.252.563.563.563zM6.21 16.585H3.633c-.31 0-.563-.252-.563-.563s.252-.563.563-.563H6.21c.31 0 .563.252.563.563s-.252.563-.563.563m13.597.563c.31 0 .563-.252.563-.563s-.252-.563-.563-.563h-2.577c-.31 0-.563.252-.563.563s.252.563.563.563z"/%3E%3C/svg%3E');
+        }
+
+        .suggested-app-icon.surveymonkey {
+            background-color: var(--surveymonkey);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm6.09 8.973c-.87 0-1.433.697-1.433 1.576 0 .88.564 1.577 1.433 1.577.87 0 1.433-.697 1.433-1.577 0-.88-.564-1.576-1.433-1.576zm-9.78 0c-.87 0-1.433.697-1.433 1.576 0 .88.563 1.577 1.432 1.577.87 0 1.433-.697 1.433-1.577 0-.88-.563-1.576-1.432-1.576zm1.387 6.489c-.102.007-.2.05-.274.131a.485.485 0 0 0-.084.559c.902 1.576 2.524 2.506 4.328 2.506 1.804 0 3.426-.93 4.328-2.506a.485.485 0 0 0-.084-.559.485.485 0 0 0-.559-.084c-.184.084-.266.296-.184.48-.77 1.35-2.18 2.18-3.68 2.18-1.5 0-2.91-.83-3.68-2.18a.485.485 0 0 0-.385-.266.485.485 0 0 0-.426.27z"/%3E%3C/svg%3E');
+        }
+
+        .suggested-app-icon.confluence {
+            background-color: var(--confluence);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M.87 18.257c-.248.382-.427.733-.584 1.127-.157.394-.18.663-.067.887.112.225.404.438.842.473.438.034.966-.056 1.573-.427l8.922-5.474c.54-.337.809-.618.989-.966.18-.348.18-.674.034-1.078-.146-.404-.427-.854-.966-1.416L1.543 1.19C1.027.584.555.13.127-.09c-.427-.225-.764-.202-.966-.034s-.292.45-.202.899c.09.45.292 1.033.674 1.775l5.63 10.933c.314.606.382.921.382 1.213s-.09.54-.314.843z"/%3E%3C/svg%3E');
+        }
+
+        .suggested-app-icon.googledocs {
+            background-color: var(--googledocs);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M14.727 6.727H14V6h.727zM14.727 7.636H14v.728h.727zm0 .91H14v.727h.727zm-.909-1.819H13.09v.728h.728zm0 .91H13.09v.727h.728zm-.909-.91h-.727v.728h.727zm0 .91h-.727v.727h.727zm.909-.91h-.727v.728h.727zm4.364 3.637H6.545v.727h11.637zm0 1.818H6.545v.728h11.637zm-11.636 1.82h11.636v.727H6.545zM14.727 0l5.818 5.818V24H3.455V0zM4.364.91v22.18h15.272V6.13L15.09.909z"/%3E%3C/svg%3E');
+        }
+
+        .app-icon.outlook { background: var(--outlook); }
+        .app-icon.mailchimp { background: var(--mailchimp); color: var(--gray-900); }
+        .app-icon.sendgrid { background: var(--sendgrid); }
+        .app-icon.typeform { background: var(--typeform); }
+        .app-icon.surveymonkey { background: var(--surveymonkey); }
+        .app-icon.confluence { background: var(--confluence); }
+        .app-icon.googledocs { background: var(--googledocs); }
+
+        .status-badge.mailchimp { background: var(--mailchimp-light); color: var(--mailchimp); }
+        .status-badge.typeform { background: var(--typeform-light); color: var(--typeform); }
+        .status-badge.confluence { background: var(--confluence-light); color: var(--confluence); }
+        .status-badge.googledocs { background: var(--googledocs-light); color: var(--googledocs); }
+
+        .btn-mailchimp { background: var(--mailchimp); color: var(--gray-900); }
+        .btn-mailchimp:hover { background: #e6c719; }
+        .btn-typeform { background: var(--typeform); color: var(--white); }
+        .btn-typeform:hover { background: #1a1a1b; }
+        .btn-confluence { background: var(--confluence); color: var(--white); }
+        .btn-confluence:hover { background: #0047b3; }
+        .btn-googledocs { background: var(--googledocs); color: var(--white); }
+        .btn-googledocs:hover { background: #3367d6; }
     </style>
 </head>
 <body>
@@ -367,6 +549,32 @@
         <div class="page-header">
             <h1 class="page-title">Type B: Content Dispatch Card</h1>
             <p class="page-subtitle">内容分发型 - Send Email, Slack Message</p>
+        </div>
+
+        <div class="example-switcher">
+            <button class="example-btn active" data-example="gmail">
+                <div class="icon gmail">✉</div>
+                <div class="text">
+                    <h4>邮件工具</h4>
+                </div>
+            </button>
+            <button class="example-btn" data-example="typeform">
+                <div class="icon typeform">?</div>
+                <div class="text">
+                    <h4>问卷调研</h4>
+                </div>
+            </button>
+            <button class="example-btn" data-example="confluence">
+                <div class="icon confluence">◀</div>
+                <div class="text">
+                    <h4>文档更新</h4>
+                </div>
+            </button>
+        </div>
+
+        <div class="suggested-apps">
+            <span class="suggested-label">建议样例：</span>
+            <div class="suggested-app-list"></div>
         </div>
 
         <div class="state-nav">
@@ -521,8 +729,10 @@
                         <span class="header-actions">☰</span>
                     </div>
                     <div class="phone-content">
-                        <!-- Generating State -->
-                        <div class="state-view active" data-view="generating">
+                        <!-- Gmail Example -->
+                        <div class="example-content active" data-example-content="gmail">
+                            <!-- Generating State -->
+                            <div class="state-view active" data-view="generating">
                             <div class="chat-bubble user">
                                 <div class="bubble-content">帮我给 Sarah 发封邮件，告诉她 Project X 的 Q1 进展顺利，下周可以约个时间讨论 Q2 计划</div>
                                 <div class="bubble-time">刚刚</div>
@@ -753,6 +963,726 @@ Best regards</div>
                                 </div>
                             </div>
                         </div>
+                        </div>
+
+                        <!-- Mailchimp Example (Coming soon) -->
+                        <div class="example-content" data-example-content="mailchimp">
+                            <div class="state-view active" data-view="generating">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Mailchimp 创建一个营销邮件 campaign，主题是「春季新品发布会邀请」，发给所有 VIP 客户群组</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">好的，我来帮你起草这个营销邮件...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Drafting campaign...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon mailchimp">M</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Mailchimp Campaign</h4>
+                                        </div>
+                                        <span class="status-badge draft">Generating</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="skeleton skeleton-line short"></div>
+                                                <div class="skeleton skeleton-line medium"></div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="skeleton skeleton-line short"></div>
+                                                <div class="skeleton skeleton-line"></div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="skeleton skeleton-line short"></div>
+                                                <div class="skeleton skeleton-line"></div>
+                                                <div class="skeleton skeleton-line medium"></div>
+                                                <div class="skeleton skeleton-line"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preview State -->
+                            <div class="state-view" data-view="preview">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Mailchimp 创建一个营销邮件 campaign，主题是「春季新品发布会邀请」，发给所有 VIP 客户群组</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">营销邮件草稿已生成，请确认内容后发送：</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Review and send
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon mailchimp">M</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Mailchimp Campaign</h4>
+                                        </div>
+                                        <span class="status-badge draft">Draft</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Campaign Name</div>
+                                                <div class="email-value">春季新品发布会邀请 - 2024</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Subject</div>
+                                                <div class="email-value">🎉 您被邀请参加我们的春季新品发布会</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Recipients</div>
+                                                <div class="email-value">VIP Customers (1,234 contacts)</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Email Content</div>
+                                                <div class="email-content">尊敬的 VIP 客户，
+
+我们诚挚邀请您参加 3 月 15 日举办的春季新品发布会。现场将发布多款创新产品，还有精美礼品相送。
+
+活动时间：3月15日 14:00-17:00
+活动地点：市中心会展中心 A厅
+
+期待与您相见！</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary">✎ Edit</button>
+                                        <button type="button" class="btn btn-mailchimp">📧 Send Campaign</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sending State -->
+                            <div class="state-view" data-view="sending">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Mailchimp 创建一个营销邮件 campaign，主题是「春季新品发布会邀请」，发给所有 VIP 客户群组</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">正在发送营销邮件...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>📧</span> Sending campaign...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon mailchimp">M</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Mailchimp Campaign</h4>
+                                        </div>
+                                        <span class="status-badge sending">Sending...</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Campaign Name</div>
+                                                <div class="email-value">春季新品发布会邀请 - 2024</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Recipients</div>
+                                                <div class="email-value">VIP Customers (1,234 contacts)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary" disabled>✎ Edit</button>
+                                        <button type="button" class="btn btn-mailchimp" disabled>
+                                            <span class="spinner"></span> Sending
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sent State -->
+                            <div class="state-view" data-view="sent">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Mailchimp 创建一个营销邮件 campaign，主题是「春季新品发布会邀请」，发给所有 VIP 客户群组</div>
+                                    <div class="bubble-time">1分钟前</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">营销邮件已成功发送给 1,234 位 VIP 客户！</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✅</span> Campaign sent
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon mailchimp">M</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Mailchimp Campaign</h4>
+                                        </div>
+                                        <span class="status-badge success">✓ Sent</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="success-check">✓</div>
+                                        <div class="success-text">
+                                            <strong>Campaign sent successfully</strong>
+                                            Sent to 1,234 VIP customers
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Failed State -->
+                            <div class="state-view" data-view="failed">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Mailchimp 创建一个营销邮件 campaign，主题是「春季新品发布会邀请」，发给所有 VIP 客户群组</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">抱歉，营销邮件发送失败了。可能是收件人列表有问题。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>⚠️</span> Send failed
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon mailchimp">M</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Mailchimp Campaign</h4>
+                                        </div>
+                                        <span class="status-badge error">✕ Failed</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="error-message">
+                                            ⚠️ Send failed: Invalid recipient list configuration.
+                                        </div>
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Campaign Name</div>
+                                                <div class="email-value">春季新品发布会邀请 - 2024</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Recipients</div>
+                                                <div class="email-value">VIP Customers (1,234 contacts)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary">✎ Edit</button>
+                                        <button type="button" class="btn btn-error">↻ Retry</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Suggest Link State -->
+                            <div class="state-view" data-view="suggest-link">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Mailchimp 创建一个营销邮件 campaign，主题是「春季新品发布会邀请」，发给所有 VIP 客户群组</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">我需要先连接你的 Mailchimp 账户才能帮你创建营销邮件。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>🔗</span> Connection Required
+                                </div>
+                                <div class="suggest-link-card">
+                                    <div class="suggest-link-header">
+                                        <div class="app-icon mailchimp">M</div>
+                                        <h4>Connect Mailchimp to continue</h4>
+                                    </div>
+                                    <div class="suggest-link-desc">
+                                        Connect to enable creating and sending marketing campaigns.
+                                    </div>
+                                    <div class="suggest-link-why">
+                                        <strong>Why:</strong> You asked to create a marketing campaign, but Mailchimp is not connected.
+                                    </div>
+                                    <div class="suggest-link-actions">
+                                        <button type="button" class="link-btn learn">Learn more</button>
+                                        <button type="button" class="link-btn connect">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Typeform Example -->
+                        <div class="example-content" data-example-content="typeform">
+                            <!-- Generating State -->
+                            <div class="state-view active" data-view="generating">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我用 Typeform 创建一个客户满意度调研问卷，发给上个月购买产品的所有客户</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">好的，我来帮你创建这个客户满意度问卷...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Creating survey...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon typeform">?</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Typeform Survey</h4>
+                                        </div>
+                                        <span class="status-badge draft">Generating</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="skeleton skeleton-line short"></div>
+                                                <div class="skeleton skeleton-line medium"></div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="skeleton skeleton-line short"></div>
+                                                <div class="skeleton skeleton-line"></div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="skeleton skeleton-line short"></div>
+                                                <div class="skeleton skeleton-line"></div>
+                                                <div class="skeleton skeleton-line medium"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preview State -->
+                            <div class="state-view" data-view="preview">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我用 Typeform 创建一个客户满意度调研问卷，发给上个月购买产品的所有客户</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">问卷已生成，请确认后发送给客户：</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Review and send
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon typeform">?</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Typeform Survey</h4>
+                                        </div>
+                                        <span class="status-badge draft">Draft</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Survey Title</div>
+                                                <div class="email-value">客户满意度调研 - 2024年3月</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Recipients</div>
+                                                <div class="email-value">Last Month Customers (456 customers)</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Survey Link</div>
+                                                <div class="email-value">typeform.com/to/abc123xyz</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Invitation Message</div>
+                                                <div class="email-content">尊敬的客户，
+
+感谢您上个月购买我们的产品。为了持续改进服务质量，我们诚挚邀请您填写这份简短的满意度调研问卷（约需 3 分钟）。
+
+您的反馈对我们非常重要！
+
+点击链接开始：typeform.com/to/abc123xyz</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary">✎ Edit</button>
+                                        <button type="button" class="btn btn-typeform">📋 Send Survey</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sending State -->
+                            <div class="state-view" data-view="sending">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我用 Typeform 创建一个客户满意度调研问卷，发给上个月购买产品的所有客户</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">正在发送问卷邀请...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>📋</span> Sending survey...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon typeform">?</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Typeform Survey</h4>
+                                        </div>
+                                        <span class="status-badge sending">Sending...</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Survey Title</div>
+                                                <div class="email-value">客户满意度调研 - 2024年3月</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Recipients</div>
+                                                <div class="email-value">Last Month Customers (456 customers)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary" disabled>✎ Edit</button>
+                                        <button type="button" class="btn btn-typeform" disabled>
+                                            <span class="spinner"></span> Sending
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sent State -->
+                            <div class="state-view" data-view="sent">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我用 Typeform 创建一个客户满意度调研问卷，发给上个月购买产品的所有客户</div>
+                                    <div class="bubble-time">1分钟前</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">问卷邀请已成功发送给 456 位客户！</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✅</span> Survey sent
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon typeform">?</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Typeform Survey</h4>
+                                        </div>
+                                        <span class="status-badge success">✓ Sent</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="success-check">✓</div>
+                                        <div class="success-text">
+                                            <strong>Survey sent successfully</strong>
+                                            Sent to 456 customers
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Failed State -->
+                            <div class="state-view" data-view="failed">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我用 Typeform 创建一个客户满意度调研问卷，发给上个月购买产品的所有客户</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">抱歉，问卷发送失败了。可能是收件人列表配置有问题。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>⚠️</span> Send failed
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon typeform">?</div>
+                                        <div class="card-header-text">
+                                            <h4>Create Typeform Survey</h4>
+                                        </div>
+                                        <span class="status-badge error">✕ Failed</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="error-message">
+                                            ⚠️ Send failed: Invalid recipient configuration.
+                                        </div>
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Survey Title</div>
+                                                <div class="email-value">客户满意度调研 - 2024年3月</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Recipients</div>
+                                                <div class="email-value">Last Month Customers (456 customers)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary">✎ Edit</button>
+                                        <button type="button" class="btn btn-error">↻ Retry</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Suggest Link State -->
+                            <div class="state-view" data-view="suggest-link">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我用 Typeform 创建一个客户满意度调研问卷，发给上个月购买产品的所有客户</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">我需要先连接你的 Typeform 账户才能帮你创建问卷。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>🔗</span> Connection Required
+                                </div>
+                                <div class="suggest-link-card">
+                                    <div class="suggest-link-header">
+                                        <div class="app-icon typeform">?</div>
+                                        <h4>Connect Typeform to continue</h4>
+                                    </div>
+                                    <div class="suggest-link-desc">
+                                        Connect to enable creating and distributing surveys.
+                                    </div>
+                                    <div class="suggest-link-why">
+                                        <strong>Why:</strong> You asked to create a customer survey, but Typeform is not connected.
+                                    </div>
+                                    <div class="suggest-link-actions">
+                                        <button type="button" class="link-btn learn">Learn more</button>
+                                        <button type="button" class="link-btn connect">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confluence Example -->
+                        <div class="example-content" data-example-content="confluence">
+                            <!-- Generating State -->
+                            <div class="state-view active" data-view="generating">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Confluence 的项目文档中更新 Q1 季度总结，添加我们完成的主要里程碑</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">好的，我来帮你起草文档更新内容...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Drafting update...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon confluence">◀</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Confluence Page</h4>
+                                        </div>
+                                        <span class="status-badge draft">Generating</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="skeleton skeleton-line short"></div>
+                                                <div class="skeleton skeleton-line medium"></div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="skeleton skeleton-line short"></div>
+                                                <div class="skeleton skeleton-line"></div>
+                                                <div class="skeleton skeleton-line medium"></div>
+                                                <div class="skeleton skeleton-line"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preview State -->
+                            <div class="state-view" data-view="preview">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Confluence 的项目文档中更新 Q1 季度总结，添加我们完成的主要里程碑</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">文档更新内容已生成，请确认后发布：</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Review and publish
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon confluence">◀</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Confluence Page</h4>
+                                        </div>
+                                        <span class="status-badge draft">Draft</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Page</div>
+                                                <div class="email-value">Project X - 2024 Q1 总结</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Section</div>
+                                                <div class="email-value">主要里程碑</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Update Content</div>
+                                                <div class="email-content">## Q1 主要里程碑
+
+✅ 完成前端架构重构
+  - 迁移至 React 18
+  - 性能提升 40%
+
+✅ 上线用户认证系统
+  - 支持 OAuth 2.0
+  - 新增双因素认证
+
+✅ API v2 发布
+  - RESTful 设计优化
+  - 响应时间减少 50%
+
+下一步：Q2 将专注于移动端优化和国际化支持。</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary">✎ Edit</button>
+                                        <button type="button" class="btn btn-confluence">📄 Publish</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sending State -->
+                            <div class="state-view" data-view="sending">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Confluence 的项目文档中更新 Q1 季度总结，添加我们完成的主要里程碑</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">正在发布文档更新...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>📄</span> Publishing...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon confluence">◀</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Confluence Page</h4>
+                                        </div>
+                                        <span class="status-badge sending">Publishing...</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Page</div>
+                                                <div class="email-value">Project X - 2024 Q1 总结</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Section</div>
+                                                <div class="email-value">主要里程碑</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary" disabled>✎ Edit</button>
+                                        <button type="button" class="btn btn-confluence" disabled>
+                                            <span class="spinner"></span> Publishing
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sent State -->
+                            <div class="state-view" data-view="sent">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Confluence 的项目文档中更新 Q1 季度总结，添加我们完成的主要里程碑</div>
+                                    <div class="bubble-time">1分钟前</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">文档已成功更新并发布！</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✅</span> Published
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon confluence">◀</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Confluence Page</h4>
+                                        </div>
+                                        <span class="status-badge success">✓ Published</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="success-check">✓</div>
+                                        <div class="success-text">
+                                            <strong>Document updated successfully</strong>
+                                            Project X - 2024 Q1 总结
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Failed State -->
+                            <div class="state-view" data-view="failed">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Confluence 的项目文档中更新 Q1 季度总结，添加我们完成的主要里程碑</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">抱歉，文档更新失败了。可能是权限不足。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>⚠️</span> Publish failed
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon confluence">◀</div>
+                                        <div class="card-header-text">
+                                            <h4>Update Confluence Page</h4>
+                                        </div>
+                                        <span class="status-badge error">✕ Failed</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="error-message">
+                                            ⚠️ Publish failed: Insufficient permissions to edit this page.
+                                        </div>
+                                        <div class="email-preview">
+                                            <div class="email-field">
+                                                <div class="email-label">Page</div>
+                                                <div class="email-value">Project X - 2024 Q1 总结</div>
+                                            </div>
+                                            <div class="email-field">
+                                                <div class="email-label">Section</div>
+                                                <div class="email-value">主要里程碑</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="button" class="btn btn-secondary">✎ Edit</button>
+                                        <button type="button" class="btn btn-error">↻ Retry</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Suggest Link State -->
+                            <div class="state-view" data-view="suggest-link">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">帮我在 Confluence 的项目文档中更新 Q1 季度总结，添加我们完成的主要里程碑</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">我需要先连接你的 Confluence 账户才能帮你更新文档。</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>🔗</span> Connection Required
+                                </div>
+                                <div class="suggest-link-card">
+                                    <div class="suggest-link-header">
+                                        <div class="app-icon confluence">◀</div>
+                                        <h4>Connect Confluence to continue</h4>
+                                    </div>
+                                    <div class="suggest-link-desc">
+                                        Connect to enable updating and publishing documents.
+                                    </div>
+                                    <div class="suggest-link-why">
+                                        <strong>Why:</strong> You asked to update a Confluence page, but Confluence is not connected.
+                                    </div>
+                                    <div class="suggest-link-actions">
+                                        <button type="button" class="link-btn learn">Learn more</button>
+                                        <button type="button" class="link-btn connect">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="chat-input">
                         <button type="button">+</button>
@@ -766,6 +1696,52 @@ Best regards</div>
     </div>
 
     <script>
+        const suggestedApps = {
+            gmail: [
+                { name: 'Gmail', icon: 'gmail' },
+                { name: 'Outlook', icon: 'outlook' },
+                { name: 'Mailchimp', icon: 'mailchimp' },
+                { name: 'SendGrid', icon: 'sendgrid' }
+            ],
+            typeform: [
+                { name: 'Typeform', icon: 'typeform' },
+                { name: 'SurveyMonkey', icon: 'surveymonkey' }
+            ],
+            confluence: [
+                { name: 'Confluence', icon: 'confluence' },
+                { name: 'Google Docs', icon: 'googledocs' }
+            ]
+        };
+
+        function updateSuggestedApps(example) {
+            const appList = document.querySelector('.suggested-app-list');
+            const apps = suggestedApps[example] || [];
+            appList.innerHTML = apps.map(app => `
+                <div class="suggested-app">
+                    <div class="suggested-app-icon ${app.icon}"></div>
+                    <span>${app.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function switchExample(example) {
+            document.querySelectorAll('.example-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.example === example) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.example-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.dataset.exampleContent === example) {
+                    content.classList.add('active');
+                }
+            });
+
+            updateSuggestedApps(example);
+        }
+
         function switchState(state) {
             document.querySelectorAll('.state-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -794,6 +1770,15 @@ Best regards</div>
                 switchState(btn.dataset.state);
             });
         });
+
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchExample(btn.dataset.example);
+            });
+        });
+
+        // Initialize with gmail examples
+        updateSuggestedApps('gmail');
     </script>
 </body>
 </html>

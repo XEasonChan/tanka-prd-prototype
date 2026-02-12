@@ -1432,44 +1432,133 @@ flowchart TD
 
                 <div class="table-container" style="margin-top: 16px;">
                     <div class="table-header">
-                        <h4>常用 Action 案例</h4>
+                        <h4>📋 Action 统一管理表格（所有 App、场景与数据来源）</h4>
+                        <p style="font-size: 0.85rem; color: var(--gray-600); margin-top: 8px;">此表格列出所有支持的 App、AI Action 场景、必需数据字段及 API 来源</p>
                     </div>
-                    <table>
+                    <table style="font-size: 0.85rem;">
                         <thead>
                             <tr>
-                                <th>样式</th>
-                                <th>应用列表样例</th>
-                                <th>相关场景</th>
+                                <th style="width: 8%;">Card 类型</th>
+                                <th style="width: 10%;">分类</th>
+                                <th style="width: 12%;">App 名称</th>
+                                <th style="width: 18%;">AI Action 场景</th>
+                                <th style="width: 25%;">必需数据字段</th>
+                                <th style="width: 27%;">数据来源 / API</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Type A: State Mutation Card -->
                             <tr>
-                                <td>CRM</td>
+                                <td rowspan="5" style="vertical-align: top; background: var(--gray-50); font-weight: 600;">Type A<br>状态变更型</td>
+                                <td rowspan="2">CRM</td>
                                 <td>HubSpot</td>
-                                <td>Update Deal Stage；Update Contact；Log Activity</td>
+                                <td>Update Deal Stage<br>Update Contact<br>Log Activity</td>
+                                <td>• Deal ID / Contact ID<br>• Current Stage<br>• Target Stage<br>• Pipeline Options</td>
+                                <td>• <code>GET /deals/:id</code> 获取当前状态<br>• <code>GET /pipelines</code> 获取 Stage 枚举<br>• <code>PATCH /deals/:id</code> 更新 Stage<br>• Context: Agent 需识别 Deal 名称并匹配 ID</td>
                             </tr>
                             <tr>
-                                <td>任务管理</td>
-                                <td>Linear, Jira</td>
-                                <td>Status Change；Assignee Update；Priority Change</td>
+                                <td>Salesforce</td>
+                                <td>Update Opportunity<br>Change Lead Status</td>
+                                <td>• Opportunity ID<br>• Current Stage<br>• Target Stage</td>
+                                <td>• <code>GET /sobjects/Opportunity/:id</code><br>• <code>PATCH /sobjects/Opportunity/:id</code><br>• Stage 枚举来自 Salesforce Schema</td>
                             </tr>
                             <tr>
-                                <td>文档同步</td>
-                                <td>Confluence, Notion, Google Doc</td>
-                                <td>创建文档；更新文档内容</td>
+                                <td rowspan="2">项目管理</td>
+                                <td>Linear</td>
+                                <td>Status Change<br>Assignee Update<br>Priority Change</td>
+                                <td>• Issue ID<br>• Current Status<br>• Target Status<br>• Assignee List<br>• Priority Options</td>
+                                <td>• <code>GET /issue/:id</code> 获取当前状态<br>• <code>GET /team/:id/states</code> 获取 Status 枚举<br>• <code>GET /team/:id/members</code> 获取成员列表<br>• <code>PATCH /issue/:id</code> 更新状态</td>
                             </tr>
                             <tr>
-                                <td>日程同步</td>
-                                <td>Google Cal, Outlook Cal</td>
-                                <td>发送日程</td>
+                                <td>Jira</td>
+                                <td>Status Transition<br>Assignee Update<br>Priority Change</td>
+                                <td>• Issue Key<br>• Current Status<br>• Target Status<br>• Transition ID<br>• User List</td>
+                                <td>• <code>GET /issue/:key</code><br>• <code>GET /issue/:key/transitions</code> 获取可用转换<br>• <code>GET /user/search</code> 搜索用户<br>• <code>POST /issue/:key/transitions</code></td>
                             </tr>
                             <tr>
-                                <td>会议生成</td>
-                                <td>Zoom, Google Meeting</td>
-                                <td>Instant Meeting：生成会议链接并发送</td>
+                                <td>即时通讯</td>
+                                <td>Slack</td>
+                                <td>Send Message<br>Update Message<br>Reply in Thread</td>
+                                <td>• Channel ID / DM ID<br>• Message Text<br>• Thread TS (for replies)<br>• User/Channel List</td>
+                                <td>• <code>GET /conversations.list</code> 获取频道列表<br>• <code>GET /users.list</code> 获取用户列表<br>• <code>POST /chat.postMessage</code> 发送消息<br>• Context: Agent 需从对话历史获取 Channel 名称和 Thread context</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="1"></td>
+                                <td>日程管理</td>
+                                <td>Google Calendar</td>
+                                <td>Create Event<br>Update Event<br>Send Invite</td>
+                                <td>• Event Title<br>• Start/End Time<br>• Attendees List<br>• Calendar ID<br>• Description</td>
+                                <td>• <code>GET /calendars</code> 获取日历列表<br>• <code>POST /calendars/:id/events</code> 创建事件<br>• Agent 需从对话提取时间、参与者信息</td>
+                            </tr>
+                            <!-- Type B: Content Dispatch Card -->
+                            <tr>
+                                <td rowspan="6" style="vertical-align: top; background: var(--primary-light); font-weight: 600;">Type B<br>内容分发型</td>
+                                <td rowspan="2">邮件工具</td>
+                                <td>Gmail</td>
+                                <td>Draft Email<br>Send Email<br>Reply to Thread</td>
+                                <td>• To (Email Address)<br>• Subject<br>• Email Body<br>• Thread ID (for replies)<br>• Attachments (optional)</td>
+                                <td>• <code>GET /messages/:id</code> 获取原邮件（回复时）<br>• <code>POST /messages/send</code> 发送邮件<br>• <code>GET /contacts</code> 获取联系人（支持搜索）<br>• Context: Agent 需从对话识别收件人名称并补全邮箱</td>
+                            </tr>
+                            <tr>
+                                <td>Outlook</td>
+                                <td>Draft Email<br>Send Email</td>
+                                <td>• To (Email Address)<br>• Subject<br>• Email Body<br>• CC/BCC (optional)</td>
+                                <td>• <code>GET /me/contacts</code> 获取联系人<br>• <code>POST /me/sendMail</code> 发送邮件<br>• <code>GET /me/messages/:id</code> 获取邮件</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">营销邮件</td>
+                                <td>Mailchimp</td>
+                                <td>Create Campaign<br>Send Campaign<br>Schedule Campaign</td>
+                                <td>• Campaign Name<br>• Subject Line<br>• Email Content (HTML)<br>• Audience/List ID<br>• Send Time (optional)</td>
+                                <td>• <code>GET /lists</code> 获取受众列表<br>• <code>POST /campaigns</code> 创建 Campaign<br>• <code>POST /campaigns/:id/actions/send</code> 发送<br>• Agent 需从指令提取 Campaign 内容和目标受众</td>
+                            </tr>
+                            <tr>
+                                <td>SendGrid</td>
+                                <td>Send Marketing Email<br>Create Template</td>
+                                <td>• From Email<br>• To List<br>• Subject<br>• HTML Content<br>• Template ID (optional)</td>
+                                <td>• <code>GET /marketing/lists</code> 获取联系人列表<br>• <code>POST /mail/send</code> 发送邮件<br>• <code>GET /templates</code> 获取模板列表</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">调研问卷</td>
+                                <td>Typeform</td>
+                                <td>Create Survey<br>Send Survey<br>Distribute Survey</td>
+                                <td>• Survey Title<br>• Questions<br>• Recipient List<br>• Survey Link<br>• Distribution Method</td>
+                                <td>• <code>POST /forms</code> 创建表单<br>• <code>GET /forms/:id</code> 获取表单链接<br>• 需集成邮件 API 进行分发<br>• Agent 需从指令生成问卷问题结构</td>
+                            </tr>
+                            <tr>
+                                <td>SurveyMonkey</td>
+                                <td>Create Survey<br>Send Collector</td>
+                                <td>• Survey Title<br>• Questions<br>• Collector Type<br>• Recipient Emails</td>
+                                <td>• <code>POST /surveys</code> 创建调研<br>• <code>POST /surveys/:id/collectors</code> 创建收集器<br>• <code>POST /collectors/:id/messages</code> 发送邀请</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="1"></td>
+                                <td rowspan="2">文档更新</td>
+                                <td>Confluence</td>
+                                <td>Create Page<br>Update Page<br>Add Comment</td>
+                                <td>• Space ID<br>• Page ID (更新时)<br>• Page Title<br>• Content (HTML/Storage Format)<br>• Parent Page ID</td>
+                                <td>• <code>GET /spaces</code> 获取空间列表<br>• <code>GET /content</code> 搜索页面<br>• <code>POST /content</code> 创建页面<br>• <code>PUT /content/:id</code> 更新页面<br>• Agent 需从对话识别要更新的页面标题</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Google Docs</td>
+                                <td>Create Doc<br>Update Doc Content<br>Insert Text</td>
+                                <td>• Document ID (更新时)<br>• Document Title<br>• Content Text<br>• Insert Position<br>• Folder ID (创建时)</td>
+                                <td>• <code>POST /documents</code> 创建文档<br>• <code>POST /documents/:id:batchUpdate</code> 批量更新<br>• <code>GET /documents/:id</code> 获取文档内容<br>• <code>GET /drive/files</code> 搜索文档</td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div class="info-box" style="margin-top: 20px; background: var(--gray-50); border-radius: 12px; padding: 20px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">💡 数据获取与 Agent Context 要求</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: var(--gray-700); font-size: 13px; line-height: 1.8;">
+                        <li><strong>Context 追踪：</strong>Agent 需从对话历史中提取关键信息（如 "给 Sarah 发邮件" → 需要查找 Sarah 的邮箱地址）</li>
+                        <li><strong>API 预加载：</strong>连接后，前端应预加载常用列表（联系人、频道、项目列表）并缓存，减少 Drafting 阶段等待时间</li>
+                        <li><strong>搜索与匹配：</strong>所有下拉字段（Assignee、Channel、Contact）需支持搜索功能，Agent 可通过名称模糊匹配</li>
+                        <li><strong>Schema 验证：</strong>枚举类型字段（如 Status、Priority）必须从 App API 动态获取，不应硬编码</li>
+                        <li><strong>权限检查：</strong>在 Drafting 阶段就应检查用户是否有权限操作目标对象（如编辑 Confluence 页面）</li>
+                    </ul>
                 </div>
 
                 <!-- Type A Prototype Embed -->

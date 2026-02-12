@@ -782,6 +782,7 @@
             </div>
 
             <div class="prototype-section">
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--gray-900); margin-bottom: 20px;">🎯 Action Card 原型</h3>
                 <div class="prototype-grid">
                     <a href="prototype-type-a.html" class="prototype-card">
                         <div class="card-icon type-a">📊</div>
@@ -805,20 +806,34 @@
                         <span class="card-link">打开原型 →</span>
                     </a>
 
-                    <a href="prototype-type-c.html" class="prototype-card">
-                        <div class="card-icon type-c">🔗</div>
-                        <h3 class="card-title">Type C: Smart Link Suggestion</h3>
-                        <p class="card-subtitle">智能连接引导 - URL Regex Trigger</p>
+                    <a href="prototype-type-c-report.html" class="prototype-card">
+                        <div class="card-icon type-c">📈</div>
+                        <h3 class="card-title">Type C: Data Retrieval & Report</h3>
+                        <p class="card-subtitle">数据检索型 - Mailchimp, HubSpot Analytics</p>
                         <div class="card-tags">
                             <span class="tag">6 个状态</span>
-                            <span class="tag">完整流程</span>
+                            <span class="tag">AI 分析</span>
+                        </div>
+                        <span class="card-link">打开原型 →</span>
+                    </a>
+                </div>
+
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--gray-900); margin: 32px 0 20px 0;">🔗 Link Suggestion 原型</h3>
+                <div class="prototype-grid">
+                    <a href="prototype-type-c.html" class="prototype-card">
+                        <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">🔗</div>
+                        <h3 class="card-title">Link Suggestion A: URL Regex Trigger</h3>
+                        <p class="card-subtitle">群聊正则引导 - Smart Chip 自动识别链接</p>
+                        <div class="card-tags">
+                            <span class="tag">6 个状态</span>
+                            <span class="tag">URL 识别</span>
                         </div>
                         <span class="card-link">打开原型 →</span>
                     </a>
 
                     <a href="prototype-suggest-link.html" class="prototype-card">
                         <div class="card-icon" style="background: linear-gradient(135deg, #0052CC, #4C9AFF);">✨</div>
-                        <h3 class="card-title">Suggest Link: Chain Reaction</h3>
+                        <h3 class="card-title">Link Suggestion B: Chain Reaction</h3>
                         <p class="card-subtitle">链式触发 - Action 完成后建议连接</p>
                         <div class="card-tags">
                             <span class="tag">7 个状态</span>
@@ -1476,11 +1491,30 @@ flowchart TD
                                 <td>• <code>GET /issue/:key</code><br>• <code>GET /issue/:key/transitions</code> 获取可用转换<br>• <code>GET /user/search</code> 搜索用户<br>• <code>POST /issue/:key/transitions</code></td>
                             </tr>
                             <tr>
-                                <td>即时通讯</td>
+                                <td rowspan="2">即时通讯<br><strong style="color: var(--primary);">Work IM</strong></td>
                                 <td>Slack</td>
                                 <td>Send Message<br>Update Message<br>Reply in Thread</td>
-                                <td>• Channel ID / DM ID<br>• Message Text<br>• Thread TS (for replies)<br>• User/Channel List</td>
-                                <td>• <code>GET /conversations.list</code> 获取频道列表<br>• <code>GET /users.list</code> 获取用户列表<br>• <code>POST /chat.postMessage</code> 发送消息<br>• Context: Agent 需从对话历史获取 Channel 名称和 Thread context</td>
+                                <td>• Channel ID / DM ID<br>• Message Text<br>• Thread TS (for replies)<br>• User/Channel List<br>• Workspace metadata</td>
+                                <td>• <code>GET /conversations.list</code> 获取频道列表<br>• <code>GET /users.list</code> 获取用户列表（含 display name, email, role）<br>• <code>POST /chat.postMessage</code> 发送消息<br>• Context: Agent 需从对话历史获取 Channel 名称和 Thread context<br>• 用户通过 display name 或 email 识别</td>
+                            </tr>
+                            <tr>
+                                <td>Microsoft Teams</td>
+                                <td>Send Message<br>Reply to Thread<br>Send to Channel</td>
+                                <td>• Channel ID / Chat ID<br>• Message Text<br>• Thread ID (for replies)<br>• User List (from org directory)<br>• Team metadata</td>
+                                <td>• <code>GET /teams</code> 获取团队列表<br>• <code>GET /users</code> 获取组织用户列表（含 display name, email, department）<br>• <code>POST /chats/messages</code> 发送消息<br>• Context: Agent 需从对话识别收件人并匹配组织目录</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">即时通讯<br><strong style="color: var(--success);">Personal IM</strong></td>
+                                <td>WhatsApp</td>
+                                <td>Send Message<br>Send to Contact<br>Send to Group</td>
+                                <td>• Contact Name<br>• Phone Number<br>• Message Text<br>• Contact ID (optional)<br>• Group ID (optional)</td>
+                                <td>• <code>GET /contacts</code> 获取联系人列表<br>• <code>GET /contacts/search</code> 搜索联系人（按名称/号码）<br>• <code>POST /messages</code> 发送消息<br>• Context: Agent 需从对话识别收件人名称并匹配电话号码<br>• <strong>仅有电话号码和用户名，无 workspace metadata</strong><br>• 支持用户编辑/修正联系人信息</td>
+                            </tr>
+                            <tr>
+                                <td>Telegram</td>
+                                <td>Send Message<br>Send to Chat<br>Send to Channel</td>
+                                <td>• Chat ID / Channel ID<br>• Username<br>• Phone Number (optional)<br>• Message Text<br>• Contact List</td>
+                                <td>• <code>GET /getMe</code> 验证 Bot 状态<br>• <code>GET /getUpdates</code> 获取聊天列表<br>• <code>POST /sendMessage</code> 发送消息<br>• Context: Agent 需从对话识别收件人并匹配 Username/Chat ID<br>• <strong>仅有 Username 和 Phone Number，无组织架构信息</strong><br>• 支持检索和编辑联系人信息</td>
                             </tr>
                             <tr>
                                 <td rowspan="1"></td>
@@ -1545,6 +1579,35 @@ flowchart TD
                                 <td>Create Doc<br>Update Doc Content<br>Insert Text</td>
                                 <td>• Document ID (更新时)<br>• Document Title<br>• Content Text<br>• Insert Position<br>• Folder ID (创建时)</td>
                                 <td>• <code>POST /documents</code> 创建文档<br>• <code>POST /documents/:id:batchUpdate</code> 批量更新<br>• <code>GET /documents/:id</code> 获取文档内容<br>• <code>GET /drive/files</code> 搜索文档</td>
+                            </tr>
+                            <!-- Type C: Data Retrieval & Report Generation -->
+                            <tr>
+                                <td rowspan="4" style="vertical-align: top; background: #fef9c3; font-weight: 600;">Type C<br>数据检索型</td>
+                                <td>营销分析</td>
+                                <td>Mailchimp</td>
+                                <td>Generate Campaign Report<br>Generate Audience Analytics<br>Export Performance Data</td>
+                                <td>• Campaign ID (optional)<br>• Date Range (Start/End)<br>• Report Metrics (Opens, Clicks, etc.)<br>• Report Format (Summary/Detailed)<br>• Audience Segment ID (optional)</td>
+                                <td>• <code>GET /reports/campaigns/:id</code> 获取单个 Campaign 报告<br>• <code>GET /reports</code> 获取所有 Campaign 报告<br>• <code>GET /lists/:id/growth-history</code> 获取受众增长数据<br>• <code>GET /lists/:id/activity</code> 获取活动数据<br>• Context: Agent 分析数据并生成可读性报告<br>• AI 生成图表说明和洞察建议</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">销售分析</td>
+                                <td>HubSpot</td>
+                                <td>Generate Sales Report<br>Pipeline Analytics<br>Revenue Forecast</td>
+                                <td>• Date Range (Start/End)<br>• Pipeline ID<br>• Report Type (Deals/Revenue/Forecast)<br>• Team/Owner Filter<br>• Grouping Options (Stage/Month)</td>
+                                <td>• <code>GET /crm/v3/objects/deals</code> 获取 Deals 数据<br>• <code>GET /analytics/v2/reports</code> 获取分析报告<br>• <code>GET /crm/v3/pipelines/deals</code> 获取 Pipeline 配置<br>• <code>GET /owners</code> 获取所有者列表<br>• Context: Agent 需计算转化率、预测趋势<br>• AI 生成执行摘要和行动建议</td>
+                            </tr>
+                            <tr>
+                                <td>Salesforce</td>
+                                <td>Generate Pipeline Report<br>Forecast Report<br>Team Performance</td>
+                                <td>• Date Range (Start/End)<br>• Report Type ID (optional)<br>• Opportunity Stage Filter<br>• User/Team Filter<br>• Include Forecast (Yes/No)</td>
+                                <td>• <code>GET /analytics/reports</code> 获取报告列表<br>• <code>POST /analytics/reports/:id/instances</code> 运行报告<br>• <code>GET /sobjects/Opportunity/describe</code> 获取字段元数据<br>• <code>GET /sobjects/User</code> 获取用户列表<br>• Context: Agent 需整合多个数据源<br>• AI 生成业绩洞察和预测分析</td>
+                            </tr>
+                            <tr>
+                                <td>网站分析</td>
+                                <td>Google Analytics</td>
+                                <td>Generate Traffic Report<br>User Behavior Analysis<br>Conversion Report</td>
+                                <td>• Date Range (Start/End)<br>• Property ID<br>• Metrics (Sessions, Users, Conversions)<br>• Dimensions (Source, Device, Page)<br>• Segment Filter (optional)</td>
+                                <td>• <code>POST /data:runReport</code> 运行自定义报告<br>• <code>GET /properties</code> 获取属性列表<br>• <code>GET /metadata</code> 获取可用维度和指标<br>• Context: Agent 需理解分析目标并选择合适指标<br>• AI 生成趋势分析和优化建议</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1689,7 +1752,112 @@ flowchart TD
             </div>
 
             <div class="subsection">
-                <h3 class="subsection-title">3.4 Type C: Resource Allocation Card（资源调度型）</h3>
+                <h3 class="subsection-title">3.4 Type C: Data Retrieval & Report Generation（数据检索与报告生成型）</h3>
+                <div class="content-box">
+                    <h4>适用场景</h4>
+                    <p>Generate Mailchimp Marketing Report, HubSpot Sales Analytics, Google Analytics Traffic Report, Salesforce Pipeline Forecast</p>
+                    <p style="margin-top: 8px;"><strong>交互逻辑：</strong>Fetch Data -> AI Analysis -> Generate Report</p>
+                </div>
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div class="content-box">
+                        <h4>UI 结构</h4>
+                        <ul>
+                            <li><strong>Header：</strong>App Icon + "Generate Report"</li>
+                            <li><strong>Body：</strong>参数配置区 + 报告预览
+                                <ul>
+                                    <li>📊 Date Range: Last 30 days</li>
+                                    <li>📈 Metrics: Opens, Clicks, Conversions</li>
+                                    <li>🎯 Filters: Campaign / Audience</li>
+                                </ul>
+                            </li>
+                            <li><strong>Footer：</strong><code>[ Generate Report ]</code> | <code>[ Export ]</code></li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <h4>核心能力</h4>
+                        <ul>
+                            <li><strong>智能数据获取：</strong>从 App API 拉取原始数据</li>
+                            <li><strong>AI 分析引擎：</strong>Tanka Agent 计算趋势、转化率、预测</li>
+                            <li><strong>可读性报告：</strong>生成执行摘要、图表说明、行动建议</li>
+                            <li><strong>多格式导出：</strong>支持 PDF、CSV、Link 分享</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 16px;">
+                    <div class="table-header">
+                        <h4>状态说明</h4>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>状态</th>
+                                <th>触发条件</th>
+                                <th>前端交互与视觉逻辑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>Configuring</code></td>
+                                <td>用户请求生成报告</td>
+                                <td>展示参数配置表单：Date Range / Metrics / Filters；支持下拉选择和日期选择器</td>
+                            </tr>
+                            <tr>
+                                <td><code>Fetching</code></td>
+                                <td>用户点击 Generate Report</td>
+                                <td>显示进度条："Fetching data from Mailchimp..."；调用 API 获取原始数据</td>
+                            </tr>
+                            <tr>
+                                <td><code>Analyzing</code></td>
+                                <td>数据获取完成</td>
+                                <td>显示 "AI is analyzing data..."；Agent 计算指标、识别趋势、生成洞察</td>
+                            </tr>
+                            <tr>
+                                <td><code>Preview</code></td>
+                                <td>分析完成</td>
+                                <td>展示报告预览：Executive Summary / Charts / Insights；按钮 [Export] / [Regenerate]</td>
+                            </tr>
+                            <tr>
+                                <td><code>Completed</code></td>
+                                <td>用户确认或导出</td>
+                                <td>显示绿勾与 "Report generated"；提供下载链接或分享链接</td>
+                            </tr>
+                            <tr>
+                                <td><code>Failed</code></td>
+                                <td>API 失败或权限不足</td>
+                                <td>显示错误原因："Unable to fetch data - permission denied"；按钮 [Retry] / [Check Permission]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box" style="margin-top: 20px; background: linear-gradient(135deg, #fef9c3 0%, #fef3c7 100%); border: 1px solid #fde047; border-radius: 12px; padding: 20px;">
+                    <h4 style="margin: 0 0 12px 0; color: #854d0e; font-size: 14px; font-weight: 600;">🤖 AI 生成能力要求</h4>
+                    <p style="margin: 0 0 12px 0; color: #713f12; font-size: 13px; line-height: 1.8;">
+                        Type C 的核心价值在于 <strong>Tanka Agent 的数据分析和报告生成能力</strong>，而不仅仅是简单的数据展示：
+                    </p>
+                    <ul style="margin: 0; padding-left: 20px; color: #713f12; font-size: 13px; line-height: 1.8;">
+                        <li><strong>趋势识别：</strong>识别指标上升/下降趋势，计算增长率、波动率</li>
+                        <li><strong>异常检测：</strong>发现异常数据点（如突然的流量下降、转化率骤降）</li>
+                        <li><strong>洞察提炼：</strong>从原始数据中提炼业务洞察（如"周三邮件打开率最高"）</li>
+                        <li><strong>行动建议：</strong>基于数据生成可执行建议（如"建议增加周三发送频率"）</li>
+                        <li><strong>预测能力：</strong>基于历史数据预测未来趋势（如销售预测、流量预测）</li>
+                    </ul>
+                </div>
+
+                <div class="content-box" style="margin-top: 16px;">
+                    <h4>典型用户场景</h4>
+                    <ul>
+                        <li><strong>营销团队：</strong>"生成上个月所有 Mailchimp Campaign 的表现报告，重点关注打开率和点击率"</li>
+                        <li><strong>销售团队：</strong>"帮我分析本季度的 HubSpot Pipeline，预测下季度的成交金额"</li>
+                        <li><strong>产品团队：</strong>"生成过去两周的 Google Analytics 流量报告，分析用户来源和转化漏斗"</li>
+                        <li><strong>管理层：</strong>"导出 Salesforce 团队业绩报告，对比各成员的成交率和 Pipeline 健康度"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">3.5 Type D: Resource Allocation Card（资源调度型）</h3>
                 <div class="content-box">
                     <h4>适用场景</h4>
                     <p>Schedule Zoom Meeting, Create Google Calendar Event, Book Resource</p>

@@ -27,6 +27,10 @@
             --typeform-light: #f5f5f5;
             --slack: #611f69;
             --slack-light: #f4ecf7;
+            --whatsapp: #25D366;
+            --whatsapp-light: #e8f9ef;
+            --telegram: #0088cc;
+            --telegram-light: #e6f4fb;
             --gcal: #4285F4;
             --gcal-light: #e8f0fe;
             --gray-900: #111827;
@@ -265,6 +269,14 @@
         .suggested-app-icon.msteams {
             background-color: #6264A7;
             background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M20.625 8.127h-2.813v7.5h2.813c1.034 0 1.875-.841 1.875-1.875v-3.75c0-1.034-.841-1.875-1.875-1.875z"/%3E%3C/svg%3E');
+        }
+        .suggested-app-icon.whatsapp {
+            background-color: var(--whatsapp);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/%3E%3C/svg%3E');
+        }
+        .suggested-app-icon.telegram {
+            background-color: var(--telegram);
+            background-image: url('data:image/svg+xml,%3Csvg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath fill="white" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/%3E%3C/svg%3E');
         }
         .suggested-app-icon.gcal {
             background-color: var(--gcal);
@@ -898,7 +910,13 @@
             <button class="example-btn" data-example="slack">
                 <div class="icon slack">S</div>
                 <div class="text">
-                    <h4>即时通讯工具</h4>
+                    <h4>Work IM 工具</h4>
+                </div>
+            </button>
+            <button class="example-btn" data-example="personalim">
+                <div class="icon whatsapp" style="background-color: var(--whatsapp);">W</div>
+                <div class="text">
+                    <h4>Personal IM 工具</h4>
                 </div>
             </button>
             <button class="example-btn" data-example="gcal">
@@ -975,10 +993,19 @@
                             <li>Diff View 展示当前值与建议值</li>
                             <li>用户可修改参数</li>
                             <li>提供 Confirm / Cancel 按钮</li>
+                            <li><strong>Personal IM：</strong>收件人字段支持搜索联系人（按名称或电话号码）</li>
                         </ul>
                         <div class="trigger-box">
                             <div class="trigger-label">触发条件</div>
                             <div class="trigger-value">意图识别完成且 App 已连接</div>
+                        </div>
+                        <div class="trigger-box" style="margin-top: 12px; background: var(--whatsapp-light); border-color: var(--whatsapp);">
+                            <div class="trigger-label" style="color: var(--whatsapp);">Personal IM 特性</div>
+                            <div class="trigger-value" style="color: var(--gray-700);">
+                                • 点击 Edit 可搜索联系人<br>
+                                • 显示联系人名称 + 电话号码<br>
+                                • 支持手动编辑/修正联系人信息
+                            </div>
                         </div>
                     </div>
                     <div class="flow-steps">
@@ -2494,6 +2521,242 @@
                             </div>
                         </div>
 
+                        <!-- WhatsApp Example -->
+                        <div class="example-content" data-example-content="personalim">
+                            <!-- Identifying State -->
+                            <div class="state-view active" data-view="identifying">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">发个 WhatsApp 消息给 Sarah，告诉她明天的会议改到下午 3 点了</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">好的，我来帮你发送 WhatsApp 消息...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Next step for you
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon whatsapp" style="background-color: var(--whatsapp);">W</div>
+                                        <div class="card-header-text">
+                                            <h4>Send WhatsApp Message</h4>
+                                        </div>
+                                        <span class="status-badge identifying">Identifying</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="skeleton skeleton-line short"></div>
+                                        <div class="skeleton skeleton-line medium"></div>
+                                        <div class="skeleton skeleton-line"></div>
+                                        <div class="skeleton skeleton-line short" style="margin-top: 16px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Drafting State -->
+                            <div class="state-view" data-view="drafting">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">发个 WhatsApp 消息给 Sarah，告诉她明天的会议改到下午 3 点了</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">我已经起草好了消息，请确认后发送：</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Next step for you
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon whatsapp" style="background-color: var(--whatsapp);">W</div>
+                                        <div class="card-header-text">
+                                            <h4>Send WhatsApp Message</h4>
+                                        </div>
+                                        <span class="status-badge pending" style="background: var(--whatsapp-light); color: var(--whatsapp); border-color: var(--whatsapp);">待确认</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Send to Contact</div>
+                                        <div class="field-row">
+                                            <div class="field-label">收件人 <span class="required">*</span> <span style="font-size: 0.7rem; color: var(--gray-400); font-weight: 400;">• 可搜索</span></div>
+                                            <div class="field-values">
+                                                <div class="field-value new">
+                                                    <strong>Sarah Johnson</strong>
+                                                    <div style="font-size: 0.8rem; color: var(--gray-500); margin-top: 2px;">+1 (415) 555-0123</div>
+                                                    <div style="font-size: 0.7rem; color: var(--gray-400); margin-top: 4px;">💡 点击 Edit 可搜索或更换联系人</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="field-label">Message <span class="required">*</span></div>
+                                            <div class="field-values">
+                                                <div class="field-value new" style="line-height: 1.6;">Hi Sarah 👋<br><br>明天的会议时间调整了，改到下午 3 点。请确认你的时间是否方便。</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary">✎ Edit</button>
+                                        <button class="btn btn-primary" style="background: var(--whatsapp); border-color: var(--whatsapp);">📤 Send</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pending State -->
+                            <div class="state-view" data-view="pending">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">发个 WhatsApp 消息给 Sarah，告诉她明天的会议改到下午 3 点了</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">正在发送 WhatsApp 消息...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✨</span> Sending...
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon whatsapp" style="background-color: var(--whatsapp);">W</div>
+                                        <div class="card-header-text">
+                                            <h4>Send WhatsApp Message</h4>
+                                        </div>
+                                        <span class="status-badge pending" style="background: var(--whatsapp-light); color: var(--whatsapp); border-color: var(--whatsapp);">发送中...</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Send to Contact</div>
+                                        <div class="field-row">
+                                            <div class="field-label">收件人</div>
+                                            <div class="field-values">
+                                                <div class="field-value new">
+                                                    <strong>Sarah Johnson</strong>
+                                                    <div style="font-size: 0.8rem; color: var(--gray-500); margin-top: 2px;">+1 (415) 555-0123</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="field-label">Message</div>
+                                            <div class="field-values">
+                                                <div class="field-value new">Hi Sarah 👋 明天的会议时间...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary" disabled>✎ Edit</button>
+                                        <button class="btn btn-primary" disabled style="background: var(--whatsapp); border-color: var(--whatsapp);">
+                                            <span class="spinner"></span> Sending
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fulfilled State -->
+                            <div class="state-view" data-view="fulfilled">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">发个 WhatsApp 消息给 Sarah，告诉她明天的会议改到下午 3 点了</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">✅ WhatsApp 消息已发送给 Sarah Johnson！</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>✅</span> Completed
+                                </div>
+                                <div class="action-card success">
+                                    <div class="card-header">
+                                        <div class="app-icon whatsapp" style="background-color: var(--whatsapp);">W</div>
+                                        <div class="card-header-text">
+                                            <h4>Send WhatsApp Message</h4>
+                                            <p>Sent just now</p>
+                                        </div>
+                                        <span class="status-badge success">✓ 已发送</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="action-type">Send to Contact</div>
+                                        <div class="field-row">
+                                            <div class="field-label">收件人</div>
+                                            <div class="field-values">
+                                                <div class="field-value new">
+                                                    <strong>Sarah Johnson</strong>
+                                                    <div style="font-size: 0.8rem; color: var(--gray-500); margin-top: 2px;">+1 (415) 555-0123</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="field-label">Message</div>
+                                            <div class="field-values">
+                                                <div class="field-value new">Hi Sarah 👋 明天的会议时间...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rejected State -->
+                            <div class="state-view" data-view="rejected">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">发个 WhatsApp 消息给 Sarah，告诉她明天的会议改到下午 3 点了</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">抱歉，发送失败了...</div>
+                                </div>
+                                <div class="next-step-label">
+                                    <span>⚠️</span> Action Failed
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-header">
+                                        <div class="app-icon whatsapp" style="background-color: var(--whatsapp);">W</div>
+                                        <div class="card-header-text">
+                                            <h4>Send WhatsApp Message</h4>
+                                        </div>
+                                        <span class="status-badge error">✕ 失败</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="error-message">
+                                            ⚠️ API Error: Contact not found. Please verify the phone number.
+                                        </div>
+                                        <div class="action-type">Send to Contact</div>
+                                        <div class="field-row">
+                                            <div class="field-label">收件人</div>
+                                            <div class="field-values">
+                                                <div class="field-value new">
+                                                    <strong>Sarah Johnson</strong>
+                                                    <div style="font-size: 0.8rem; color: var(--gray-500); margin-top: 2px;">+1 (415) 555-0123</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-secondary">✎ Edit Contact</button>
+                                        <button class="btn btn-error">↻ Retry</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Not Connected State -->
+                            <div class="state-view" data-view="not-connected">
+                                <div class="chat-bubble user">
+                                    <div class="bubble-content">发个 WhatsApp 消息给 Sarah，告诉她明天的会议改到下午 3 点了</div>
+                                    <div class="bubble-time">刚刚</div>
+                                </div>
+                                <div class="chat-bubble ai">
+                                    <div class="bubble-content">需要先连接 WhatsApp 才能发送消息</div>
+                                </div>
+                                <div class="suggest-link-card">
+                                    <div class="suggest-header">
+                                        <div class="app-icon whatsapp" style="background-color: var(--whatsapp);">W</div>
+                                        <h4>Connect WhatsApp to continue</h4>
+                                    </div>
+                                    <div class="suggest-body">
+                                        <p>Connect to enable personal messaging capability.</p>
+                                        <div class="suggest-why">
+                                            <strong>Why:</strong> You requested to send a WhatsApp message but WhatsApp is not connected
+                                        </div>
+                                    </div>
+                                    <div class="suggest-footer">
+                                        <button class="btn btn-secondary">Learn more</button>
+                                        <button class="btn btn-primary" style="background: var(--whatsapp); border-color: var(--whatsapp);">Connect WhatsApp</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Google Calendar Example -->
                         <div class="example-content" data-example-content="gcal">
                             <!-- Identifying State -->
@@ -2814,6 +3077,10 @@
             slack: [
                 { name: 'Slack', icon: 'slack' },
                 { name: 'Microsoft Teams', icon: 'msteams' }
+            ],
+            personalim: [
+                { name: 'WhatsApp', icon: 'whatsapp' },
+                { name: 'Telegram', icon: 'telegram' }
             ],
             gcal: [
                 { name: 'Google Calendar', icon: 'gcal' },

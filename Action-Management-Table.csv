@@ -34,15 +34,51 @@ Priority Change","• Issue Key
 • GET /issue/:key/transitions 获取可用转换
 • GET /user/search 搜索用户
 • POST /issue/:key/transitions",-
-Type A 状态变更型,即时通讯,Slack,"Send Message
+Type A 状态变更型,即时通讯 - Work IM,Slack,"Send Message
 Update Message
 Reply in Thread","• Channel ID / DM ID
 • Message Text
 • Thread TS (for replies)
-• User/Channel List","• GET /conversations.list 获取频道列表
-• GET /users.list 获取用户列表
+• User/Channel List
+• Workspace metadata","• GET /conversations.list 获取频道列表
+• GET /users.list 获取用户列表（含 display name, email, role）
 • POST /chat.postMessage 发送消息
-• Context: Agent 需从对话历史获取 Channel 名称和 Thread context",-
+• Context: Agent 需从对话历史获取 Channel 名称和 Thread context
+• 用户通过 display name 或 email 识别",-
+Type A 状态变更型,即时通讯 - Work IM,Microsoft Teams,"Send Message
+Reply to Thread
+Send to Channel","• Channel ID / Chat ID
+• Message Text
+• Thread ID (for replies)
+• User List (from org directory)
+• Team metadata","• GET /teams 获取团队列表
+• GET /users 获取组织用户列表（含 display name, email, department）
+• POST /chats/messages 发送消息
+• Context: Agent 需从对话识别收件人并匹配组织目录",-
+Type A 状态变更型,即时通讯 - Personal IM,WhatsApp,"Send Message
+Send to Contact
+Send to Group","• Contact Name
+• Phone Number
+• Message Text
+• Contact ID (optional)
+• Group ID (optional)","• GET /contacts 获取联系人列表
+• GET /contacts/search 搜索联系人（按名称/号码）
+• POST /messages 发送消息
+• Context: Agent 需从对话识别收件人名称并匹配电话号码
+• 仅有电话号码和用户名，无 workspace metadata
+• 支持用户编辑/修正联系人信息",-
+Type A 状态变更型,即时通讯 - Personal IM,Telegram,"Send Message
+Send to Chat
+Send to Channel","• Chat ID / Channel ID
+• Username
+• Phone Number (optional)
+• Message Text
+• Contact List","• GET /getMe 验证 Bot 状态
+• GET /getUpdates 获取聊天列表
+• POST /sendMessage 发送消息
+• Context: Agent 需从对话识别收件人并匹配 Username/Chat ID
+• 仅有 Username 和 Phone Number，无组织架构信息
+• 支持检索和编辑联系人信息",-
 Type A 状态变更型,日程管理,Google Calendar,"Create Event
 Update Event
 Send Invite","• Event Title
@@ -125,3 +161,50 @@ Insert Text","• Document ID (更新时)
 • POST /documents/:id:batchUpdate 批量更新
 • GET /documents/:id 获取文档内容
 • GET /drive/files 搜索文档",-
+Type C 数据检索型,营销分析,Mailchimp,"Generate Campaign Report
+Generate Audience Analytics
+Export Performance Data","• Campaign ID (optional)
+• Date Range (Start/End)
+• Report Metrics (Opens, Clicks, etc.)
+• Report Format (Summary/Detailed)
+• Audience Segment ID (optional)","• GET /reports/campaigns/:id 获取单个 Campaign 报告
+• GET /reports 获取所有 Campaign 报告
+• GET /lists/:id/growth-history 获取受众增长数据
+• GET /lists/:id/activity 获取活动数据
+• Context: Agent 分析数据并生成可读性报告
+• AI 生成图表说明和洞察建议",-
+Type C 数据检索型,销售分析,HubSpot,"Generate Sales Report
+Pipeline Analytics
+Revenue Forecast","• Date Range (Start/End)
+• Pipeline ID
+• Report Type (Deals/Revenue/Forecast)
+• Team/Owner Filter
+• Grouping Options (Stage/Month)","• GET /crm/v3/objects/deals 获取 Deals 数据
+• GET /analytics/v2/reports 获取分析报告
+• GET /crm/v3/pipelines/deals 获取 Pipeline 配置
+• GET /owners 获取所有者列表
+• Context: Agent 需计算转化率、预测趋势
+• AI 生成执行摘要和行动建议",-
+Type C 数据检索型,网站分析,Google Analytics,"Generate Traffic Report
+User Behavior Analysis
+Conversion Report","• Date Range (Start/End)
+• Property ID
+• Metrics (Sessions, Users, Conversions)
+• Dimensions (Source, Device, Page)
+• Segment Filter (optional)","• POST /data:runReport 运行自定义报告
+• GET /properties 获取属性列表
+• GET /metadata 获取可用维度和指标
+• Context: Agent 需理解分析目标并选择合适指标
+• AI 生成趋势分析和优化建议",-
+Type C 数据检索型,销售分析,Salesforce,"Generate Pipeline Report
+Forecast Report
+Team Performance","• Date Range (Start/End)
+• Report Type ID (optional)
+• Opportunity Stage Filter
+• User/Team Filter
+• Include Forecast (Yes/No)","• GET /analytics/reports 获取报告列表
+• POST /analytics/reports/:id/instances 运行报告
+• GET /sobjects/Opportunity/describe 获取字段元数据
+• GET /sobjects/User 获取用户列表
+• Context: Agent 需整合多个数据源
+• AI 生成业绩洞察和预测分析",-

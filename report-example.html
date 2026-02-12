@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailchimp Marketing Report - November 2024</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0096f8;
+            --primary-light: #e8f4fd;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --error: #ef4444;
+            --mailchimp: #FFE01B;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .report-header {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .app-logo {
+            width: 56px;
+            height: 56px;
+            background: var(--mailchimp);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .header-info { flex: 1; }
+        .report-title { font-size: 1.75rem; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+        .report-subtitle { color: var(--gray-600); font-size: 0.95rem; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--success-light);
+            color: var(--success);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .metric-card {
+            background: var(--gray-50);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .metric-change {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .metric-change.up { color: var(--success); }
+        .metric-change.down { color: var(--error); }
+
+        .section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary-light), var(--gray-50));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            border: 2px dashed var(--gray-300);
+        }
+
+        .insight-box {
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .insight-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .insight-text {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        .campaign-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .campaign-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px;
+            background: var(--gray-50);
+            border-radius: 10px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .campaign-rank {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .campaign-info { flex: 1; }
+        .campaign-name { font-size: 0.9rem; font-weight: 600; color: var(--gray-900); }
+        .campaign-subject { font-size: 0.75rem; color: var(--gray-600); margin-top: 2px; }
+
+        .campaign-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        .stat-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .recommendations {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recommendation-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+            background: var(--success-light);
+            border-radius: 10px;
+            border: 1px solid var(--success);
+        }
+
+        .recommendation-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--success);
+            color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .recommendation-text {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        .generated-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gray-100);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Report Header -->
+        <div class="report-header">
+            <div class="header-top">
+                <div class="app-logo">🐵</div>
+                <div class="header-info">
+                    <h1 class="report-title">November 2024 Campaign Performance</h1>
+                    <p class="report-subtitle">Mailchimp Email Marketing Report • Generated by Tanka AI</p>
+                </div>
+                <div class="badge">
+                    <span>✓</span>
+                    AI Analyzed
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Emails Sent</div>
+                    <div class="metric-value">24,580</div>
+                    <div class="metric-change up">↑ 12.3% vs Oct</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Average Open Rate</div>
+                    <div class="metric-value">28.4%</div>
+                    <div class="metric-change up">↑ 3.2% vs Oct</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Average Click Rate</div>
+                    <div class="metric-value">4.7%</div>
+                    <div class="metric-change up">↑ 0.8% vs Oct</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Unsubscribe Rate</div>
+                    <div class="metric-value">0.3%</div>
+                    <div class="metric-change down">↓ 0.1% vs Oct</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="section">
+            <h2 class="section-title">📋 Executive Summary</h2>
+            <div class="insight-box">
+                <div class="insight-title">🎯 Key Insights</div>
+                <div class="insight-text">
+                    Your November campaigns showed strong performance with a 3.2% increase in open rates and 0.8% increase in click rates compared to October. The highest engagement was seen on Wednesdays and Fridays. Subject lines with questions (+22% opens) and numbers (+18% opens) significantly outperformed generic headlines.
+                </div>
+            </div>
+            <div class="insight-box" style="background: var(--warning-light); border-left-color: var(--warning);">
+                <div class="insight-title" style="color: var(--warning);">⚠️ Areas for Improvement</div>
+                <div class="insight-text">
+                    Campaigns sent on Mondays showed 15% lower open rates. Emoji usage in subject lines helped opens but slightly decreased click-through rates. Consider A/B testing subject line styles for your December campaigns.
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Trend Chart -->
+        <div class="section">
+            <h2 class="section-title">📈 Performance Trends</h2>
+            <div class="chart-placeholder">
+                📊 Line chart showing Open Rate & Click Rate trends over time<br>
+                <span style="font-size: 0.75rem; margin-top: 8px;">(Chart.js visualization would be rendered here)</span>
+            </div>
+        </div>
+
+        <!-- Top Performing Campaigns -->
+        <div class="section">
+            <h2 class="section-title">🏆 Top Performing Campaigns</h2>
+            <div class="campaign-list">
+                <div class="campaign-item">
+                    <div class="campaign-rank">1</div>
+                    <div class="campaign-info">
+                        <div class="campaign-name">Black Friday Early Access</div>
+                        <div class="campaign-subject">"Are you ready for Black Friday deals?"</div>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="stat">
+                            <div class="stat-label">Opens</div>
+                            <div class="stat-value">42.3%</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Clicks</div>
+                            <div class="stat-value">8.9%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="campaign-item">
+                    <div class="campaign-rank" style="background: var(--gray-500);">2</div>
+                    <div class="campaign-info">
+                        <div class="campaign-name">Product Update Newsletter</div>
+                        <div class="campaign-subject">"3 new features you'll love ❤️"</div>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="stat">
+                            <div class="stat-label">Opens</div>
+                            <div class="stat-value">35.7%</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Clicks</div>
+                            <div class="stat-value">6.2%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="campaign-item">
+                    <div class="campaign-rank" style="background: var(--gray-400);">3</div>
+                    <div class="campaign-info">
+                        <div class="campaign-name">Customer Success Story</div>
+                        <div class="campaign-subject">"How Sarah increased revenue by 40%"</div>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="stat">
+                            <div class="stat-label">Opens</div>
+                            <div class="stat-value">31.2%</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Clicks</div>
+                            <div class="stat-value">5.8%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Recommendations -->
+        <div class="section">
+            <h2 class="section-title">💡 AI-Powered Recommendations</h2>
+            <div class="recommendations">
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">1</div>
+                    <div class="recommendation-text">
+                        <strong>Optimize send times:</strong> Schedule more campaigns for Wednesday 10 AM and Friday 2 PM when your audience shows highest engagement (28% better than average).
+                    </div>
+                </div>
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">2</div>
+                    <div class="recommendation-text">
+                        <strong>Subject line strategy:</strong> Use question-based subject lines for promotional campaigns and number-based headlines for educational content to maximize opens.
+                    </div>
+                </div>
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">3</div>
+                    <div class="recommendation-text">
+                        <strong>Reduce Monday sends:</strong> Consider moving Monday campaigns to Tuesday or Wednesday to improve open rates by an estimated 15%.
+                    </div>
+                </div>
+                <div class="recommendation-item">
+                    <div class="recommendation-icon">4</div>
+                    <div class="recommendation-text">
+                        <strong>A/B test emoji usage:</strong> While emojis increase opens, they slightly decrease clicks. Test emoji-free subject lines for content-focused campaigns.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="generated-badge">
+                🤖 Generated by Tanka AI Agent • December 12, 2024
+            </div>
+            <p style="margin-top: 16px; color: var(--gray-400);">
+                This report was automatically generated based on your Mailchimp data and analyzed using AI.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

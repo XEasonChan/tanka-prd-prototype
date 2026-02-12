@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type C: Data Retrieval & Report Generation - 数据检索与报告生成型</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0096f8;
+            --primary-light: #e8f4fd;
+            --accent: #ffc53d;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --error-light: #fee2e2;
+            --mailchimp: #FFE01B;
+            --mailchimp-dark: #241c15;
+            --mailchimp-light: #fffbea;
+            --hubspot: #FF7A59;
+            --hubspot-light: #fff4f2;
+            --googleanalytics: #F9AB00;
+            --googleanalytics-light: #fffbea;
+            --salesforce: #00A1E0;
+            --salesforce-light: #e6f7fc;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            padding: 8px 16px;
+            background: var(--white);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover { background: var(--primary-light); border-color: var(--primary); }
+
+        .page-header { margin-bottom: 24px; }
+        .page-title { font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+        .page-subtitle { color: var(--gray-500); font-size: 0.9rem; }
+
+        .state-nav { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+
+        .state-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .state-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .state-btn.active { background: var(--primary); border-color: var(--primary); color: var(--white); }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1fr 390px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) { .content-layout { grid-template-columns: 1fr; } }
+
+        .info-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .info-title { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--gray-900); }
+        .info-content { color: var(--gray-600); font-size: 0.875rem; line-height: 1.7; }
+        .info-list { margin: 12px 0; padding-left: 20px; }
+        .info-list li { margin-bottom: 8px; color: var(--gray-600); }
+
+        .trigger-box {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .trigger-label { font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .trigger-value { color: var(--primary); font-size: 0.8rem; font-weight: 500; }
+
+        /* Phone Mockup */
+        .phone-wrapper { display: flex; justify-content: center; }
+
+        .phone {
+            width: 375px;
+            background: var(--white);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
+        }
+
+        .phone-status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .status-notch {
+            width: 100px;
+            height: 20px;
+            background: var(--gray-900);
+            border-radius: 0 0 12px 12px;
+        }
+
+        .phone-screen {
+            background: var(--gray-50);
+            height: 700px;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        /* Chat Messages */
+        .chat-container { display: flex; flex-direction: column; gap: 16px; }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .message.user { flex-direction: row-reverse; }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .message.user .message-avatar { background: var(--gray-300); }
+
+        .message-content {
+            max-width: 75%;
+            background: var(--white);
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+
+        .message.user .message-content {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* Action Card */
+        .action-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 8px;
+            max-width: 90%;
+        }
+
+        .card-header {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .app-icon.mailchimp { background: var(--mailchimp); }
+        .app-icon.hubspot { background: var(--hubspot-light); }
+        .app-icon.googleanalytics { background: var(--googleanalytics-light); }
+        .app-icon.salesforce { background: var(--salesforce-light); }
+
+        .card-title-block { flex: 1; }
+        .card-title { font-size: 0.85rem; font-weight: 600; color: var(--gray-900); }
+        .card-subtitle { font-size: 0.7rem; color: var(--gray-500); margin-top: 2px; }
+
+        .card-body { padding: 14px; }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-50) 50%, var(--gray-100) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        .skeleton-line {
+            height: 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .skeleton-line:last-child { margin-bottom: 0; }
+        .skeleton-line.short { width: 60%; }
+
+        /* Data Summary */
+        .data-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--gray-50);
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .metric-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .metric-change {
+            font-size: 0.7rem;
+            margin-left: 6px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .metric-change.up {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .metric-change.down {
+            background: var(--error-light);
+            color: var(--error);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--gray-100);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        /* Report Proposal */
+        .report-proposal {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .proposal-text {
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+
+        .proposal-highlight {
+            background: var(--primary-light);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .proposal-highlight-text {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Card Actions */
+        .card-actions {
+            padding: 12px 14px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover { background: #0077c4; border-color: #0077c4; }
+
+        .btn-secondary {
+            background: var(--white);
+            border-color: var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover { border-color: var(--gray-400); background: var(--gray-50); }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Success State */
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--success-light);
+            color: var(--success);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .checkmark {
+            width: 16px;
+            height: 16px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.65rem;
+        }
+
+        .report-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s;
+        }
+
+        .report-link:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .report-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .report-info {
+            flex: 1;
+        }
+
+        .report-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .report-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            margin-top: 2px;
+        }
+
+        .arrow {
+            color: var(--gray-400);
+            font-size: 1rem;
+        }
+
+        /* State-specific visibility */
+        .state-content { display: none; }
+        .state-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← 返回 PRD 首页</a>
+
+        <div class="page-header">
+            <h1 class="page-title">Type C: Data Retrieval & Report Generation</h1>
+            <p class="page-subtitle">数据检索与报告生成型 - 智能数据分析与可视化报告</p>
+        </div>
+
+        <div class="state-nav">
+            <button class="state-btn active" data-state="identifying">1. Identifying</button>
+            <button class="state-btn" data-state="fetching">2. Fetching Data</button>
+            <button class="state-btn" data-state="data-retrieved">3. Data Retrieved</button>
+            <button class="state-btn" data-state="proposing">4. Proposing Report</button>
+            <button class="state-btn" data-state="generating">5. Generating Report</button>
+            <button class="state-btn" data-state="completed">6. Completed</button>
+        </div>
+
+        <div class="content-layout">
+            <!-- Phone Mockup -->
+            <div class="phone-wrapper">
+                <div class="phone">
+                    <div class="phone-status-bar">
+                        <div class="status-notch"></div>
+                    </div>
+                    <div class="phone-screen">
+                        <div class="chat-container">
+                            <!-- User Message -->
+                            <div class="message user">
+                                <div class="message-avatar">U</div>
+                                <div class="message-content">
+                                    Show me how our email campaigns performed last month
+                                </div>
+                            </div>
+
+                            <!-- AI Response -->
+                            <div class="message">
+                                <div class="message-avatar">AI</div>
+                                <div class="message-content" id="ai-message">
+                                    Let me fetch your Mailchimp campaign data...
+                                </div>
+                            </div>
+
+                            <!-- Action Card Container -->
+                            <div class="message">
+                                <div class="message-avatar" style="opacity: 0;">AI</div>
+                                <div id="card-container" style="max-width: 90%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Panel -->
+            <div class="info-panel">
+                <div id="info-identifying" class="state-content active">
+                    <h3 class="info-title">1️⃣ Identifying - 识别意图</h3>
+                    <div class="info-content">
+                        <p>用户在对话中询问数据相关的问题，AI 识别意图并确定需要调用的数据源。</p>
+                        <ul class="info-list">
+                            <li><strong>意图识别：</strong>识别用户想查询哪个平台的数据</li>
+                            <li><strong>参数提取：</strong>提取时间范围、指标类型等参数</li>
+                            <li><strong>权限检查：</strong>确认用户是否已连接目标平台</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">触发条件</div>
+                            <div class="trigger-value">用户询问："上个月的邮件营销表现如何"</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="info-fetching" class="state-content">
+                    <h3 class="info-title">2️⃣ Fetching Data - 获取数据</h3>
+                    <div class="info-content">
+                        <p>调用 Mailchimp API 获取原始数据，显示进度反馈。</p>
+                        <ul class="info-list">
+                            <li><strong>API 调用：</strong>GET /reports/campaigns 获取营销数据</li>
+                            <li><strong>数据范围：</strong>自动计算上个月的时间范围</li>
+                            <li><strong>进度显示：</strong>实时反馈数据获取进度</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">数据来源</div>
+                            <div class="trigger-value">Mailchimp Reports API</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="info-data-retrieved" class="state-content">
+                    <h3 class="info-title">3️⃣ Data Retrieved - 数据获取完成</h3>
+                    <div class="info-content">
+                        <p>数据获取完成，在对话中展示关键指标摘要。</p>
+                        <ul class="info-list">
+                            <li><strong>数据摘要：</strong>展示打开率、点击率等关键指标</li>
+                            <li><strong>趋势对比：</strong>自动计算同比/环比变化</li>
+                            <li><strong>初步洞察：</strong>AI 识别数据中的异常或亮点</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">下一步</div>
+                            <div class="trigger-value">询问用户是否需要生成可视化报告</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="info-proposing" class="state-content">
+                    <h3 class="info-title">4️⃣ Proposing Report - 提议生成报告</h3>
+                    <div class="info-content">
+                        <p>基于获取的数据，AI 主动询问是否生成完整的可视化报告。</p>
+                        <ul class="info-list">
+                            <li><strong>智能建议：</strong>识别数据适合生成报告的场景</li>
+                            <li><strong>价值说明：</strong>告知生成报告的好处（图表、洞察、可分享）</li>
+                            <li><strong>用户确认：</strong>用户点击"Generate Report"确认</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">Action Card 类型</div>
+                            <div class="trigger-value">Report Generation Proposal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="info-generating" class="state-content">
+                    <h3 class="info-title">5️⃣ Generating Report - 生成报告中</h3>
+                    <div class="info-content">
+                        <p>Tanka Agent 分析数据并生成可视化报告，包含图表和洞察。</p>
+                        <ul class="info-list">
+                            <li><strong>数据分析：</strong>AI 计算趋势、识别异常、提炼洞察</li>
+                            <li><strong>可视化生成：</strong>生成图表、表格等可视化元素</li>
+                            <li><strong>报告组装：</strong>创建完整的 HTML 报告页面</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">技术实现</div>
+                            <div class="trigger-value">Tanka Agent + Chart.js/D3.js</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="info-completed" class="state-content">
+                    <h3 class="info-title">6️⃣ Completed - 完成</h3>
+                    <div class="info-content">
+                        <p>报告生成完成，用户可以查看、分享或导出报告。</p>
+                        <ul class="info-list">
+                            <li><strong>报告链接：</strong>点击可跳转到独立的报告页面</li>
+                            <li><strong>新 Session：</strong>在新的 Work Session 中打开报告</li>
+                            <li><strong>后续操作：</strong>支持导出 PDF、分享链接等</li>
+                        </ul>
+                        <div class="trigger-box">
+                            <div class="trigger-label">跳转目标</div>
+                            <div class="trigger-value">Agent 生成的报告页面（新 Work Session）</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const states = {
+            identifying: {
+                aiMessage: "Let me fetch your Mailchimp campaign data...",
+                card: `
+                    <div class="action-card">
+                        <div class="card-header">
+                            <div class="app-icon mailchimp">🐵</div>
+                            <div class="card-title-block">
+                                <div class="card-title">Mailchimp Campaign Report</div>
+                                <div class="card-subtitle">Identifying data requirements...</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line short"></div>
+                        </div>
+                    </div>
+                `
+            },
+            fetching: {
+                aiMessage: "Fetching your campaign data from Mailchimp...",
+                card: `
+                    <div class="action-card">
+                        <div class="card-header">
+                            <div class="app-icon mailchimp">🐵</div>
+                            <div class="card-title-block">
+                                <div class="card-title">Mailchimp Campaign Report</div>
+                                <div class="card-subtitle">November 2024</div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <div class="spinner"></div>
+                                Fetching campaign data...
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            "data-retrieved": {
+                aiMessage: "Here's a summary of your email campaigns from last month:",
+                card: `
+                    <div class="action-card">
+                        <div class="card-header">
+                            <div class="app-icon mailchimp">🐵</div>
+                            <div class="card-title-block">
+                                <div class="card-title">Campaign Performance</div>
+                                <div class="card-subtitle">November 2024 • 12 campaigns sent</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="data-summary">
+                                <div class="metric-row">
+                                    <span class="metric-label">📧 Total Emails Sent</span>
+                                    <span class="metric-value">24,580</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">📬 Open Rate</span>
+                                    <span class="metric-value">
+                                        28.4%
+                                        <span class="metric-change up">↑ +3.2%</span>
+                                    </span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">👆 Click Rate</span>
+                                    <span class="metric-value">
+                                        4.7%
+                                        <span class="metric-change up">↑ +0.8%</span>
+                                    </span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">🔄 Unsubscribe Rate</span>
+                                    <span class="metric-value">
+                                        0.3%
+                                        <span class="metric-change down">↓ -0.1%</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            proposing: {
+                aiMessage: "Here's a summary of your email campaigns from last month:",
+                card: `
+                    <div class="action-card">
+                        <div class="card-header">
+                            <div class="app-icon mailchimp">🐵</div>
+                            <div class="card-title-block">
+                                <div class="card-title">Campaign Performance</div>
+                                <div class="card-subtitle">November 2024 • 12 campaigns sent</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="data-summary">
+                                <div class="metric-row">
+                                    <span class="metric-label">📧 Total Emails Sent</span>
+                                    <span class="metric-value">24,580</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">📬 Open Rate</span>
+                                    <span class="metric-value">
+                                        28.4%
+                                        <span class="metric-change up">↑ +3.2%</span>
+                                    </span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">👆 Click Rate</span>
+                                    <span class="metric-value">
+                                        4.7%
+                                        <span class="metric-change up">↑ +0.8%</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="report-proposal">
+                            <div class="proposal-highlight">
+                                <div class="proposal-highlight-text">
+                                    💡 Would you like me to generate a visual report with charts and detailed insights?
+                                </div>
+                            </div>
+                            <div class="proposal-text">
+                                I can create a comprehensive report with trend analysis, campaign comparisons, and actionable recommendations.
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-secondary">Not Now</button>
+                            <button class="btn btn-primary">📊 Generate Report</button>
+                        </div>
+                    </div>
+                `
+            },
+            generating: {
+                aiMessage: "Generating your visual report...",
+                card: `
+                    <div class="action-card">
+                        <div class="card-header">
+                            <div class="app-icon mailchimp">🐵</div>
+                            <div class="card-title-block">
+                                <div class="card-title">Generating Marketing Report</div>
+                                <div class="card-subtitle">Analyzing campaign performance...</div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <div class="spinner"></div>
+                                Analyzing data and creating visualizations...
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            completed: {
+                aiMessage: "Your marketing report is ready! 📊",
+                card: `
+                    <div class="action-card">
+                        <div class="card-header">
+                            <div class="app-icon mailchimp">🐵</div>
+                            <div class="card-title-block">
+                                <div class="card-title">Mailchimp Marketing Report</div>
+                                <div class="card-subtitle">November 2024 Performance Analysis</div>
+                            </div>
+                            <div class="success-badge">
+                                <div class="checkmark">✓</div>
+                                Ready
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <a href="#" class="report-link" onclick="window.open('report-example.html', '_blank'); return false;">
+                                <div class="report-icon">📊</div>
+                                <div class="report-info">
+                                    <div class="report-title">November Campaign Performance Report</div>
+                                    <div class="report-meta">Generated just now • 8 pages</div>
+                                </div>
+                                <div class="arrow">→</div>
+                            </a>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-secondary">📤 Share</button>
+                            <button class="btn btn-primary" onclick="window.open('report-example.html', '_blank')">🔍 View Report</button>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        const stateButtons = document.querySelectorAll('.state-btn');
+        const cardContainer = document.getElementById('card-container');
+        const aiMessage = document.getElementById('ai-message');
+
+        function showState(stateName) {
+            // Update buttons
+            stateButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.state === stateName);
+            });
+
+            // Update info panels
+            document.querySelectorAll('.state-content').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`info-${stateName}`).classList.add('active');
+
+            // Update card and message
+            const state = states[stateName];
+            aiMessage.textContent = state.aiMessage;
+            cardContainer.innerHTML = state.card;
+        }
+
+        stateButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                showState(btn.dataset.state);
+            });
+        });
+
+        // Initialize
+        showState('identifying');
+    </script>
+</body>
+</html>

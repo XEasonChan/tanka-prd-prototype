@@ -1,0 +1,127 @@
+Card类型,分类,App名称,AI Action场景,必需数据字段,数据来源/API,开发状态
+Type A 状态变更型,CRM,HubSpot,"Update Deal Stage
+Update Contact
+Log Activity","• Deal ID / Contact ID
+• Current Stage
+• Target Stage
+• Pipeline Options","• GET /deals/:id 获取当前状态
+• GET /pipelines 获取 Stage 枚举
+• PATCH /deals/:id 更新 Stage
+• Context: Agent 需识别 Deal 名称并匹配 ID",-
+Type A 状态变更型,CRM,Salesforce,"Update Opportunity
+Change Lead Status","• Opportunity ID
+• Current Stage
+• Target Stage","• GET /sobjects/Opportunity/:id
+• PATCH /sobjects/Opportunity/:id
+• Stage 枚举来自 Salesforce Schema",-
+Type A 状态变更型,项目管理,Linear,"Status Change
+Assignee Update
+Priority Change","• Issue ID
+• Current Status
+• Target Status
+• Assignee List
+• Priority Options","• GET /issue/:id 获取当前状态
+• GET /team/:id/states 获取 Status 枚举
+• GET /team/:id/members 获取成员列表
+• PATCH /issue/:id 更新状态",-
+Type A 状态变更型,项目管理,Jira,"Status Transition
+Assignee Update
+Priority Change","• Issue Key
+• Current Status
+• Target Status
+• Transition ID
+• User List","• GET /issue/:key
+• GET /issue/:key/transitions 获取可用转换
+• GET /user/search 搜索用户
+• POST /issue/:key/transitions",-
+Type A 状态变更型,即时通讯,Slack,"Send Message
+Update Message
+Reply in Thread","• Channel ID / DM ID
+• Message Text
+• Thread TS (for replies)
+• User/Channel List","• GET /conversations.list 获取频道列表
+• GET /users.list 获取用户列表
+• POST /chat.postMessage 发送消息
+• Context: Agent 需从对话历史获取 Channel 名称和 Thread context",-
+Type A 状态变更型,日程管理,Google Calendar,"Create Event
+Update Event
+Send Invite","• Event Title
+• Start/End Time
+• Attendees List
+• Calendar ID
+• Description","• GET /calendars 获取日历列表
+• POST /calendars/:id/events 创建事件
+• Agent 需从对话提取时间、参与者信息",-
+Type B 内容分发型,邮件工具,Gmail,"Draft Email
+Send Email
+Reply to Thread","• To (Email Address)
+• Subject
+• Email Body
+• Thread ID (for replies)
+• Attachments (optional)","• GET /messages/:id 获取原邮件（回复时）
+• POST /messages/send 发送邮件
+• GET /contacts 获取联系人（支持搜索）
+• Context: Agent 需从对话识别收件人名称并补全邮箱",-
+Type B 内容分发型,邮件工具,Outlook,"Draft Email
+Send Email","• To (Email Address)
+• Subject
+• Email Body
+• CC/BCC (optional)","• GET /me/contacts 获取联系人
+• POST /me/sendMail 发送邮件
+• GET /me/messages/:id 获取邮件",-
+Type B 内容分发型,营销邮件,Mailchimp,"Create Campaign
+Send Campaign
+Schedule Campaign","• Campaign Name
+• Subject Line
+• Email Content (HTML)
+• Audience/List ID
+• Send Time (optional)","• GET /lists 获取受众列表
+• POST /campaigns 创建 Campaign
+• POST /campaigns/:id/actions/send 发送
+• Agent 需从指令提取 Campaign 内容和目标受众",-
+Type B 内容分发型,营销邮件,SendGrid,"Send Marketing Email
+Create Template","• From Email
+• To List
+• Subject
+• HTML Content
+• Template ID (optional)","• GET /marketing/lists 获取联系人列表
+• POST /mail/send 发送邮件
+• GET /templates 获取模板列表",-
+Type B 内容分发型,调研问卷,Typeform,"Create Survey
+Send Survey
+Distribute Survey","• Survey Title
+• Questions
+• Recipient List
+• Survey Link
+• Distribution Method","• POST /forms 创建表单
+• GET /forms/:id 获取表单链接
+• 需集成邮件 API 进行分发
+• Agent 需从指令生成问卷问题结构",-
+Type B 内容分发型,调研问卷,SurveyMonkey,"Create Survey
+Send Collector","• Survey Title
+• Questions
+• Collector Type
+• Recipient Emails","• POST /surveys 创建调研
+• POST /surveys/:id/collectors 创建收集器
+• POST /collectors/:id/messages 发送邀请",-
+Type B 内容分发型,文档更新,Confluence,"Create Page
+Update Page
+Add Comment","• Space ID
+• Page ID (更新时)
+• Page Title
+• Content (HTML/Storage Format)
+• Parent Page ID","• GET /spaces 获取空间列表
+• GET /content 搜索页面
+• POST /content 创建页面
+• PUT /content/:id 更新页面
+• Agent 需从对话识别要更新的页面标题",-
+Type B 内容分发型,文档更新,Google Docs,"Create Doc
+Update Doc Content
+Insert Text","• Document ID (更新时)
+• Document Title
+• Content Text
+• Insert Position
+• Folder ID (创建时)","• POST /documents 创建文档
+• POST /documents/:id:batchUpdate 批量更新
+• GET /documents/:id 获取文档内容
+• GET /drive/files 搜索文档",-

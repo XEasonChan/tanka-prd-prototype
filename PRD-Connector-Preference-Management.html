@@ -493,7 +493,7 @@
             <div class="prd-meta">
                 <div class="prd-meta-item">
                     <span>📅</span>
-                    <span>Version 1.0 • 2024-12-15</span>
+                    <span>Version 1.1 • 2024-12-15</span>
                 </div>
                 <div class="prd-meta-item">
                     <span>👤</span>
@@ -501,7 +501,7 @@
                 </div>
                 <div class="prd-meta-item">
                     <span>🎯</span>
-                    <span>Status: Ready for Implementation</span>
+                    <span>Status: Design Decisions Finalized</span>
                 </div>
             </div>
         </div>
@@ -1465,20 +1465,191 @@ GET /skill/connector-preferences/list?user_id=user_12345
             </table>
         </div>
 
-        <!-- Open Questions -->
+        <!-- Design Decisions -->
         <div class="section">
-            <h2 class="section-title">❓ Open Questions</h2>
+            <h2 class="section-title">✅ Design Decisions</h2>
 
-            <div class="info-box warning">
-                <div class="info-box-title" style="color: var(--warning);">待讨论和决策的问题</div>
+            <div class="info-box success">
+                <div class="info-box-title" style="color: var(--success);">已确定的设计决策</div>
                 <div class="info-box-content" style="color: var(--gray-700);">
+                    以下设计决策已经过团队讨论和确认,将在实施过程中遵循。
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 1: 支持细粒度偏好配置 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 基于场景的智能分类</div>
+                <div class="card-content">
+                    <strong>决策:</strong> 支持更细粒度的偏好设置,所有偏好配置都沉淀到 Skill 中管理。<br><br>
+
+                    <strong>典型场景示例:</strong>
+                    <ul class="styled-list">
+                        <li><strong>日程管理:</strong> 个人时间/Block 时间 → Google Calendar,对外会议 → Outlook Calendar</li>
+                        <li><strong>文档工具:</strong>
+                            <ul style="padding-left: 20px; margin-top: 8px;">
+                                <li>需要 Database 的汇报 → Notion</li>
+                                <li>需要和内部工程师协作的 PRD → Confluence</li>
+                                <li>需要对外协作的文档 → Google Docs</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <strong style="display: block; margin-top: 16px; color: var(--primary);">🎯 关键实现:</strong>
+                    <div style="margin-top: 8px; padding: 12px; background: var(--primary-light); border-radius: 6px; border-left: 3px solid var(--primary);">
+                        • 用户通过<strong>自然语言</strong>灵活配置偏好分类规则<br>
+                        • 示例:"把需要数据库的汇报文档都放到 Notion"<br>
+                        • AI 理解并提取分类条件,保存到 Skill 的偏好规则中<br>
+                        • 后续根据上下文(如"创建季度销售汇报")自动匹配对应 App
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 2: 暂不支持团队级偏好 ⏸️</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge priority-low">V2 Feature</span> 团队级偏好配置延后</div>
+                <div class="card-content">
+                    <strong>决策:</strong> V1 版本<strong>不支持</strong>团队级别的偏好配置,避免增加复杂度。<br><br>
+
+                    <strong>原因:</strong>
+                    <ul class="styled-list">
+                        <li>团队级偏好会引入权限管理、冲突解决等复杂逻辑</li>
+                        <li>不同团队成员的工作习惯可能差异较大,统一配置可能适得其反</li>
+                    </ul>
+
+                    <strong style="display: block; margin-top: 16px; color: var(--gray-600);">🔮 未来规划:</strong>
+                    <div style="margin-top: 8px; padding: 12px; background: var(--gray-50); border-radius: 6px; border-left: 3px solid var(--gray-400);">
+                        • <strong>企业工具推荐:</strong> 当企业内多数成员使用某个工具时,向新成员推荐<br>
+                        • <strong>偏好共享:</strong> 允许团队成员之间分享偏好配置模板<br>
+                        • <strong>冲突提示:</strong> 当检测到多个同类型工具时,提示企业管理员统一规范
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 3: 默认使用上次工具 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 智能推荐策略</div>
+                <div class="card-content">
+                    <strong>决策:</strong> 如果用户没有主动设置偏好,系统<strong>默认使用上一次使用的同类型工具</strong>。<br><br>
+
+                    <strong>工作流程:</strong>
                     <ol style="line-height: 2; padding-left: 20px;">
-                        <li><strong>偏好粒度:</strong> 是否需要支持更细粒度的偏好?如"周一用 Outlook,其他时间用 Google Calendar"?</li>
-                        <li><strong>团队共享偏好:</strong> 企业用户是否需要团队级别的偏好配置(如"团队统一用 Slack")?</li>
-                        <li><strong>智能推荐:</strong> 是否基于用户历史行为,AI 主动推荐偏好?如"你最近 80% 的会议都用 Google Calendar,要设为首选吗?"</li>
-                        <li><strong>偏好导出/导入:</strong> 用户更换设备或账号时,是否需要偏好迁移功能?</li>
-                        <li><strong>App 优先级:</strong> 如果用户没有明确偏好,是否按 App 连接时间、使用频率等自动推荐?</li>
+                        <li>用户首次创建会议,选择了 Google Calendar → 系统记录</li>
+                        <li>用户第二次创建会议,未明确说用哪个 App → <strong>自动使用 Google Calendar</strong></li>
+                        <li>如果用户第三次明确说"用 Outlook 创建" → 使用 Outlook,并更新最近使用记录</li>
+                        <li>第四次创建会议 → 自动使用 Outlook(因为上次用了 Outlook)</li>
                     </ol>
+
+                    <strong style="display: block; margin-top: 16px; color: var(--primary);">💡 实现细节:</strong>
+                    <div style="margin-top: 8px; padding: 12px; background: var(--primary-light); border-radius: 6px; border-left: 3px solid var(--primary);">
+                        • Skill 维护 <code>last_used_app[action_type]</code> 字段<br>
+                        • 优先级: <strong>明确指定 > 偏好设置 > 上次使用 > Clarify</strong><br>
+                        • 用户可随时在设置中将"上次使用"固化为"偏好设置"
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 4: 偏好云端存储,跨设备同步 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 偏好迁移策略</div>
+                <div class="card-content">
+                    <strong>决策:</strong> 偏好数据存储在云端用户属性中,支持跨设备同步。<br><br>
+
+                    <strong>不同场景处理:</strong>
+                    <table class="data-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr>
+                                <th>场景</th>
+                                <th>偏好迁移策略</th>
+                                <th>原因</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>更换设备</strong><br>(同一账号)</td>
+                                <td><span style="color: var(--success); font-weight: 600;">✅ 自动同步</span></td>
+                                <td>偏好存储在云端,登录后自动加载</td>
+                            </tr>
+                            <tr>
+                                <td><strong>更换账号</strong><br>(不同个人账号)</td>
+                                <td><span style="color: var(--error); font-weight: 600;">❌ 不迁移</span></td>
+                                <td>不同账号可能绑定不同的 App 集合</td>
+                            </tr>
+                            <tr>
+                                <td><strong>切换组织</strong><br>(企业 → 个人 / A 公司 → B 公司)</td>
+                                <td><span style="color: var(--error); font-weight: 600;">❌ 不迁移</span></td>
+                                <td>不同组织的偏好工具通常不同(如 A 公司用 Slack,B 公司用 Teams)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <strong style="display: block; margin-top: 16px; color: var(--gray-600);">📌 技术实现:</strong>
+                    <div style="margin-top: 8px; padding: 12px; background: var(--gray-50); border-radius: 6px; border-left: 3px solid var(--gray-400);">
+                        • 偏好数据存储位置: <code>/users/:user_id/preferences/connector</code><br>
+                        • 每个 Workspace/Organization 有独立的 Connector 配置<br>
+                        • 切换组织时,重新初始化偏好(触发首次 Clarify)
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 5: 数据结构扩展 - 支持场景分类</h3>
+            <div class="card">
+                <div class="card-title">偏好存储结构升级</div>
+                <div class="card-content">
+                    <p style="margin-bottom: 12px;">为支持细粒度偏好,偏好数据结构需要扩展:</p>
+                    <div class="code-block">
+<span class="comment">// 升级后的用户偏好存储结构</span>
+{
+  <span class="key">"user_id"</span>: <span class="string">"user_12345"</span>,
+  <span class="key">"preferences"</span>: {
+    <span class="key">"create_calendar_event"</span>: {
+      <span class="key">"default"</span>: <span class="string">"google_calendar"</span>,
+      <span class="key">"rules"</span>: [
+        {
+          <span class="key">"condition"</span>: <span class="string">"个人时间 OR Block 时间"</span>,
+          <span class="key">"app"</span>: <span class="string">"google_calendar"</span>,
+          <span class="key">"confidence"</span>: 0.95
+        },
+        {
+          <span class="key">"condition"</span>: <span class="string">"对外会议 OR 客户会议"</span>,
+          <span class="key">"app"</span>: <span class="string">"outlook_calendar"</span>,
+          <span class="key">"confidence"</span>: 0.90
+        }
+      ],
+      <span class="key">"last_used"</span>: <span class="string">"google_calendar"</span>
+    },
+    <span class="key">"create_document"</span>: {
+      <span class="key">"default"</span>: <span class="string">"notion"</span>,
+      <span class="key">"rules"</span>: [
+        {
+          <span class="key">"condition"</span>: <span class="string">"需要 Database OR 汇报 OR 数据分析"</span>,
+          <span class="key">"app"</span>: <span class="string">"notion"</span>
+        },
+        {
+          <span class="key">"condition"</span>: <span class="string">"PRD OR 内部工程师协作"</span>,
+          <span class="key">"app"</span>: <span class="string">"confluence"</span>
+        },
+        {
+          <span class="key">"condition"</span>: <span class="string">"对外协作 OR 客户共享"</span>,
+          <span class="key">"app"</span>: <span class="string">"google_docs"</span>
+        }
+      ],
+      <span class="key">"last_used"</span>: <span class="string">"notion"</span>
+    }
+  },
+  <span class="key">"metadata"</span>: {
+    <span class="key">"last_updated"</span>: <span class="string">"2024-12-15T10:30:00Z"</span>,
+    <span class="key">"version"</span>: <span class="string">"2.0"</span>
+  }
+}
+                    </div>
+
+                    <div style="margin-top: 16px; padding: 12px; background: var(--accent-light); border-radius: 6px; border-left: 3px solid var(--accent);">
+                        <strong style="color: #d97706;">🔧 AI 规则匹配:</strong><br>
+                        当用户说"创建季度销售汇报文档"时:<br>
+                        1. AI 提取关键词: "汇报" → 匹配 rule[0] 的 condition<br>
+                        2. Confidence 0.95 > 阈值 → 自动选择 Notion<br>
+                        3. 如果 confidence < 阈值 → 回退到 Clarify
+                    </div>
                 </div>
             </div>
         </div>
@@ -1486,9 +1657,10 @@ GET /skill/connector-preferences/list?user_id=user_12345
         <!-- Footer -->
         <div class="prd-footer">
             <div style="margin-bottom: 12px;">
-                <strong>Document Version:</strong> 1.0 | <strong>Last Updated:</strong> 2024-12-15 | <strong>Owner:</strong> Product Team
+                <strong>Document Version:</strong> 1.1 | <strong>Last Updated:</strong> 2024-12-15 | <strong>Owner:</strong> Product Team
             </div>
             <div style="color: var(--gray-400);">
+                <strong>Version 1.1 Updates:</strong> Design decisions finalized - Added support for fine-grained preferences, natural language configuration, and last-used app defaulting.<br>
                 This PRD is a living document and will be updated as the project evolves.
             </div>
         </div>

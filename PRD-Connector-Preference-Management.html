@@ -493,7 +493,7 @@
             <div class="prd-meta">
                 <div class="prd-meta-item">
                     <span>📅</span>
-                    <span>Version 1.1 • 2024-12-15</span>
+                    <span>Version 1.2 • 2024-12-15</span>
                 </div>
                 <div class="prd-meta-item">
                     <span>👤</span>
@@ -501,7 +501,7 @@
                 </div>
                 <div class="prd-meta-item">
                     <span>🎯</span>
-                    <span>Status: Design Decisions Finalized</span>
+                    <span>Status: Implementation Details Complete</span>
                 </div>
             </div>
         </div>
@@ -1654,13 +1654,350 @@ GET /skill/connector-preferences/list?user_id=user_12345
             </div>
         </div>
 
+        <!-- Implementation Details & Technical Decisions -->
+        <div class="section">
+            <h2 class="section-title">⚙️ Implementation Details & Technical Decisions</h2>
+
+            <div class="info-box primary">
+                <div class="info-box-title" style="color: var(--primary);">基于工程评审的实施细则</div>
+                <div class="info-box-content" style="color: var(--gray-700);">
+                    以下为经过工程团队严格评审后确定的技术实施细节,确保方案的可落地性和系统稳定性。
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 6: 规则管理界面设计 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> Link 页面入口 + 聚合显示</div>
+                <div class="card-content">
+                    <strong>实现方案:</strong> 在 Link 页面提供入口,查看所有 Links 及对应的默认值后台。<br><br>
+
+                    <strong>UI 结构:</strong>
+                    <ul class="styled-list">
+                        <li><strong>入口位置:</strong> Link 页面顶部导航栏添加 "Preferences" 按钮</li>
+                        <li><strong>聚合显示:</strong> 同类型 App 聚合在一起,显示优先级排序
+                            <ul style="padding-left: 20px; margin-top: 8px;">
+                                <li>日程管理: ① Google Calendar (默认) | ② Outlook Calendar</li>
+                                <li>文档工具: ① Notion (默认) | ② Confluence | ③ Google Docs</li>
+                            </ul>
+                        </li>
+                        <li><strong>快速切换:</strong> 点击可切换默认 App,立即生效</li>
+                    </ul>
+
+                    <div style="margin-top: 16px; padding: 12px; background: var(--primary-light); border-radius: 6px; border-left: 3px solid var(--primary);">
+                        <strong style="color: var(--primary);">💡 关键点:</strong><br>
+                        • 优先级基于用户配置的规则数量和使用频率动态排序<br>
+                        • 支持拖拽调整优先级顺序<br>
+                        • 显示每个 App 的连接状态(已连接 ✓ / 已断开 ✗)
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 7: 规则生效与确认机制 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 立即生效 + 文本确认</div>
+                <div class="card-content">
+                    <strong>决策:</strong> 修改后的规则<strong>立即生效</strong>,AI 在 Chat 中返回文本确认消息。<br><br>
+
+                    <strong>确认消息示例:</strong>
+                    <div style="margin-top: 12px; padding: 16px; background: var(--success-light); border-radius: 8px; border: 1px solid var(--success);">
+                        <div style="font-size: 0.85rem; color: var(--gray-700);">
+                            <strong style="color: var(--success);">✓ 偏好已更新</strong><br>
+                            已将"需要数据库的汇报文档"设为使用 <strong>Notion</strong> 创建。下次创建类似文档时将自动使用 Notion。
+                        </div>
+                    </div>
+
+                    <strong style="display: block; margin-top: 16px;">工作流程:</strong>
+                    <ol style="line-height: 2; padding-left: 20px;">
+                        <li>用户:"把需要数据库的汇报都放 Notion"</li>
+                        <li>AI 解析并提取规则:condition = "需要数据库 OR 汇报", app = "notion"</li>
+                        <li>立即保存到 Skill 的 preferences 中</li>
+                        <li>返回确认消息:"✓ 偏好已更新,已将'需要数据库的汇报文档'设为使用 Notion 创建"</li>
+                        <li>下次匹配到该规则时,直接使用 Notion,无需 Clarify</li>
+                    </ol>
+
+                    <div style="margin-top: 16px; padding: 12px; background: var(--warning-light); border-radius: 6px; border-left: 3px solid var(--warning);">
+                        <strong style="color: var(--warning);">⚠️ 注意:</strong><br>
+                        如果 AI 对规则解析有歧义(confidence < 0.7),会先确认:"你是说'需要数据库的汇报'都用 Notion 吗?"
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 8: 规则对用户隐形 + 智能引导 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 无感配置体验</div>
+                <div class="card-content">
+                    <strong>设计理念:</strong> 配置的规则对用户<strong>隐形</strong>,通过对话自然建立,无需手动配置复杂规则。<br><br>
+
+                    <strong>用户体验流程:</strong>
+                    <table class="data-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr>
+                                <th>场景</th>
+                                <th>AI 行为</th>
+                                <th>规则状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>首次使用某类操作</strong></td>
+                                <td>触发 Clarify,询问用户选择</td>
+                                <td>用户选择后,<strong>隐式建立规则</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>后续相同场景</strong></td>
+                                <td>自动使用首选 App,无需询问</td>
+                                <td>规则自动匹配并执行</td>
+                            </tr>
+                            <tr>
+                                <td><strong>绑定新的同类 App</strong></td>
+                                <td>检测到新 App,再次询问:"你想用 X 还是 Y?"</td>
+                                <td>用户重新选择后,<strong>更新规则</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>用户主动修改偏好</strong></td>
+                                <td>理解自然语言修改指令,立即生效</td>
+                                <td>规则更新,返回确认消息</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <strong style="display: block; margin-top: 16px; color: var(--primary);">🎯 关键优势:</strong>
+                    <div style="margin-top: 8px; padding: 12px; background: var(--primary-light); border-radius: 6px; border-left: 3px solid var(--primary);">
+                        • <strong>零学习成本:</strong> 用户无需理解"规则"概念,像平时聊天一样表达偏好<br>
+                        • <strong>自动建立:</strong> AI 从对话中自动提取并保存偏好规则<br>
+                        • <strong>智能提醒:</strong> 绑定新 App 时主动询问,确保偏好及时更新
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 9: 规则验证与错误处理 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 调用成功后写入 + 断连标记</div>
+                <div class="card-content">
+                    <strong>验证机制:</strong> 只有在完成调用并获得正常返回后,才将规则写入规则库。<br><br>
+
+                    <strong>工作流程:</strong>
+                    <ol style="line-height: 2; padding-left: 20px;">
+                        <li>用户配置偏好:"需要数据库的汇报用 Notion"</li>
+                        <li>AI 解析规则并标记为 <code>status: "pending_validation"</code></li>
+                        <li>下次匹配到该规则时,尝试调用 Notion API 创建文档</li>
+                        <li><strong>调用成功</strong>(200 OK) → 规则状态更新为 <code>"validated"</code>,正式写入规则库</li>
+                        <li><strong>调用失败</strong>(401/403/500) → 规则保持 <code>"pending_validation"</code>,回退到 Clarify</li>
+                    </ol>
+
+                    <strong style="display: block; margin-top: 16px;">断连处理:</strong>
+                    <table class="data-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr>
+                                <th>场景</th>
+                                <th>规则状态</th>
+                                <th>AI 行为</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>App 断开连接</strong></td>
+                                <td>标记为 <code>status: "unavailable"</code></td>
+                                <td>跳过该规则,尝试匹配其他规则或触发 Clarify</td>
+                            </tr>
+                            <tr>
+                                <td><strong>App 重新连接</strong></td>
+                                <td>恢复为 <code>status: "validated"</code></td>
+                                <td>规则自动生效,继续使用该 App</td>
+                            </tr>
+                            <tr>
+                                <td><strong>多次调用失败</strong>(3次+)</td>
+                                <td>标记为 <code>status: "deprecated"</code></td>
+                                <td>提示用户:"Notion 连接异常,建议重新绑定或更换其他工具"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 16px; padding: 12px; background: var(--success-light); border-radius: 6px; border-left: 3px solid var(--success);">
+                        <strong style="color: var(--success);">✓ 优势:</strong><br>
+                        • 避免保存无效规则,确保规则库质量<br>
+                        • 断连后规则不丢失,重连后自动恢复<br>
+                        • 多次失败后主动提示,引导用户解决问题
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 10: 不支持跨 Action Type 规则复用 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 精准操作,避免误操作</div>
+                <div class="card-content">
+                    <strong>决策:</strong> 规则<strong>不跨 Action Type 复用</strong>。每个 Action Type 独立配置偏好。<br><br>
+
+                    <strong>原因:</strong>
+                    <ul class="styled-list">
+                        <li><strong>避免误操作:</strong> "更新文档"需要精确指定文档名称/链接,不应自动匹配</li>
+                        <li><strong>精准控制:</strong> 不同操作的上下文要求不同(如创建 vs 更新 vs 删除)</li>
+                        <li><strong>降低复杂度:</strong> 每个 Action Type 独立管理,逻辑清晰,易于维护</li>
+                    </ul>
+
+                    <strong style="display: block; margin-top: 16px;">示例对比:</strong>
+                    <table class="data-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr>
+                                <th>用户请求</th>
+                                <th>Action Type</th>
+                                <th>是否使用规则</th>
+                                <th>原因</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>"创建季度销售汇报"</td>
+                                <td><code>create_document</code></td>
+                                <td><span style="color: var(--success); font-weight: 600;">✓ 使用规则</span></td>
+                                <td>匹配 "需要数据库的汇报 → Notion" 规则</td>
+                            </tr>
+                            <tr>
+                                <td>"更新季度销售汇报"</td>
+                                <td><code>update_document</code></td>
+                                <td><span style="color: var(--error); font-weight: 600;">✗ 不使用规则</span></td>
+                                <td>需要精确指定文档名称/链接,避免误操作</td>
+                            </tr>
+                            <tr>
+                                <td>"删除季度销售汇报"</td>
+                                <td><code>delete_document</code></td>
+                                <td><span style="color: var(--error); font-weight: 600;">✗ 不使用规则</span></td>
+                                <td>高风险操作,必须明确指定目标</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 11: 性能优化策略 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 全规则遍历 + Skill 架构优化</div>
+                <div class="card-content">
+                    <strong>决策:</strong> 每次请求<strong>遍历所有规则</strong>,通过 Claude Skill 架构和字典注释优化性能。<br><br>
+
+                    <strong>技术实现:</strong>
+                    <ul class="styled-list">
+                        <li><strong>Skill 级缓存:</strong> 用户偏好数据缓存在 Skill context 中,避免重复读取</li>
+                        <li><strong>规则索引:</strong> 按 Action Type 建立索引,只遍历相关规则
+                            <pre style="background: var(--gray-900); color: #a5d6ff; padding: 12px; border-radius: 6px; font-size: 0.75rem; margin-top: 8px;">
+<span class="comment">// 规则索引结构</span>
+{
+  <span class="key">"create_document"</span>: [<span class="string">rule1</span>, <span class="string">rule2</span>, <span class="string">rule3</span>],
+  <span class="key">"create_calendar_event"</span>: [<span class="string">rule4</span>, <span class="string">rule5</span>]
+}
+                            </pre>
+                        </li>
+                        <li><strong>字典注释:</strong> 在规则 condition 中添加关键词标签,加速匹配
+                            <pre style="background: var(--gray-900); color: #a5d6ff; padding: 12px; border-radius: 6px; font-size: 0.75rem; margin-top: 8px;">
+{
+  <span class="key">"condition"</span>: <span class="string">"需要 Database OR 汇报"</span>,
+  <span class="key">"keywords"</span>: [<span class="string">"database"</span>, <span class="string">"汇报"</span>, <span class="string">"报告"</span>, <span class="string">"数据"</span>],
+  <span class="key">"app"</span>: <span class="string">"notion"</span>
+}
+                            </pre>
+                        </li>
+                        <li><strong>响应时间目标:</strong> < 150ms(规则匹配 + App 选择)</li>
+                    </ul>
+
+                    <div style="margin-top: 16px; padding: 12px; background: var(--accent-light); border-radius: 6px; border-left: 3px solid var(--accent);">
+                        <strong style="color: #d97706;">🔧 优化策略:</strong><br>
+                        • 规则按 <code>last_matched</code> 时间排序,最近匹配的优先遍历<br>
+                        • 匹配成功后立即返回,不继续遍历剩余规则<br>
+                        • 定期清理长期未匹配的规则(6个月+)
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Decision 12: 多语言支持策略 ✅</h3>
+            <div class="card">
+                <div class="card-title"><span class="badge status-ready">Approved</span> 英文存储 + LLM 翻译</div>
+                <div class="card-content">
+                    <strong>决策:</strong> 规则 condition 统一以<strong>英文存储</strong>,多语言交互由 LLM 处理。<br><br>
+
+                    <strong>工作流程:</strong>
+                    <ol style="line-height: 2; padding-left: 20px;">
+                        <li>用户用中文输入:"把需要数据库的汇报都放 Notion"</li>
+                        <li>AI 提取条件并<strong>翻译为英文</strong>:"documents with database OR reports"</li>
+                        <li>以英文形式存储到规则库:
+                            <pre style="background: var(--gray-900); color: #a5d6ff; padding: 12px; border-radius: 6px; font-size: 0.75rem; margin-top: 8px;">
+{
+  <span class="key">"condition"</span>: <span class="string">"documents with database OR reports"</span>,
+  <span class="key">"app"</span>: <span class="string">"notion"</span>
+}
+                            </pre>
+                        </li>
+                        <li>下次用户说"创建季度销售汇报"(中文) → AI 翻译为 "create quarterly sales report" → 匹配规则 → 返回 Notion</li>
+                        <li>日文用户说"データベースレポートを作成" → AI 翻译为 "create database report" → 匹配规则 → 返回 Notion</li>
+                    </ol>
+
+                    <strong style="display: block; margin-top: 16px; color: var(--success);">✓ 优势:</strong>
+                    <div style="margin-top: 8px; padding: 12px; background: var(--success-light); border-radius: 6px; border-left: 3px solid var(--success);">
+                        • <strong>统一标准:</strong> 规则库以英文为标准,避免多语言存储的一致性问题<br>
+                        • <strong>LLM 能力:</strong> 充分利用大语言模型的多语言理解能力<br>
+                        • <strong>易于扩展:</strong> 新增语言支持无需修改规则库,LLM 自动处理
+                    </div>
+
+                    <div style="margin-top: 16px; padding: 12px; background: var(--warning-light); border-radius: 6px; border-left: 3px solid var(--warning);">
+                        <strong style="color: var(--warning);">⚠️ 注意事项:</strong><br>
+                        • 中英文混合输入:"创建 Database report 用 Notion" → AI 统一翻译为英文<br>
+                        • 专有名词保留原文:"创建 Q4 Sales Forecast" → "create Q4 Sales Forecast"
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">🚨 Technical Challenge: 自然语言条件解析 🔍</h3>
+            <div class="card" style="border: 2px solid var(--warning); background: var(--warning-light);">
+                <div class="card-title" style="color: var(--warning);"><span class="badge priority-high">High Priority</span> 待讨论的技术难点</div>
+                <div class="card-content">
+                    <strong style="color: var(--warning);">问题描述:</strong><br>
+                    用户通过自然语言配置偏好(如"把需要数据库的汇报都放 Notion"),AI 需要准确提取并存储条件。由于无法维护同义词词典,完全依赖 AI 推理,存在以下挑战:<br><br>
+
+                    <strong>挑战点:</strong>
+                    <ul class="styled-list">
+                        <li><strong>同义词问题:</strong> "汇报" vs "报告" vs "总结" vs "分析" - AI 如何识别为同一概念?</li>
+                        <li><strong>语义漂移:</strong> 用户每次表达可能略有不同,如何确保匹配到同一规则?</li>
+                        <li><strong>条件边界:</strong> "需要数据库的汇报" vs "数据库相关文档" - 边界如何界定?</li>
+                        <li><strong>规则冲突:</strong> 多个规则部分重叠时,如何选择最佳匹配?</li>
+                    </ul>
+
+                    <strong style="display: block; margin-top: 16px; color: var(--warning);">💭 待讨论方案:</strong>
+                    <div style="margin-top: 8px; padding: 14px; background: white; border-radius: 6px; border: 1px solid var(--warning);">
+                        <strong>方案 A: 纯 AI 推理</strong><br>
+                        • 完全依赖 LLM 的语义理解能力<br>
+                        • 优点: 灵活,适应性强,无需维护词典<br>
+                        • 缺点: 不可控,可能出现误匹配<br><br>
+
+                        <strong>方案 B: AI + 向量相似度</strong><br>
+                        • 将 condition 转为 embedding 向量<br>
+                        • 新请求也转为 embedding,计算相似度<br>
+                        • 优点: 更稳定,可调节相似度阈值<br>
+                        • 缺点: 增加技术复杂度,需要向量数据库<br><br>
+
+                        <strong>方案 C: AI + 用户反馈强化</strong><br>
+                        • AI 初步匹配后,向用户确认:"这次的文档属于'需要数据库的汇报'吗?"<br>
+                        • 用户确认后,将该次匹配记录下来,强化规则<br>
+                        • 优点: 准确率高,用户可控<br>
+                        • 缺点: 增加用户交互次数
+                    </div>
+
+                    <div style="margin-top: 16px; padding: 12px; background: var(--error-light); border-radius: 6px; border-left: 3px solid var(--error);">
+                        <strong style="color: var(--error);">⚠️ 需要团队讨论:</strong><br>
+                        • 选择哪个方案作为 V1 实现?<br>
+                        • 如何平衡准确率和用户体验?<br>
+                        • 是否需要 A/B 测试不同方案?
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="prd-footer">
             <div style="margin-bottom: 12px;">
-                <strong>Document Version:</strong> 1.1 | <strong>Last Updated:</strong> 2024-12-15 | <strong>Owner:</strong> Product Team
+                <strong>Document Version:</strong> 1.2 | <strong>Last Updated:</strong> 2024-12-15 | <strong>Owner:</strong> Product Team
             </div>
             <div style="color: var(--gray-400);">
-                <strong>Version 1.1 Updates:</strong> Design decisions finalized - Added support for fine-grained preferences, natural language configuration, and last-used app defaulting.<br>
+                <strong>Version 1.2 Updates:</strong> Added comprehensive implementation details based on engineering review - Rule management UI, validation mechanisms, performance optimization, multilingual support, and technical challenge discussion.<br>
+                <strong>Version 1.1:</strong> Design decisions finalized - Fine-grained preferences, natural language configuration, last-used app defaulting.<br>
                 This PRD is a living document and will be updated as the project evolves.
             </div>
         </div>

@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarify Card → Action Card In-place Transition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --primary-light: #e7f5ff;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+            --green: #16a34a;
+            --green-light: #dcfce7;
+            --orange: #ea580c;
+            --orange-light: #fff7ed;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            gap: 40px;
+        }
+
+        .phone-frame {
+            width: 440px;
+            height: 956px;
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            overflow: hidden;
+            background: var(--white);
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notch {
+            width: 80px;
+            height: 24px;
+            background: #1a1a1a;
+            border-radius: 12px;
+        }
+
+        .phone-body {
+            height: calc(100% - 44px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 8px 20px 12px;
+            border-bottom: 1px solid var(--gray-100);
+            flex-shrink: 0;
+        }
+
+        .header-back {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 17px;
+            color: var(--gray-900);
+        }
+
+        .header-action {
+            width: 20px;
+        }
+
+        /* Chat area */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--gray-50);
+        }
+
+        /* Message bubbles */
+        .msg-row {
+            display: flex;
+            flex-direction: column;
+            max-width: 92%;
+        }
+
+        .msg-row.user {
+            align-self: flex-start;
+        }
+
+        .msg-row.ai {
+            align-self: flex-end;
+        }
+
+        .msg-sender {
+            font-size: 11px;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+            padding: 0 4px;
+        }
+
+        .msg-row.ai .msg-sender {
+            text-align: right;
+            color: var(--primary);
+        }
+
+        .msg-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--gray-900);
+        }
+
+        .msg-row.user .msg-bubble {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-row.ai .msg-bubble {
+            background: linear-gradient(135deg, #e8f7ee, #edf7fc);
+            border-bottom-right-radius: 4px;
+        }
+
+        /* ============================================
+           CLARIFY CARD — the star of the show
+           ============================================ */
+        .clarify-card {
+            background: var(--white);
+            border-radius: 16px;
+            border: 1.5px solid var(--gray-200);
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+
+        .clarify-card.selected {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(0, 122, 255, 0.12);
+        }
+
+        /* Phase 1: App selection */
+        .clarify-header {
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .clarify-header .action-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .clarify-header .action-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .clarify-header .action-desc {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-top: 2px;
+        }
+
+        /* App options grid */
+        .app-options {
+            padding: 12px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: opacity 0.3s, max-height 0.4s;
+            overflow: hidden;
+        }
+
+        .app-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1.5px solid var(--gray-200);
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .app-option:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .app-option:active {
+            transform: scale(0.98);
+        }
+
+        .app-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .app-option .app-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .app-option .app-info {
+            flex: 1;
+        }
+
+        .app-option .app-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .app-option .app-desc {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 1px;
+        }
+
+        .app-option .check-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .app-option.selected .check-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .app-option.selected .check-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Preference hint */
+        .pref-hint {
+            padding: 0 16px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        .pref-hint .bulb {
+            font-size: 13px;
+        }
+
+        /* ============================================
+           Loading phase
+           ============================================ */
+        .loading-overlay {
+            display: none;
+            padding: 32px 16px;
+            text-align: center;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .loading-text .app-highlight {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* ============================================
+           Phase 2: Action Card (revealed in-place)
+           ============================================ */
+        .action-card-content {
+            display: none;
+        }
+
+        .action-card-content.active {
+            display: block;
+            animation: fadeSlideIn 0.4s ease-out;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Action card selected app badge */
+        .selected-app-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--primary-light);
+            border-bottom: 1px solid #d0ebff;
+        }
+
+        .selected-app-badge img {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+        }
+
+        .selected-app-badge .badge-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .selected-app-badge .badge-change {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--primary);
+            cursor: pointer;
+            opacity: 0.7;
+            text-decoration: underline;
+        }
+
+        .selected-app-badge .badge-change:hover {
+            opacity: 1;
+        }
+
+        /* Form fields */
+        .card-fields {
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .field-input {
+            padding: 10px 12px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--gray-900);
+            background: var(--gray-50);
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .field-input:focus {
+            border-color: var(--primary);
+            background: var(--white);
+        }
+
+        .field-input.prefilled {
+            background: var(--white);
+            border-color: var(--gray-300);
+        }
+
+        .field-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .field-row .field-group {
+            flex: 1;
+        }
+
+        /* Tag input for attendees */
+        .attendee-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 12px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            background: var(--gray-50);
+            min-height: 40px;
+            align-items: center;
+        }
+
+        .attendee-tag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: var(--primary-light);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .attendee-tag .remove {
+            cursor: pointer;
+            opacity: 0.6;
+            font-size: 14px;
+        }
+
+        .attendee-tag .remove:hover {
+            opacity: 1;
+        }
+
+        /* Submit area */
+        .card-actions {
+            padding: 12px 16px 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit.primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-submit.primary:hover {
+            background: #0062d1;
+        }
+
+        .btn-submit.primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit.secondary {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            flex: 0 0 auto;
+            padding: 12px 20px;
+        }
+
+        .btn-submit.secondary:hover {
+            background: var(--gray-200);
+        }
+
+        /* ============================================
+           Success state
+           ============================================ */
+        .success-overlay {
+            display: none;
+            padding: 24px 16px;
+            text-align: center;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .success-overlay.active {
+            display: flex;
+            animation: fadeSlideIn 0.3s ease-out;
+        }
+
+        .success-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--green-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .success-text {
+            font-size: 14px;
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+
+        .success-sub {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        /* ============================================
+           Confirmed preference message
+           ============================================ */
+        .pref-confirmed {
+            display: none;
+            margin-top: 4px;
+        }
+
+        .pref-confirmed.active {
+            display: block;
+            animation: fadeSlideIn 0.4s ease-out;
+        }
+
+        .pref-confirmed .msg-bubble {
+            background: var(--green-light);
+            border-bottom-right-radius: 4px;
+            font-size: 14px;
+            color: var(--green);
+        }
+
+        /* Input bar (decorative) */
+        .input-bar {
+            padding: 12px 16px;
+            border-top: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            background: var(--white);
+        }
+
+        .input-bar input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 24px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            color: var(--gray-500);
+            background: var(--gray-50);
+        }
+
+        .input-bar .send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Side panel: flow explanation */
+        .side-panel {
+            width: 380px;
+            flex-shrink: 0;
+            padding-top: 60px;
+        }
+
+        .flow-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+        }
+
+        .flow-step {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 20px;
+            opacity: 0.35;
+            transition: opacity 0.4s;
+        }
+
+        .flow-step.active {
+            opacity: 1;
+        }
+
+        .flow-step.done {
+            opacity: 0.6;
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray-500);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .flow-step.active .step-num {
+            background: var(--primary);
+            color: white;
+        }
+
+        .flow-step.done .step-num {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .flow-step.done .step-num::after {
+            content: '✓';
+        }
+
+        .flow-step.done .step-num span {
+            display: none;
+        }
+
+        .step-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 3px;
+        }
+
+        .step-content p {
+            font-size: 13px;
+            color: var(--gray-500);
+            line-height: 1.4;
+        }
+
+        /* Reset button */
+        .reset-btn {
+            margin-top: 24px;
+            padding: 10px 20px;
+            border: 1.5px solid var(--gray-300);
+            border-radius: 10px;
+            background: var(--white);
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Phone Frame -->
+    <div class="phone-frame">
+        <div class="status-bar"><div class="notch"></div></div>
+        <div class="phone-body">
+            <!-- Header -->
+            <div class="header">
+                <button class="header-back">‹</button>
+                <div class="header-title">Tanka AI</div>
+                <div class="header-action"></div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area" id="chatArea">
+                <!-- User message -->
+                <div class="msg-row user">
+                    <div class="msg-sender">You</div>
+                    <div class="msg-bubble">帮我在日历上给 Sara 发一个邀请，约她这周六去参加 SF downtown 的 Claude Cowork 线下聚会，带上这个链接 https://luma.com/kfftxij2</div>
+                </div>
+
+                <!-- AI message + Clarify card -->
+                <div class="msg-row ai" style="max-width: 96%;">
+                    <div class="msg-sender">Tanka AI</div>
+
+                    <!-- THE CLARIFY CARD -->
+                    <div class="clarify-card" id="clarifyCard">
+
+                        <!-- Header: always visible -->
+                        <div class="clarify-header">
+                            <div class="action-label">发送日历邀请</div>
+                            <div class="action-title">周六 — Claude Cowork 线下聚会 · 邀请 Sara</div>
+                            <div class="action-desc">AI 已识别参数，请选择要使用的应用</div>
+                        </div>
+
+                        <!-- Phase 1: App selection -->
+                        <div class="app-options" id="appOptions">
+                            <div class="app-option" data-app="google_calendar" onclick="selectApp(this)">
+                                <img class="app-icon" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Calendar" onerror="this.style.display='none'">
+                                <div class="app-info">
+                                    <div class="app-name">Google Calendar</div>
+                                    <div class="app-desc">个人日历 · 已连接</div>
+                                </div>
+                                <div class="check-icon"></div>
+                            </div>
+                            <div class="app-option" data-app="outlook_calendar" onclick="selectApp(this)">
+                                <img class="app-icon" src="https://www.svgrepo.com/show/373951/outlook.svg" alt="Outlook Calendar" onerror="this.style.display='none'">
+                                <div class="app-info">
+                                    <div class="app-name">Outlook Calendar</div>
+                                    <div class="app-desc">工作日历 · 已连接</div>
+                                </div>
+                                <div class="check-icon"></div>
+                            </div>
+                        </div>
+
+                        <div class="pref-hint" id="prefHint">
+                            <span class="bulb">💡</span>
+                            你的选择会被保存，下次我会直接使用
+                        </div>
+
+                        <!-- Loading phase -->
+                        <div class="loading-overlay" id="loadingOverlay">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">
+                                正在准备 <span class="app-highlight" id="loadingAppName">Google Calendar</span> 卡片...
+                            </div>
+                        </div>
+
+                        <!-- Phase 2: Action Card -->
+                        <div class="action-card-content" id="actionCardContent">
+                            <div class="selected-app-badge">
+                                <img id="selectedAppIcon" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="">
+                                <span class="badge-text" id="selectedAppName">Google Calendar</span>
+                                <span class="badge-change" onclick="resetToSelection()">换一个</span>
+                            </div>
+
+                            <div class="card-fields">
+                                <div class="field-group">
+                                    <label class="field-label">活动标题</label>
+                                    <input class="field-input prefilled" type="text" value="Claude Cowork 线下聚会 · SF Downtown">
+                                </div>
+
+                                <div class="field-row">
+                                    <div class="field-group">
+                                        <label class="field-label">日期</label>
+                                        <input class="field-input prefilled" type="text" value="周六 (2/28)">
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="field-label">时间</label>
+                                        <input class="field-input prefilled" type="text" value="17:30 开始">
+                                    </div>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label">地点</label>
+                                    <input class="field-input prefilled" type="text" value="San Francisco Downtown">
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label">邀请对象</label>
+                                    <div class="attendee-tags">
+                                        <span class="attendee-tag">
+                                            Sara
+                                            <span class="remove">×</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label">活动链接</label>
+                                    <input class="field-input prefilled" type="text" value="https://luma.com/kfftxij2" readonly>
+                                </div>
+                            </div>
+
+                            <div class="card-actions">
+                                <button class="btn-submit secondary" onclick="cancelCard()">取消</button>
+                                <button class="btn-submit primary" onclick="submitCard()">发送邀请</button>
+                            </div>
+                        </div>
+
+                        <!-- Success state -->
+                        <div class="success-overlay" id="successOverlay">
+                            <div class="success-icon">✓</div>
+                            <div class="success-text">邀请已发送</div>
+                            <div class="success-sub">周六 Claude Cowork · 已邀请 Sara</div>
+                        </div>
+                    </div>
+
+                    <!-- Preference confirmed message (shows after submit) -->
+                    <div class="pref-confirmed" id="prefConfirmed">
+                        <div class="msg-bubble" style="margin-top: 8px; background: #dcfce7; color: #16a34a; font-size: 13px; border-radius: 12px; border-bottom-right-radius: 4px;">
+                            ✓ 已将 <strong id="confirmedAppName">Google Calendar</strong> 设为发送日历邀请的默认应用
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input bar -->
+            <div class="input-bar">
+                <input type="text" placeholder="输入消息..." disabled>
+                <button class="send-btn">↑</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Panel: Flow explanation -->
+    <div class="side-panel">
+        <div class="flow-title">Clarify → Action Card<br>In-place 转换流程</div>
+
+        <div class="flow-step active" id="step1">
+            <div class="step-num"><span>1</span></div>
+            <div class="step-content">
+                <h4>AI 意图识别 + 参数提取</h4>
+                <p>识别 action_type: send_calendar_invite<br>提取: 日期、活动、邀请对象、链接</p>
+            </div>
+        </div>
+
+        <div class="flow-step" id="step2">
+            <div class="step-num"><span>2</span></div>
+            <div class="step-content">
+                <h4>检索 Skill Memory → 无偏好</h4>
+                <p>首次使用，无 preferred_app 记录<br>触发 Clarify 选择卡片</p>
+            </div>
+        </div>
+
+        <div class="flow-step" id="step3">
+            <div class="step-num"><span>3</span></div>
+            <div class="step-content">
+                <h4>展示 Clarify 卡片</h4>
+                <p>在同一位置展示 App 选项<br>用户点击选择，无需对话来回</p>
+            </div>
+        </div>
+
+        <div class="flow-step" id="step4">
+            <div class="step-num"><span>4</span></div>
+            <div class="step-content">
+                <h4>In-place 加载过渡</h4>
+                <p>选择后卡片原地 Loading<br>准备 Action Card 表单</p>
+            </div>
+        </div>
+
+        <div class="flow-step" id="step5">
+            <div class="step-num"><span>5</span></div>
+            <div class="step-content">
+                <h4>Action Card 原地展开</h4>
+                <p>同一张卡片变为可编辑表单<br>参数已由 AI 预填充</p>
+            </div>
+        </div>
+
+        <div class="flow-step" id="step6">
+            <div class="step-num"><span>6</span></div>
+            <div class="step-content">
+                <h4>提交 + 偏好自动保存</h4>
+                <p>执行操作，同时将选择写入 Skill Memory<br>下次直接跳过 Clarify</p>
+            </div>
+        </div>
+
+        <button class="reset-btn" onclick="resetDemo()">↺ 重置 Demo</button>
+    </div>
+
+    <script>
+        // App data
+        const appData = {
+            google_calendar: {
+                name: 'Google Calendar',
+                icon: 'https://www.svgrepo.com/show/475656/google-color.svg'
+            },
+            outlook_calendar: {
+                name: 'Outlook Calendar',
+                icon: 'https://www.svgrepo.com/show/373951/outlook.svg'
+            }
+        };
+
+        let selectedAppId = null;
+        let currentPhase = 'selection'; // selection | loading | action | success
+
+        function setActiveStep(n) {
+            for (let i = 1; i <= 6; i++) {
+                const step = document.getElementById('step' + i);
+                step.classList.remove('active', 'done');
+                if (i < n) step.classList.add('done');
+                if (i === n) step.classList.add('active');
+            }
+        }
+
+        function selectApp(el) {
+            if (currentPhase !== 'selection') return;
+
+            selectedAppId = el.dataset.app;
+            const app = appData[selectedAppId];
+
+            // Mark selected
+            document.querySelectorAll('.app-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+
+            // Short delay then transition to loading
+            setTimeout(() => {
+                currentPhase = 'loading';
+                setActiveStep(4);
+
+                // Hide selection, show loading
+                document.getElementById('appOptions').style.display = 'none';
+                document.getElementById('prefHint').style.display = 'none';
+
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.classList.add('active');
+                document.getElementById('loadingAppName').textContent = app.name;
+
+                document.getElementById('clarifyCard').classList.add('selected');
+
+                // Update action card header desc
+                document.querySelector('.action-desc').textContent = '正在加载...';
+
+                // After loading, show action card
+                setTimeout(() => {
+                    currentPhase = 'action';
+                    setActiveStep(5);
+
+                    loadingOverlay.classList.remove('active');
+
+                    // Update header
+                    document.querySelector('.action-desc').textContent = '确认以下信息并提交';
+
+                    // Update selected app badge
+                    document.getElementById('selectedAppIcon').src = app.icon;
+                    document.getElementById('selectedAppName').textContent = app.name;
+
+                    // Show action card content
+                    document.getElementById('actionCardContent').classList.add('active');
+
+                    // Scroll to ensure card is fully visible
+                    const chatArea = document.getElementById('chatArea');
+                    setTimeout(() => {
+                        chatArea.scrollTop = chatArea.scrollHeight;
+                    }, 100);
+
+                }, 1200);
+            }, 400);
+        }
+
+        function submitCard() {
+            if (currentPhase !== 'action') return;
+            currentPhase = 'success';
+            setActiveStep(6);
+
+            const app = appData[selectedAppId];
+
+            // Hide action card content, show success
+            document.getElementById('actionCardContent').classList.remove('active');
+            document.getElementById('successOverlay').classList.add('active');
+
+            // Update header
+            document.querySelector('.action-desc').textContent = '操作完成';
+
+            // Show preference confirmed
+            document.getElementById('confirmedAppName').textContent = app.name;
+            setTimeout(() => {
+                document.getElementById('prefConfirmed').classList.add('active');
+                const chatArea = document.getElementById('chatArea');
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }, 600);
+        }
+
+        function cancelCard() {
+            resetToSelection();
+        }
+
+        function resetToSelection() {
+            currentPhase = 'selection';
+            selectedAppId = null;
+            setActiveStep(3);
+
+            // Reset card state
+            document.getElementById('clarifyCard').classList.remove('selected');
+            document.getElementById('actionCardContent').classList.remove('active');
+            document.getElementById('loadingOverlay').classList.remove('active');
+            document.getElementById('successOverlay').classList.remove('active');
+            document.getElementById('prefConfirmed').classList.remove('active');
+
+            // Show selection again
+            document.getElementById('appOptions').style.display = 'flex';
+            document.getElementById('prefHint').style.display = 'flex';
+            document.querySelectorAll('.app-option').forEach(o => o.classList.remove('selected'));
+
+            // Reset header
+            document.querySelector('.action-desc').textContent = 'AI 已识别参数，请选择要使用的应用';
+        }
+
+        function resetDemo() {
+            currentPhase = 'selection';
+            selectedAppId = null;
+            setActiveStep(3);
+
+            document.getElementById('clarifyCard').classList.remove('selected');
+            document.getElementById('actionCardContent').classList.remove('active');
+            document.getElementById('loadingOverlay').classList.remove('active');
+            document.getElementById('successOverlay').classList.remove('active');
+            document.getElementById('prefConfirmed').classList.remove('active');
+
+            document.getElementById('appOptions').style.display = 'flex';
+            document.getElementById('prefHint').style.display = 'flex';
+            document.querySelectorAll('.app-option').forEach(o => o.classList.remove('selected'));
+
+            document.querySelector('.action-desc').textContent = 'AI 已识别参数，请选择要使用的应用';
+        }
+
+        // Initialize: set step 3 as active (card is shown)
+        setActiveStep(3);
+    </script>
+</body>
+</html>
